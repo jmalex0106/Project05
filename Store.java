@@ -288,7 +288,7 @@ public class Store {
         }
         //adds store as a line to AllStores.txt, which lists all existing stores
         try {
-            File file = new File("AllSores.txt");
+            File file = new File("AllStores.txt");
             FileOutputStream fileOutputStream = new FileOutputStream(file, true);
             PrintWriter printWriter = new PrintWriter(fileOutputStream);
             String add = getName();
