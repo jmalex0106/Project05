@@ -19,15 +19,11 @@ public class SellerMenuGUI implements Runnable {
 
         content.setLayout(new BorderLayout());
 
-
-
         // Menu Panel - Panel1
         JPanel panel1 = new JPanel(new GridLayout(3,3)); // 3x3
-        // GridBagConstraints gridBagConstraints = new GridBagConstraints();
 
         // // View Store
-        // gridBagConstraints.gridx = 0;
-        // gridBagConstraints.gridy = 0;
+
         JLabel labelStore = new JLabel("View Stores: ");
         panel1.add(labelStore); // (1,1)
 
@@ -47,8 +43,7 @@ public class SellerMenuGUI implements Runnable {
         panel1.add(confirmStore); // (1, 3)
 
         // View Statistics
-        // gridBagConstraints.gridx = 0;
-        // gridBagConstraints.gridy = 1;
+
 
         JLabel labelStatistics = new JLabel("View Statistics: ");
         panel1.add(labelStatistics); // (2, 1)
@@ -62,16 +57,12 @@ public class SellerMenuGUI implements Runnable {
         panel1.add(confirmStat); // (2,3)
 
         // // Open New Store
-        // gridBagConstraints.gridx = 0;
-        // gridBagConstraints.gridy = 2;
-
         JButton openNewStore = new JButton("Open new Store");
         openNewStore.setSize(50,50); // add action listener
         panel1.add(openNewStore);// (3,1)
 
         // // Return to Main Menu
-        // gridBagConstraints.gridy = 2;
-        // gridBagConstraints.gridx = 2;
+
         JButton returnMain = new JButton("Main Menu");
         panel1.add(returnMain); // (3,2)
 
