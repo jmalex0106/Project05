@@ -27,11 +27,9 @@ public class SellerMenuGUI implements Runnable {
         JLabel labelStore = new JLabel("View Stores: ");
         panel1.add(labelStore); // (1,1)
 
-        // gridBagConstraints.gridx = 1;
         JComboBox<String> storeDropdown = new JComboBox<>(Store);
         panel1.add(storeDropdown); // (1,2)
 
-        // gridBagConstraints.gridx = 2;
         JButton confirmStore = new JButton("Confirm"); // add action listener
         confirmStore.addActionListener(new ActionListener() {
             @Override
@@ -43,8 +41,6 @@ public class SellerMenuGUI implements Runnable {
         panel1.add(confirmStore); // (1, 3)
 
         // View Statistics
-
-
         JLabel labelStatistics = new JLabel("View Statistics: ");
         panel1.add(labelStatistics); // (2, 1)
 
