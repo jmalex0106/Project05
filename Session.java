@@ -6,9 +6,6 @@ import java.util.ArrayList;
  * Each session represents a one-hour block of time.
  */
 public class Session {
-    private String location;  //The location that the session will be held at. This is set by the tutor,
-    //not the student. If the session is not available, the location is always "".
-    private int capacity;  //Capacity as set by the tutor. A capacity of 0 is an unavailable session.
     private int hour;  //The hour of day that the session occurs at. For example, 13 is the 13:00 to 14:00
     //session.
     private int day; //The day of the month that the session occurs at.
@@ -32,30 +29,12 @@ public class Session {
      * @param year
      */
     public Session(int hour, int day, int month, int year) {
-        this.location = "";
-        this.capacity = 0;
         this.hour = hour;
         this.day = day;
         this.month = month;
         this.year = year;
         this.enrolledCustomers = new ArrayList<String>();
         this.waitingCustomers = new ArrayList<String>();
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
     }
 
     public ArrayList<String> getEnrolledCustomers() {
@@ -108,64 +87,6 @@ public class Session {
         enrolledCustomers.remove(customer.getName());
     }
 
-    public boolean isValidTutor(String userName, String passWord) {
-        try {
-            File f = new File("tutorInfo.txt");
-            FileReader fr = new FileReader(f);
-            BufferedReader bfr = new BufferedReader(fr);
-            ArrayList<String> list = new ArrayList<String>();
-            String line = bfr.readLine();
-            while (line != null) {
-                list.add(line);
-                line = bfr.readLine();
-            }
-            bfr.close();
-
-            String[] userPassArr = list.toArray(new String[list.size()]);
-
-            for (int i = 0; i < userPassArr.length; i++) {
-                String[] tmpArr = userPassArr[i].split(",");
-                String user = userPassArr[0];
-                String pass = userPassArr[1];
-                if (user.equals(userName) && pass.equals(passWord)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public boolean isValidStudent(String userName, String passWord) {
-        try {
-            File f = new File("studentInfo.txt");
-            FileReader fr = new FileReader(f);
-            BufferedReader bfr = new BufferedReader(fr);
-            ArrayList<String> list = new ArrayList<String>();
-            String line = bfr.readLine();
-            while (line != null) {
-                list.add(line);
-                line = bfr.readLine();
-            }
-            bfr.close();
-
-            String[] userPassArr = list.toArray(new String[list.size()]);
-
-            for (int i = 0; i < userPassArr.length; i++) {
-                String[] tmpArr = userPassArr[i].split(",");
-                String user = userPassArr[0];
-                String pass = userPassArr[1];
-                if (user.equals(userName) && pass.equals(passWord)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     public int getDay() {
         return day;
     }
@@ -191,8 +112,6 @@ public class Session {
         ans += "Month: " + getMonth() + "\n";
         ans += "Day: " + getDay() + "\n";
         ans += "Hour: " + getHour() + ":00" + "\n";
-        ans += "Capacity: " + getCapacity() + "\n";
-        ans += "Location: " + getLocation() + "\n";
         return ans;
     }
 }
