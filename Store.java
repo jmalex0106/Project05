@@ -517,7 +517,9 @@ public class Store {
     /**
      * Creates a new session if a session at the appropriate time does not exist.
      * Adds customer to the waitlist at this session. This method can be treated as skeleton code
-     * for similar methods like approveAppointment, denyAppointment, etc. 
+     * for similar methods like approveAppointment, denyAppointment, etc.
+     * NOTE: This method does not update any fields in any customer object. To do so,
+     * other methods must be called from the Customer class.
      */
     public void requestAppointmentAtTime(int year , int month, int day , int hour ,
                                          String customerName) {
@@ -534,6 +536,78 @@ public class Store {
                     session.addToWaitingList(customerName);
                 }
             }
+        }
+    }
+
+    /**
+     * Removes customer from waitlist at the specified session, if applicable, or does nothing.
+     * NOTE: This method does not update any fields in any customer object. To do so,
+     * other methods must be called from the Customer class.
+     */
+    public void declineAppointmentAtTime(int year , int month, int day , int hour ,
+                                         String customerName) {
+        try {
+            for (Session session : sessions) {
+                if (session.getYear() == year &&
+                        session.getMonth() == month &&
+                        session.getDay() == day &&
+                        session.getHour() == hour) {
+                    session.removeFromWaitingList(customerName);
+                }
+            }
+        } catch (Exception exception) {
+            return;
+        }
+    }
+
+    /**
+     * Searches for customerName in the waitling list of the session at this store specified by the
+     * year, month, day, and hour parameters. If found, this customerName is moved from
+     * waitingCustomers to enrolledCustomers.
+     * @param year
+     * @param month
+     * @param day
+     * @param hour
+     * @param customerName
+     */
+    public void approveAppointmentAtTime(int year , int month, int day , int hour ,
+                                         String customerName) {
+        try {
+            for (Session session : sessions) {
+                if (session.getYear() == year &&
+                        session.getMonth() == month &&
+                        session.getDay() == day &&
+                        session.getHour() == hour) {
+                    session.removeFromWaitingList(customerName);
+                    session.addToEnrolledList(customerName);
+                }
+            }
+        } catch (Exception exception) {
+            return;
+        }
+    }
+
+    /**
+     * Deletes the customerName from the enrolledCustomers field of the specified session.
+     * @param year
+     * @param month
+     * @param day
+     * @param hour
+     * @param customerName
+     */
+    public void cancelAlreadyApprovedAppointment(int year , int month, int day , int hour ,
+                                         String customerName) {
+        try {
+            for (Session session : sessions) {
+                if (session.getYear() == year &&
+                        session.getMonth() == month &&
+                        session.getDay() == day &&
+                        session.getHour() == hour) {
+                    session.removeFromEnrolledList(customerName);
+                }
+            }
+        } catch (Exception exception) {
+            return;
         }
     }
 }
