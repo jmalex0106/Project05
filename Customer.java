@@ -37,7 +37,8 @@ public class Customer {
                     Session session = new Session(Integer.parseInt(line.split(",")[1]),
                             Integer.parseInt(line.split(",")[2]),
                             Integer.parseInt(line.split(",")[3]),
-                            Integer.parseInt(line.split(",")[4]));
+                            Integer.parseInt(line.split(",")[4]),
+                            line.split(",")[5].trim());
                     if (line.split(",")[0].equals("approved")) {
                         approvedRequest.add(session);
                     } else if (line.split(",")[0].equals("waiting")) {
@@ -72,19 +73,14 @@ public class Customer {
     // Customers can make or cancel appointment requests.
     public void requestAppointment(Session session) {
         waitingRequest.add(session);
-        session.addToWaitingList(this);
-        System.out.println("Appointment requested!");
     }
 
     public void cancelAppointment(Session session) {
         if (waitingRequest.contains(session)) {
             waitingRequest.remove(session);
-            session.removeFromWaitingList(this);
         } else if (approvedRequest.contains(session)) {
             approvedRequest.remove(session);
-            session.removeFromWaitingList(this);
         } else {
-            System.out.println("The session does not exist");
         }
     }
 

@@ -29,11 +29,12 @@ public class Session {
      * @param month
      * @param year
      */
-    public Session(int hour, int day, int month, int year) {
+    public Session(int hour, int day, int month, int year, String store) {
         this.hour = hour;
         this.day = day;
         this.month = month;
         this.year = year;
+        this.store = store;
         this.enrolledCustomers = new ArrayList<String>();
         this.waitingCustomers = new ArrayList<String>();
     }
@@ -46,21 +47,21 @@ public class Session {
         return waitingCustomers;
     }
 
-    public void addToWaitingList(Customer customer) {
-        waitingCustomers.add(customer.getName());
+    public void addToWaitingList(String customer) {
+        waitingCustomers.add(customer);
     }
 
-    public void addToEnrolledList(Customer customer) {
-        enrolledCustomers.add(customer.getName());
+    public void addToEnrolledList(String customer) {
+        enrolledCustomers.add(customer);
         //add customer to enrolled list for store
     }
 
-    public void removeFromWaitingList(Customer customer) {
-        waitingCustomers.remove(customer.getName());
+    public void removeFromWaitingList(String customer) {
+        waitingCustomers.remove(customer);
     }
 
-    public void removeFromEnrolledList(Customer customer) {
-        enrolledCustomers.remove(customer.getName());
+    public void removeFromEnrolledList(String customer) {
+        enrolledCustomers.remove(customer);
     }
 
     public int getDay() {

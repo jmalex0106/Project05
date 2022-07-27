@@ -513,5 +513,27 @@ public class Store {
         }
         return false;
     }
-}
 
+    /**
+     * Creates a new session if a session at the appropriate time does not exist.
+     * Adds customer to the waitlist at this session. This method can be treated as skeleton code
+     * for similar methods like approveAppointment, denyAppointment, etc. 
+     */
+    public void requestAppointmentAtTime(int year , int month, int day , int hour ,
+                                         String customerName) {
+        if (!checkIfSessionAtTimeAlreadyExists(year , month , day ,hour)) {
+            Session session = new Session(year , month , day ,hour, name);
+            session.addToWaitingList(customerName);
+            sessions.add(session);
+        } else {
+            for (Session session : sessions) {
+                if (session.getYear() == year &&
+                        session.getMonth() == month &&
+                        session.getDay() == day &&
+                        session.getHour() == hour) {
+                    session.addToWaitingList(customerName);
+                }
+            }
+        }
+    }
+}
