@@ -16,6 +16,7 @@ public class Session {
     //in this session.
     private ArrayList<String> waitingCustomers;  //An array list of customers who are waiting to be
     //approved for this session.
+
     private static final String SUCCESSFULRESERVATION = "Tutoring reservation made successfully for %s from %d:00" +
             " to %d:00 on %s %d%s, %d\n";
     private static final String SUCCESSFULWAITLIST = "Waitlist reservation made successfully for %s from %d:00" +
@@ -47,31 +48,6 @@ public class Session {
 
     public void addToWaitingList(Customer customer) {
         waitingCustomers.add(customer.getName());
-    }
-
-    public String getEmailFromFile() {
-        String ans = "";
-        File f = new File("studentInfo.txt");
-        try {
-            FileReader fr = new FileReader(f);
-            BufferedReader bfr = new BufferedReader(fr);
-            ArrayList<String> list = new ArrayList<String>();
-            String line = bfr.readLine();
-            while (line != null) {
-                list.add(line);
-                line = bfr.readLine();
-            }
-            bfr.close();
-            for (int i = 0; i < list.size(); i++) {
-                String[] tmpArr = list.get(i).split(",");
-                ans = tmpArr[2];
-                return ans;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return ans;
     }
 
     public void addToEnrolledList(Customer customer) {
@@ -108,10 +84,10 @@ public class Session {
     }
 
     public String toString() {
-        String ans = "Year: " + getYear() + "\n";
-        ans += "Month: " + getMonth() + "\n";
-        ans += "Day: " + getDay() + "\n";
-        ans += "Hour: " + getHour() + ":00" + "\n";
+        String ans = "Year: " + year + "\n";
+        ans += "Month: " + month + "\n";
+        ans += "Day: " + day + "\n";
+        ans += "Hour: " + hour + ":00" + "\n";
         return ans;
     }
 }
