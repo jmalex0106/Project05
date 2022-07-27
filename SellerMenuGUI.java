@@ -4,8 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class SellerMenuGUI implements Runnable {
-    private static final String[] Store = {"Select Store", "Indiana University"};
-    private static final String[] Statistics = {"The most popular appointment", "other options"};
+    private static  String[] Store = {"Select Store", "Indiana University"};
+    private static  String[] Statistics = {"The most popular appointment", "other options"};
 
 
     public static void main(String[] args) {
@@ -75,11 +75,11 @@ public class SellerMenuGUI implements Runnable {
             }
         });
         panel1.add(exit); // (3,3)
-
         content.add(panel1, BorderLayout.CENTER);
 
         // set Frame
         frame.setSize(500, 200);
+        frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);

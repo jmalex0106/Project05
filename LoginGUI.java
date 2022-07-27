@@ -13,9 +13,11 @@ public class LoginGUI implements Runnable{
     public void run() {
         JFrame frame = new JFrame("Log in");
 
-        Container content = new JFrame().getContentPane();
+        Container content = frame.getContentPane();
 
         content.setLayout(new BorderLayout());
+
+
 
         // Menu - panel1
         JPanel panel1 = new JPanel(new GridLayout(3,2)); // 3x2
@@ -47,9 +49,9 @@ public class LoginGUI implements Runnable{
         panel1.add(exitButton);
 
         //
-
         content.add(panel1, BorderLayout.CENTER);
 
+        frame.setResizable(false);
         frame.setSize(500, 200);
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
