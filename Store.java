@@ -495,5 +495,23 @@ public class Store {
         }
         return true;
     }
+
+    /**
+     * Returns true if there already exists a session object in this store (in the field sessions) at the entered
+     * year, month, day, and hour. This method is never called directly, but is called in other methods
+     * that are used when a customer applies for an appointment so that there can never be two
+     * session objects with the same time at the same store.
+     */
+    public boolean checkIfSessionAtTimeAlreadyExists(int year , int month, int day , int hour) {
+        for (Session session : sessions) {
+            if (session.getYear() == year &&
+            session.getMonth() == month &&
+            session.getDay() == day &&
+            session.getHour() == hour) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
