@@ -11,19 +11,31 @@ import java.util.concurrent.CyclicBarrier;
 public class Store {
     private static final int[] days = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //days in normal years
     private static final int[] leapDays = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //days in leap years
-    private String name;
-    private String seller;
-    private Year[] years;
-    private boolean[] isOpen;
-    private int[] openingTimes;
-    private int[] closingTimes;
-    private int[] capacities;
-    private String[] locations;
-    private Set<String> uniqueCustomers;
-    private ArrayList<Session> waitingRequest;
-    private ArrayList<Session> approvedRequest;
+    private String name;  //The name of the store
+    private String seller;  //The name of the seller that owns this store
+    private Year[] years;  //An array of year objects that hold all the sessions at this store
+    private boolean[] isOpen;  //A length 7 array. Position 0 = Sunday, 6 = Saturday. A value
+    //of true means that the store will open on that day of the week, every week. A value of false
+    //means that the store is closed that day of the week, every week.
+    private int[] openingTimes;  //A length n array, where 0 < n <= 7 is the number of days in a
+    //week that the store is open. An opening time of 11 means that this store begins its first session
+    //at 11:00.
+    private int[] closingTimes;  //A length n array, where 0 < n <= 7 is the number of days in a
+    //week that the store is open. A closing time of 15 means that this store ends its last session
+    //at 15:00
+    private int[] capacities;  //A length n array, where 0 < n <= 7 is the number of days in a
+    //week that the store is open. Capacity is the number of students each session can hold.
+    private String[] locations;  //A length n array, where 0 < n <= 7 is the number of days in a
+    //week that the store is open. Location of the sessions on that day of the week.
+    private Set<String> uniqueCustomers;  //A set of unique customers. Sets are used because they
+    //cannot have duplicate elements.
 
-
+    /**
+     * A basic constructor for the store object. Sets the name of the store and the seller name,
+     * and sets all of the sessions in years to blank sessions.
+     * @param name - the name of this store.
+     * @param seller - the name of the owner of this store.
+     */
     public Store(String name, String seller) {
         this.name = name;
         this.seller = seller;
@@ -57,7 +69,6 @@ public class Store {
     public String getName() {
         return name;
     }
-
     public String getSeller() {
         return seller;
     }
@@ -86,6 +97,9 @@ public class Store {
         return locations;
     }
 
+    /**
+     * TODO - Provide documentation. I have no idea how this work. Fix maybe???
+     */
     public void importFromCsv() {
         try {
             File f = new File(name + "Store.txt");
@@ -139,6 +153,9 @@ public class Store {
         }
     }
 
+    /**
+     * TODO - Fix maybe??? Add docs, I have no idea how this works
+     */
     public int makeCsvFromTxt() {
         int ans = 0;
         try {
@@ -205,7 +222,17 @@ public class Store {
         return ans;
     }
 
-
+    /**
+     * Checks the fields of a store to make sure they are valid. If they are valid, it sets the
+     * fields of the store object and returns true. If any are not valid, it returns false and does
+     * nothing. This method is never called directly, but only from other methods in Store.
+     * @param isOpen
+     * @param openingTimes
+     * @param closingTimes
+     * @param capacities
+     * @param locations
+     * @return
+     */
     public boolean setupStoreInputChecks(boolean[] isOpen, int[] openingTimes,
                                          int[] closingTimes, int[] capacities, String[] locations) {
         if (isOpen.length != 7) {
@@ -264,6 +291,10 @@ public class Store {
         return true;
     }
 
+    /**
+     * Sets up a store. This method is ONLY to be called when a brand-new store has been
+     * created for the first time (when a tutor makes a new store for the first time)
+     */
     public void setupStore() {
         if (setupStoreInputChecks(isOpen, openingTimes, closingTimes,
                 capacities, locations)) {
@@ -301,6 +332,11 @@ public class Store {
         }
     }
 
+    /**
+     * Remakes the file associated with this store from the store object. This method needs to be
+     * called on the server side to save changes made to a store object.
+     * TODO-figure out how this works and provide better docs
+     */
     public void makeFileFromStore() {
         try {
             File file = new File(name + "Store.txt");
@@ -402,38 +438,20 @@ public class Store {
         }
     }
 
+    /**
+     *
+     * @return number of unique customers for this store
+     */
     public int numberOfCustomers() {
         return uniqueCustomers.size();
     }
 
+    /**
+     * This method is called whenever the tutor approves a new
+     * @param name
+     */
     public void addCustomer(String name) {
         uniqueCustomers.add(name);
-    }
-
-    public boolean approve(Session session, Customer customer) {
-        if (customer.waitingRequest.contains(session) &&
-                waitingRequest.contains(session)) {
-            customer.approvedRequest.add(session);
-            customer.waitingRequest.remove(session);
-            approvedRequest.add(session);
-            waitingRequest.remove(session);
-            return true;
-        } else {
-            System.out.println("The Session is not in the waiting list");
-            return false;
-        }
-    }
-
-    public boolean decline(Session session, Customer customer) {
-        if (customer.waitingRequest.contains(session) &&
-                waitingRequest.contains(session)) {
-            customer.waitingRequest.remove(session);
-            waitingRequest.remove(session);
-            return true;
-        } else {
-            System.out.println("The Session is not in the waiting list");
-            return false;
-        }
     }
 
     public void remakeStoreFromFile() {
@@ -490,81 +508,24 @@ public class Store {
             do {
                 uniqueCustomers.add(line1);
                 line1 = bufferedReader.readLine();
-            } while (line1 != "BREAK");
+            } while (!line1.equals("BREAK"));
             store.setUniqueCustomers(uniqueCustomers);
-            //Code to set waitingRequest and approvedRequest
-            waitingApproved(name + "Store.txt");
             bufferedReader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void waitingApproved(String fileName) { //Code to set waitingRequest and approvedRequest
-        File file = new File(fileName);
-        ArrayList<String> list = new ArrayList<String>();
-        try {
-            FileReader fr = new FileReader(file);
-            BufferedReader bfr = new BufferedReader(fr);
-            String line = bfr.readLine();
-            while (line != null) {
-                list.add(line);
-                line = bfr.readLine();
-            }
-            bfr.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        int idx = 0;
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).equalsIgnoreCase("BREAK")) {
-                idx = i;
-            }
-        }
-
-        for (int i = idx + 1; i < list.size(); i++) {
-            String[] tmpArr = list.get(i).split(",");
-            if (tmpArr[0].equalsIgnoreCase("Approved")) {
-                int tmpHour = Integer.parseInt(tmpArr[1]);
-                int tmpDay = Integer.parseInt(tmpArr[2]);
-                int tmpMonth = Integer.parseInt(tmpArr[3]);
-                int tmpYear = Integer.parseInt(tmpArr[4]);
-                Session tmpSession = new Session(tmpHour, tmpDay, tmpMonth, tmpYear);
-                String tmpEmail = tmpSession.getEmailFromFile();
-                tmpSession.addToEnrolledList(new Customer(tmpArr[5]));
-                approvedRequest.add(tmpSession);
-            } else if (tmpArr[0].equalsIgnoreCase("Waiting")) {
-                int tmpHour = Integer.parseInt(tmpArr[1]);
-                int tmpDay = Integer.parseInt(tmpArr[2]);
-                int tmpMonth = Integer.parseInt(tmpArr[3]);
-                int tmpYear = Integer.parseInt(tmpArr[4]);
-                Session tmpSession = new Session(tmpHour, tmpDay, tmpMonth, tmpYear);
-                String tmpEmail = tmpSession.getEmailFromFile();
-                tmpSession.addToWaitingList(new Customer(tmpArr[5]));
-                waitingRequest.add(tmpSession);
-            }
-        }
-
-    }
-
-
     public void setUniqueCustomers(Set<String> uniqueCustomers) {
         this.uniqueCustomers = uniqueCustomers;
     }
 
-    public void setWaitingRequest(ArrayList<Session> waitingRequest) {
-        this.waitingRequest = waitingRequest;
-    }
-
-    public void setApprovedRequest(ArrayList<Session> approvedRequest) {
-        this.approvedRequest = approvedRequest;
-    }
-
-    public String mostPopularAp(String storeName, String seller) {
+    /**
+     *
+     * @return A string for the most popular day at this store
+     */
+    public String mostPopularAp() {
         int cnt = 0;
-        Store store = new Store(storeName, seller);
-        store.remakeStoreFromFile();
-
         for (int i = 0; i < years.length; i++) {
             for (int j = 0; j < 12; j++) {
                 Month month = new Month(j, i + 2022);
@@ -602,14 +563,6 @@ public class Store {
             default:
                 return "INVALID";
         }
-    }
-
-    public ArrayList<Session> getWaitingRequest() {
-        return waitingRequest;
-    }
-
-    public ArrayList<Session> getApprovedRequest() {
-        return approvedRequest;
     }
 
     public Set<String> getUniqueCustomers() {
