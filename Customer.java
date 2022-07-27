@@ -28,9 +28,7 @@ public class Customer extends User {
                     Session session = new Session(Integer.parseInt(line.split(",")[1]),
                             Integer.parseInt(line.split(",")[2]),
                             Integer.parseInt(line.split(",")[3]),
-                            Integer.parseInt(line.split(",")[4]),
-                            line.split(",")[5].trim());
-                    session.setName(name);
+                            Integer.parseInt(line.split(",")[4]));
                     if (line.split(",")[0].equals("approved")) {
                         approvedRequest.add(session);
                     } else if (line.split(",")[0].equals("waiting")) {

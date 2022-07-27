@@ -1,17 +1,11 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
-
 /**
  * Session
  * <p>
- * Each session represents a one-hour block of time that can be reserved or not reserved by a student.
+ * Each session represents a one-hour block of time.
  */
 public class Session {
-    private String name;  //The name of the person reserving this session. Is "" if the session is
-    // unvalaible or if no one has reserved the session. This is set by the student, not the tutor.
     private String location;  //The location that the session will be held at. This is set by the tutor,
     //not the student. If the session is not available, the location is always "".
     private int capacity;  //Capacity as set by the tutor. A capacity of 0 is an unavailable session.
@@ -30,32 +24,22 @@ public class Session {
     private static final String SUCCESSFULWAITLIST = "Waitlist reservation made successfully for %s from %d:00" +
             " to %d:00 on %s %d%s, %d\n";
 
-    public Session(int hour, int day, int month, int year, String store) {
-        this.name = "";
+    /**
+     * A basic constructor for a session object
+     * @param hour
+     * @param day
+     * @param month
+     * @param year
+     */
+    public Session(int hour, int day, int month, int year) {
         this.location = "";
         this.capacity = 0;
         this.hour = hour;
         this.day = day;
         this.month = month;
         this.year = year;
-        this.store = store;
         this.enrolledCustomers = new ArrayList<String>();
         this.waitingCustomers = new ArrayList<String>();
-    }
-
-    public boolean checkOpenSession() {
-        if (!name.equals("") || capacity == 0) {
-            return false;
-        }
-        return true;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getLocation() {

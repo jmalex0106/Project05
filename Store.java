@@ -36,15 +36,15 @@ public class Store {
         this.uniqueCustomers = new HashSet<String>();
         for (int i = 0; i < years.length; i++) {
             for (int j = 0; j < 12; j++) {
-                Month month = new Month(j, i + 2022, name);
+                Month month = new Month(j, i + 2022);
                 for (int k = 0; k < month.numberOfDaysInMonth(); k++) {
-                    Day day = new Day(k + 1, j, i + 2022, name);
+                    Day day = new Day(k + 1, j, i + 2022);
                     int dayOfWeek = day.getDayOfWeek() - 1;
                     if (isOpen[dayOfWeek]) {
                         for (int l = 0; l < 24; l++) {
                             if (openingTimes[dayOfWeek] <= l &&
                                     closingTimes[dayOfWeek] > l) {
-                                Session session = new Session(l, k, j, i, name);
+                                Session session = new Session(l, k, j, i + 2022);
                                 years[i].getMonthAtInt(j).getDayAtInt(k).setSessionAtHour(l, session);
                             }
                         }
@@ -269,15 +269,15 @@ public class Store {
                 capacities, locations)) {
             for (int i = 0; i < years.length; i++) {
                 for (int j = 0; j < 12; j++) {
-                    Month month = new Month(j, i + 2022, name);
+                    Month month = new Month(j, i + 2022);
                     for (int k = 0; k < month.numberOfDaysInMonth(); k++) {
-                        Day day = new Day(k + 1, j, i + 2022, name);
+                        Day day = new Day(k + 1, j, i + 2022);
                         int dayOfWeek = day.getDayOfWeek() - 1;
                         if (isOpen[dayOfWeek]) {
                             for (int l = 0; l < 24; l++) {
                                 if (openingTimes[dayOfWeek] <= l &&
                                         closingTimes[dayOfWeek] > l) {
-                                    Session session = new Session(l, k, j, i, name);
+                                    Session session = new Session(l, k, j, i + 2022);
                                     years[i].getMonthAtInt(j).getDayAtInt(k).setSessionAtHour(l, session);
                                 }
                             }
@@ -337,9 +337,9 @@ public class Store {
             add += "\n";
             for (int i = 0; i < years.length; i++) {
                 for (int j = 0; j < 12; j++) {
-                    Month month = new Month(j, i + 2022, name);
+                    Month month = new Month(j, i + 2022);
                     for (int k = 0; k < month.numberOfDaysInMonth(); k++) {
-                        Day day = new Day(k + 1, j, i + 2022, name);
+                        Day day = new Day(k + 1, j, i + 2022);
                         int dayOfWeek = day.getDayOfWeek();
                         if (isOpen[dayOfWeek]) {
                             for (int l = 0; l < 24; l++) {
@@ -529,7 +529,7 @@ public class Store {
                 int tmpDay = Integer.parseInt(tmpArr[2]);
                 int tmpMonth = Integer.parseInt(tmpArr[3]);
                 int tmpYear = Integer.parseInt(tmpArr[4]);
-                Session tmpSession = new Session(tmpHour, tmpDay, tmpMonth, tmpYear, name);
+                Session tmpSession = new Session(tmpHour, tmpDay, tmpMonth, tmpYear);
                 String tmpEmail = tmpSession.getEmailFromFile();
                 tmpSession.addToEnrolledList(new Customer(tmpArr[5], tmpEmail));
                 approvedRequest.add(tmpSession);
@@ -538,7 +538,7 @@ public class Store {
                 int tmpDay = Integer.parseInt(tmpArr[2]);
                 int tmpMonth = Integer.parseInt(tmpArr[3]);
                 int tmpYear = Integer.parseInt(tmpArr[4]);
-                Session tmpSession = new Session(tmpHour, tmpDay, tmpMonth, tmpYear, name);
+                Session tmpSession = new Session(tmpHour, tmpDay, tmpMonth, tmpYear);
                 String tmpEmail = tmpSession.getEmailFromFile();
                 tmpSession.addToWaitingList(new Customer(tmpArr[5], tmpEmail));
                 waitingRequest.add(tmpSession);
@@ -567,12 +567,12 @@ public class Store {
 
         for (int i = 0; i < years.length; i++) {
             for (int j = 0; j < 12; j++) {
-                Month month = new Month(j, i + 2022, name);
+                Month month = new Month(j, i + 2022);
                 for (int k = 0; k < month.numberOfDaysInMonth(); k++) {
-                    Day day = new Day(k + 1, j, i + 2022, name);
+                    Day day = new Day(k + 1, j, i + 2022);
                     for (int l = 0; l < 24; l++) {
                         for (int m = 0; m < 31; m++) {
-                            day.setSessionAtHour(l, new Session(l, m, month.getMonth(), 2022, name));
+                            day.setSessionAtHour(l, new Session(l, m, month.getMonth(), 2022));
                             Session tmpSession = day.getSessionAtHour(l);
                             if (cnt <= tmpSession.getEnrolledCustomers().size() +
                                     tmpSession.getWaitingCustomers().size()) {
@@ -616,3 +616,4 @@ public class Store {
         return uniqueCustomers;
     }
 }
+

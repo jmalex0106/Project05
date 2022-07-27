@@ -328,7 +328,7 @@ public class MainMenu {
             System.out.println(ENTERHOUR);
             int hour = getScanner().nextInt();
             getScanner().nextLine();
-            Session session = new Session(hour, day, month, year, store);
+            Session session = new Session(hour, day, month, year);
             customer.requestAppointment(session);
             customer.makeFileIfNotFound();
             customer.remakeFileFromCustomer();

@@ -7,11 +7,11 @@ public class Month {
     private static final int[] days = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //days in normal years
     private static final int[] leapDays = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //days in leap years
 
-    public Month(int month, int year, String store) {
+    public Month(int month, int year) {
         Day[] temp = new Day[numberOfDaysInMonth()];
 
         for (int i = 0; i < temp.length; i++) {
-            temp[i] = new Day((i + 1), month, year, store);
+            temp[i] = new Day((i + 1), month, year);
         }
     }
 
