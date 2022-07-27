@@ -54,8 +54,8 @@ public class Customer extends User {
         }
     }
 
-    public Customer(String name, String email) {
-        super(name, email);
+    public Customer(String name) {
+        super(name);
         waitingRequest = new ArrayList<>();
         approvedRequest = new ArrayList<>();
     }

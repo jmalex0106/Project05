@@ -531,7 +531,7 @@ public class Store {
                 int tmpYear = Integer.parseInt(tmpArr[4]);
                 Session tmpSession = new Session(tmpHour, tmpDay, tmpMonth, tmpYear);
                 String tmpEmail = tmpSession.getEmailFromFile();
-                tmpSession.addToEnrolledList(new Customer(tmpArr[5], tmpEmail));
+                tmpSession.addToEnrolledList(new Customer(tmpArr[5]));
                 approvedRequest.add(tmpSession);
             } else if (tmpArr[0].equalsIgnoreCase("Waiting")) {
                 int tmpHour = Integer.parseInt(tmpArr[1]);
@@ -540,7 +540,7 @@ public class Store {
                 int tmpYear = Integer.parseInt(tmpArr[4]);
                 Session tmpSession = new Session(tmpHour, tmpDay, tmpMonth, tmpYear);
                 String tmpEmail = tmpSession.getEmailFromFile();
-                tmpSession.addToWaitingList(new Customer(tmpArr[5], tmpEmail));
+                tmpSession.addToWaitingList(new Customer(tmpArr[5]));
                 waitingRequest.add(tmpSession);
             }
         }

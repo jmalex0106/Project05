@@ -4,8 +4,8 @@ import java.io.*;
 public class Seller extends User {
     private ArrayList<Store> stores;
 
-    public Seller(String name, String email) {
-        super(name, email);
+    public Seller(String name) {
+        super(name);
         stores = new ArrayList<>();
     }
 
