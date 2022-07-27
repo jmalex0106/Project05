@@ -2,9 +2,18 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class Customer extends User {
+public class Customer {
+    private String name;
     ArrayList<Session> waitingRequest;
     ArrayList<Session> approvedRequest;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public ArrayList<Session> getWaitingRequest() {
         return waitingRequest;
@@ -55,7 +64,7 @@ public class Customer extends User {
     }
 
     public Customer(String name) {
-        super(name);
+        this.name = name;
         waitingRequest = new ArrayList<>();
         approvedRequest = new ArrayList<>();
     }
