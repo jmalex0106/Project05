@@ -65,5 +65,28 @@ public class Seller {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Returns a string arraylist that contains the names of all the stores that a certain tutor owns.
+     * This method reads from AllStores.txt. It assumes that AllStores.txt exists.
+     */
+    public ArrayList<String> sellerOwnedStores(Seller seller) {
+        ArrayList<String> output = new ArrayList<>();
+        try {
+            File file = new File("AllStores.txt");
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                if (line.split(",")[1].equals(seller.getName())) {    //checks seller's name
+                    output.add(line.split(",")[0]);   //adds the store name.
+                }
+                line = bufferedReader.readLine();
+            }
+        } catch (Exception exception){
+            //Exception handling
+        }
+        return output;
+    }
 }
 
