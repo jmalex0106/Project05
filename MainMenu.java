@@ -1,3 +1,4 @@
+
 import java.awt.Desktop;
 import java.net.StandardSocketOptions;
 import java.net.URI;
@@ -63,7 +64,9 @@ public class MainMenu {
     private String input;
     private Scanner scanner;
 
-
+    /**
+     * A basic constructor
+     */
     public MainMenu() {
         this.input = "";
         this.scanner = new Scanner(System.in);
@@ -87,6 +90,9 @@ public class MainMenu {
         mainMenu.initialMainMenu();
     }
 
+    /**
+     * Displays the main menu options and takes input from scanner
+     */
     public void initialMainMenu() {
         System.out.println(WELCOMEMENU);
         setInput(getScanner().nextLine());
@@ -113,6 +119,9 @@ public class MainMenu {
         }
     }
 
+    /**
+     * Takes in a user's login info from the scanner and runs searchForValidLogin
+     */
     public void initialLoginEnterInfo() {
         System.out.println(ENTERUSERNAME);
         String username = scanner.nextLine().trim();
@@ -121,6 +130,11 @@ public class MainMenu {
         searchForValidLogin(username, password);
     }
 
+    /**
+     * Searches for a valid login that matches the entered username and password.
+     * @param username
+     * @param password
+     */
     public void searchForValidLogin(String username, String password) {
         boolean loop = true;
         boolean login = false;
@@ -135,7 +149,7 @@ public class MainMenu {
                                 lineSplit[3].equals(password) &&
                                 lineSplit[0].equals("Tutor")) {
                             System.out.println(SUCCESSFULLOGIN);
-                            Seller seller = new Seller(lineSplit[1], lineSplit[2]);
+                            Seller seller = new Seller(lineSplit[1]);
                             try {
                                 seller.remakeSellerFromFile();
                             } catch (Exception exception) {
@@ -149,7 +163,7 @@ public class MainMenu {
                                 lineSplit[3].equals(password) &&
                                 lineSplit[0].equals("Student")) {
                             System.out.println(SUCCESSFULLOGIN);
-                            Customer customer = new Customer(lineSplit[1], lineSplit[2]);
+                            Customer customer = new Customer(lineSplit[1]);
                             try {
                                 customer.remakeCustomerFromFile();
                             } catch (Exception exception) {
@@ -174,6 +188,10 @@ public class MainMenu {
         }
     }
 
+    /**
+     * Creates a new account with the provided information. Usernames must be unique, emails must be
+     * valid, and passwords must be at least six characters.
+     */
     public void createNewAccount() {
         boolean loop = true;
         boolean innerLoop = true;
@@ -272,6 +290,10 @@ public class MainMenu {
         }
     }
 
+    /**
+     * Plays a video from the url
+     * @param url
+     */
     public void playVideo(String url) {
         try {
             Desktop desktop = Desktop.getDesktop();
@@ -281,6 +303,10 @@ public class MainMenu {
         }
     }
 
+    /**
+     * Runs the main menu for the customer and takes input from the scanner
+     * @param customer
+     */
     public void customerMenu(Customer customer) {
         customer.makeFileIfNotFound();
         System.out.println(CUSTOMERINITIALMENU);
@@ -312,6 +338,11 @@ public class MainMenu {
         }
     }
 
+    /**
+     * Takes input from the customer to select an appointment, and creates the appointment if valid.
+     * TODO - this method must save to both the store's and the customer's file.
+     * @param customer
+     */
     public void appointmentRequest(Customer customer) {
         try {
             System.out.println(ENTERSTORENAME);
@@ -328,7 +359,7 @@ public class MainMenu {
             System.out.println(ENTERHOUR);
             int hour = getScanner().nextInt();
             getScanner().nextLine();
-            Session session = new Session(hour, day, month, year, store);
+            Session session = new Session(hour, day, month, year , store);
             customer.requestAppointment(session);
             customer.makeFileIfNotFound();
             customer.remakeFileFromCustomer();
@@ -340,6 +371,10 @@ public class MainMenu {
         customerMenu(customer);
     }
 
+    /**
+     * Lists all of a customer's waiting appointments
+     * @param customer
+     */
     public void listWaitingAppointments(Customer customer) {
         System.out.println("Waiting Appointments");
         for (int i = 0; i < customer.getWaitingRequest().size(); i++) {
@@ -348,6 +383,10 @@ public class MainMenu {
         }
     }
 
+    /**
+     * Lists all of a customer's approved appointments
+     * @param customer
+     */
     public void listApprovedAppointments(Customer customer) {
         System.out.println("Approved Appointments");
         for (int i = 0; i < customer.getApprovedRequest().size(); i++) {
@@ -356,6 +395,10 @@ public class MainMenu {
         }
     }
 
+    /**
+     * Shows appointments menu to customer and takes input from scanner
+     * @param customer
+     */
     public void listAppointmentsMenu(Customer customer) {
         System.out.println(SEEAPPOINTMENTS);
         setInput(getScanner().nextLine());
@@ -374,6 +417,10 @@ public class MainMenu {
         customerMenu(customer);
     }
 
+    /**
+     * Shows initial statistics menu and takes input from scanner
+     * @param customer
+     */
     public void statisticsMenu(Customer customer) {
         System.out.println(STATSMENU);
         setInput(getScanner().nextLine());
@@ -421,6 +468,10 @@ public class MainMenu {
         }
     }
 
+    /**
+     * Exports customer's appointments to a .txt file
+     * @param customer
+     */
     public void exportCustomerAppointments(Customer customer) {
         try {
             File f = new File(customer.getName() + ".txt");
@@ -472,7 +523,6 @@ public class MainMenu {
             case "3" -> {
                 System.out.println("Store statistics:");
                 for (int i = 0; i < seller.getStores().size(); i++) {
-                    printStoreStatistics(seller.getStores().get(i));
                 }
                 initialMainMenu();
             }
@@ -523,11 +573,9 @@ public class MainMenu {
         setInput(getScanner().nextLine());
         switch (getInput()) {
             case "1" -> {
-                approveAppointments(store);
                 initialStoreMenu(seller, store);
             }
             case "2" -> {
-                declineAppointments(store);
                 initialStoreMenu(seller, store);
             }
 
@@ -538,68 +586,6 @@ public class MainMenu {
                 System.out.println(INVALID);
                 initialStoreMenu(seller, store);
             }
-        }
-    }
-
-    public void declineAppointments(Store store) {
-        int n = 0;
-        ArrayList<String> customers = new ArrayList<String>();
-        ArrayList<Session> sessions = new ArrayList<Session>();
-        System.out.println("Please select an appointment to approve " +
-                "by inputting the corresponding number");
-        for (int i = 0; i < store.getWaitingRequest().size(); i++) {
-            for (int j = 0; j < store.getWaitingRequest().get(i).getWaitingCustomers().size(); j++) {
-                n++;
-                System.out.println("Student " +
-                        store.getWaitingRequest().get(i).getWaitingCustomers().get(j)
-                        + " is waiting for approval for sesson " +
-                        store.getWaitingRequest().get(i).toString() +
-                        "\n Please enter " +
-                        n + "to approve.");
-            }
-        }
-        setInput(getScanner().nextLine());
-        try {
-            System.out.println("Please input customer email to approve request.");
-            String email = getScanner().nextLine();
-            Customer customer = new Customer(customers.get(Integer.parseInt(getInput()) - 1), email);
-            customer.remakeCustomerFromFile();
-            store.decline(sessions.get(Integer.parseInt(getInput()) - 1), customer);
-            customer.remakeFileFromCustomer();
-            store.makeFileFromStore();
-        } catch (Exception exception) {
-            System.out.println("Invalid input, please try again");
-        }
-    }
-
-    public void approveAppointments(Store store) {
-        int n = 0;
-        ArrayList<String> customers = new ArrayList<String>();
-        ArrayList<Session> sessions = new ArrayList<Session>();
-        System.out.println("Please select an appointment to approve " +
-                "by inputting the corresponding number");
-        for (int i = 0; i < store.getWaitingRequest().size(); i++) {
-            for (int j = 0; j < store.getWaitingRequest().get(i).getWaitingCustomers().size(); j++) {
-                n++;
-                System.out.println("Student " +
-                        store.getWaitingRequest().get(i).getWaitingCustomers().get(j)
-                        + " is waiting for approval for sesson " +
-                        store.getWaitingRequest().get(i).toString() +
-                        "\n Please enter " +
-                        n + "to approve.");
-            }
-        }
-        setInput(getScanner().nextLine());
-        try {
-            System.out.println("Please input customer email to approve request.");
-            String email = getScanner().nextLine();
-            Customer customer = new Customer(customers.get(Integer.parseInt(getInput()) - 1), email);
-            customer.remakeCustomerFromFile();
-            store.approve(sessions.get(Integer.parseInt(getInput()) - 1), customer);
-            customer.remakeFileFromCustomer();
-            store.makeFileFromStore();
-        } catch (Exception exception) {
-            System.out.println("Invalid input, please try again");
         }
     }
 
@@ -646,15 +632,5 @@ public class MainMenu {
 
     public void close() {
         System.out.println(EXIT);
-    }
-
-    public void printStoreStatistics(Store store) {
-        System.out.println("The most popular day for the store " +
-                store.getName() +
-                " is " +
-                store.mostPopularAp(store.getName(), store.getSeller()));
-        System.out.println("This store has " +
-                store.getUniqueCustomers() +
-                " customers.\n");
     }
 }

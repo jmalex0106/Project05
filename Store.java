@@ -4,54 +4,52 @@ import java.io.PrintWriter;
 import java.io.*;
 import java.nio.BufferOverflowException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CyclicBarrier;
+import java.util.spi.CalendarNameProvider;
 
 public class Store {
     private static final int[] days = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //days in normal years
     private static final int[] leapDays = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //days in leap years
-    private String name;
-    private String seller;
-    private Year[] years;
-    private boolean[] isOpen;
-    private int[] openingTimes;
-    private int[] closingTimes;
-    private int[] capacities;
-    private String[] locations;
-    private Set<String> uniqueCustomers;
-    private ArrayList<Session> waitingRequest;
-    private ArrayList<Session> approvedRequest;
+    private String name;  //The name of the store
+    private String seller;  //The name of the seller that owns this store
+    private boolean[] isOpen;  //A length 7 array. Position 0 = Sunday, 6 = Saturday. A value
+    //of true means that the store will open on that day of the week, every week. A value of false
+    //means that the store is closed that day of the week, every week.
+    private int[] openingTimes;  //A length n array, where 0 < n <= 7 is the number of days in a
+    //week that the store is open. An opening time of 11 means that this store begins its first session
+    //at 11:00.
+    private int[] closingTimes;  //A length n array, where 0 < n <= 7 is the number of days in a
+    //week that the store is open. A closing time of 15 means that this store ends its last session
+    //at 15:00
+    private int[] capacities;  //A length n array, where 0 < n <= 7 is the number of days in a
+    //week that the store is open. Capacity is the number of students each session can hold.
+    private String[] locations;  //A length n array, where 0 < n <= 7 is the number of days in a
+    //week that the store is open. Location of the sessions on that day of the week.
+    private Set<String> uniqueCustomers;  //A set of unique customers. Sets are used because they
+    //cannot have duplicate elements.
+    private ArrayList<Session> sessions;  //All of the sessions at this store that have at least
+    //one customer in the waiting list OR in the approved list.
 
-
+    /**
+     * A basic constructor for the store object. Sets the name of the store and the seller name,
+     * and sets all of the sessions to blank sessions.
+     *
+     * @param name   - the name of this store.
+     * @param seller - the name of the owner of this store.
+     */
     public Store(String name, String seller) {
         this.name = name;
         this.seller = seller;
-        this.years = new Year[10];
         this.isOpen = new boolean[7];
         this.openingTimes = null;
         this.closingTimes = null;
         this.capacities = null;
         this.locations = null;
         this.uniqueCustomers = new HashSet<String>();
-        for (int i = 0; i < years.length; i++) {
-            for (int j = 0; j < 12; j++) {
-                Month month = new Month(j, i + 2022, name);
-                for (int k = 0; k < month.numberOfDaysInMonth(); k++) {
-                    Day day = new Day(k + 1, j, i + 2022, name);
-                    int dayOfWeek = day.getDayOfWeek() - 1;
-                    if (isOpen[dayOfWeek]) {
-                        for (int l = 0; l < 24; l++) {
-                            if (openingTimes[dayOfWeek] <= l &&
-                                    closingTimes[dayOfWeek] > l) {
-                                Session session = new Session(l, k, j, i, name);
-                                years[i].getMonthAtInt(j).getDayAtInt(k).setSessionAtHour(l, session);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        this.sessions = new ArrayList<Session>();
     }
 
     public String getName() {
@@ -60,10 +58,6 @@ public class Store {
 
     public String getSeller() {
         return seller;
-    }
-
-    public Year[] getYears() {
-        return years;
     }
 
     public boolean[] getIsOpen() {
@@ -86,6 +80,9 @@ public class Store {
         return locations;
     }
 
+    /**
+     * TODO - Provide documentation. I have no idea how this work. Fix maybe???
+     */
     public void importFromCsv() {
         try {
             File f = new File(name + "Store.txt");
@@ -139,6 +136,9 @@ public class Store {
         }
     }
 
+    /**
+     * TODO - Fix maybe??? Add docs, I have no idea how this works
+     */
     public int makeCsvFromTxt() {
         int ans = 0;
         try {
@@ -205,7 +205,18 @@ public class Store {
         return ans;
     }
 
-
+    /**
+     * Checks the fields of a store to make sure they are valid. If they are valid, it sets the
+     * fields of the store object and returns true. If any are not valid, it returns false and does
+     * nothing. This method is never called directly, but only from other methods in Store.
+     *
+     * @param isOpen
+     * @param openingTimes
+     * @param closingTimes
+     * @param capacities
+     * @param locations
+     * @return
+     */
     public boolean setupStoreInputChecks(boolean[] isOpen, int[] openingTimes,
                                          int[] closingTimes, int[] capacities, String[] locations) {
         if (isOpen.length != 7) {
@@ -264,31 +275,16 @@ public class Store {
         return true;
     }
 
+    /**
+     * Sets up a store. This method is ONLY to be called when a brand-new store has been
+     * created for the first time (when a tutor makes a new store for the first time)
+     */
     public void setupStore() {
-        if (setupStoreInputChecks(isOpen, openingTimes, closingTimes,
-                capacities, locations)) {
-            for (int i = 0; i < years.length; i++) {
-                for (int j = 0; j < 12; j++) {
-                    Month month = new Month(j, i + 2022, name);
-                    for (int k = 0; k < month.numberOfDaysInMonth(); k++) {
-                        Day day = new Day(k + 1, j, i + 2022, name);
-                        int dayOfWeek = day.getDayOfWeek() - 1;
-                        if (isOpen[dayOfWeek]) {
-                            for (int l = 0; l < 24; l++) {
-                                if (openingTimes[dayOfWeek] <= l &&
-                                        closingTimes[dayOfWeek] > l) {
-                                    Session session = new Session(l, k, j, i, name);
-                                    years[i].getMonthAtInt(j).getDayAtInt(k).setSessionAtHour(l, session);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        setupStoreInputChecks(isOpen, openingTimes, closingTimes,
+                capacities, locations);
         //adds store as a line to AllStores.txt, which lists all existing stores
         try {
-            File file = new File("AllSores.txt");
+            File file = new File("AllStores.txt");
             FileOutputStream fileOutputStream = new FileOutputStream(file, true);
             PrintWriter printWriter = new PrintWriter(fileOutputStream);
             String add = getName();
@@ -301,6 +297,11 @@ public class Store {
         }
     }
 
+    /**
+     * Makes the file associated with this store from the store object. This method needs to be
+     * called on the server side to save changes made to a store object.
+     * TODO-figure out how this works and provide better docs
+     */
     public void makeFileFromStore() {
         try {
             File file = new File(name + "Store.txt");
@@ -333,65 +334,35 @@ public class Store {
                 add += customer;
                 add += "\n";
             }
-            add += "BREAK";
-            add += "\n";
-            for (int i = 0; i < years.length; i++) {
-                for (int j = 0; j < 12; j++) {
-                    Month month = new Month(j, i + 2022, name);
-                    for (int k = 0; k < month.numberOfDaysInMonth(); k++) {
-                        Day day = new Day(k + 1, j, i + 2022, name);
-                        int dayOfWeek = day.getDayOfWeek();
-                        if (isOpen[dayOfWeek]) {
-                            for (int l = 0; l < 24; l++) {
-                                if (years[i].getMonthAtInt(j).getDayAtInt(k).
-                                        getSessionAtHour(l).getEnrolledCustomers().size() > 0) {
-                                    for (int m = 0; m < years[i].getMonthAtInt(j).getDayAtInt(k).
-                                            getSessionAtHour(l).getEnrolledCustomers().size(); m++) {
-                                        add += "approved,";
-                                        add += years[i].getMonthAtInt(j).getDayAtInt(k).
-                                                getSessionAtHour(l).getHour();
-                                        add += ",";
-                                        add += years[i].getMonthAtInt(j).getDayAtInt(k).
-                                                getSessionAtHour(l).getDay();
-                                        add += ",";
-                                        add += years[i].getMonthAtInt(j).getDayAtInt(k).
-                                                getSessionAtHour(l).getMonth();
-                                        add += ",";
-                                        add += years[i].getMonthAtInt(j).getDayAtInt(k).
-                                                getSessionAtHour(l).getYear();
-                                        add += ",";
-                                        years[i].getMonthAtInt(j).getDayAtInt(k).
-                                                getSessionAtHour(l).
-                                                getEnrolledCustomers().get(i);
-                                        add += "\n";
-                                    }
-                                }
-                                if (years[i].getMonthAtInt(j).getDayAtInt(k).
-                                        getSessionAtHour(l).getWaitingCustomers().size() > 0) {
-                                    for (int m = 0; m < years[i].getMonthAtInt(j).getDayAtInt(k).
-                                            getSessionAtHour(l).getWaitingCustomers().size(); m++) {
-                                        add += "approved,";
-                                        add += years[i].getMonthAtInt(j).getDayAtInt(k).
-                                                getSessionAtHour(l).getHour();
-                                        add += ",";
-                                        add += years[i].getMonthAtInt(j).getDayAtInt(k).
-                                                getSessionAtHour(l).getDay();
-                                        add += ",";
-                                        add += years[i].getMonthAtInt(j).getDayAtInt(k).
-                                                getSessionAtHour(l).getMonth();
-                                        add += ",";
-                                        add += years[i].getMonthAtInt(j).getDayAtInt(k).
-                                                getSessionAtHour(l).getYear();
-                                        add += ",";
-                                        years[i].getMonthAtInt(j).getDayAtInt(k).
-                                                getSessionAtHour(l).
-                                                getWaitingCustomers().get(i);
-                                        add += "\n";
-                                    }
-                                }
-                            }
-                        }
-                    }
+            add += "BREAK\n";
+            //Adds sessions back into file in the form
+            //isApproved,hour,day,month,year,customer username
+            for (int i = 0; i < sessions.size(); i++) {
+                for (int j = 0; j < sessions.get(i).getWaitingCustomers().size(); j++) {
+                    add += "waiting,";
+                    add += sessions.get(i).getHour();
+                    add += ",";
+                    add += sessions.get(i).getDay();
+                    add += ",";
+                    add += sessions.get(i).getMonth();
+                    add += ",";
+                    add += sessions.get(i).getYear();
+                    add += ",";
+                    add += sessions.get(i).getWaitingCustomers().get(j);
+                    add += "\n";
+                }
+                for (int k = 0; k < sessions.get(i).getWaitingCustomers().size(); k++) {
+                    add += "approved,";
+                    add += sessions.get(i).getHour();
+                    add += ",";
+                    add += sessions.get(i).getDay();
+                    add += ",";
+                    add += sessions.get(i).getMonth();
+                    add += ",";
+                    add += sessions.get(i).getYear();
+                    add += ",";
+                    add += sessions.get(i).getEnrolledCustomers().get(k);
+                    add += "\n";
                 }
             }
             add = add.trim();
@@ -402,38 +373,20 @@ public class Store {
         }
     }
 
+    /**
+     * @return number of unique customers for this store
+     */
     public int numberOfCustomers() {
         return uniqueCustomers.size();
     }
 
+    /**
+     * This method is called whenever the tutor approves a new
+     *
+     * @param name
+     */
     public void addCustomer(String name) {
         uniqueCustomers.add(name);
-    }
-
-    public boolean approve(Session session, Customer customer) {
-        if (customer.waitingRequest.contains(session) &&
-                waitingRequest.contains(session)) {
-            customer.approvedRequest.add(session);
-            customer.waitingRequest.remove(session);
-            approvedRequest.add(session);
-            waitingRequest.remove(session);
-            return true;
-        } else {
-            System.out.println("The Session is not in the waiting list");
-            return false;
-        }
-    }
-
-    public boolean decline(Session session, Customer customer) {
-        if (customer.waitingRequest.contains(session) &&
-                waitingRequest.contains(session)) {
-            customer.waitingRequest.remove(session);
-            waitingRequest.remove(session);
-            return true;
-        } else {
-            System.out.println("The Session is not in the waiting list");
-            return false;
-        }
     }
 
     public void remakeStoreFromFile() {
@@ -490,129 +443,171 @@ public class Store {
             do {
                 uniqueCustomers.add(line1);
                 line1 = bufferedReader.readLine();
-            } while (line1 != "BREAK");
+            } while (!line1.equals("BREAK"));
             store.setUniqueCustomers(uniqueCustomers);
-            //Code to set waitingRequest and approvedRequest
-            waitingApproved(name + "Store.txt");
             bufferedReader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void waitingApproved(String fileName) { //Code to set waitingRequest and approvedRequest
-        File file = new File(fileName);
-        ArrayList<String> list = new ArrayList<String>();
-        try {
-            FileReader fr = new FileReader(file);
-            BufferedReader bfr = new BufferedReader(fr);
-            String line = bfr.readLine();
-            while (line != null) {
-                list.add(line);
-                line = bfr.readLine();
-            }
-            bfr.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        int idx = 0;
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).equalsIgnoreCase("BREAK")) {
-                idx = i;
-            }
-        }
-
-        for (int i = idx + 1; i < list.size(); i++) {
-            String[] tmpArr = list.get(i).split(",");
-            if (tmpArr[0].equalsIgnoreCase("Approved")) {
-                int tmpHour = Integer.parseInt(tmpArr[1]);
-                int tmpDay = Integer.parseInt(tmpArr[2]);
-                int tmpMonth = Integer.parseInt(tmpArr[3]);
-                int tmpYear = Integer.parseInt(tmpArr[4]);
-                Session tmpSession = new Session(tmpHour, tmpDay, tmpMonth, tmpYear, name);
-                String tmpEmail = tmpSession.getEmailFromFile();
-                tmpSession.addToEnrolledList(new Customer(tmpArr[5], tmpEmail));
-                approvedRequest.add(tmpSession);
-            } else if (tmpArr[0].equalsIgnoreCase("Waiting")) {
-                int tmpHour = Integer.parseInt(tmpArr[1]);
-                int tmpDay = Integer.parseInt(tmpArr[2]);
-                int tmpMonth = Integer.parseInt(tmpArr[3]);
-                int tmpYear = Integer.parseInt(tmpArr[4]);
-                Session tmpSession = new Session(tmpHour, tmpDay, tmpMonth, tmpYear, name);
-                String tmpEmail = tmpSession.getEmailFromFile();
-                tmpSession.addToWaitingList(new Customer(tmpArr[5], tmpEmail));
-                waitingRequest.add(tmpSession);
-            }
-        }
-
-    }
-
-
     public void setUniqueCustomers(Set<String> uniqueCustomers) {
         this.uniqueCustomers = uniqueCustomers;
     }
 
-    public void setWaitingRequest(ArrayList<Session> waitingRequest) {
-        this.waitingRequest = waitingRequest;
+    public Set<String> getUniqueCustomers() {
+        return uniqueCustomers;
     }
 
-    public void setApprovedRequest(ArrayList<Session> approvedRequest) {
-        this.approvedRequest = approvedRequest;
+    /**
+     * Checks if the store is open at the particular time entered.
+     * @param year
+     * @param day
+     * @param month
+     * @param day
+     * @param hour
+     * @return
+     */
+    public boolean checkIfStoreIsOpen(int year , int month, int day , int hour) {
+        Calendar calender = Calendar.getInstance();
+        calender.set(Calendar.YEAR, year);
+        calender.set(Calendar.MONTH, month);
+        calender.set(Calendar.DAY_OF_MONTH, day);
+        calender.set(Calendar.HOUR, hour);
+        //Checks if the store is open on this particular day
+        if (!isOpen[calender.get(Calendar.DAY_OF_WEEK) - 1]) {
+           return false;
+        }
+        //Gets the index of the day n in the arrays openingTimes, closingTimes, capacities, and
+        //locations
+        int index = 0;
+        for (int i = 0; i < calender.get(Calendar.DAY_OF_WEEK) - 1; i++) {
+            if (isOpen[i]) {
+                index++;
+            }
+        }
+        //Checks if session time is within the open hours of the store
+        if (openingTimes[index] > calender.get(Calendar.HOUR)) {
+            return false;
+        }
+        if (closingTimes[index] <= calender.get(Calendar.HOUR)) {
+            return false;
+        }
+        return true;
     }
 
-    public String mostPopularAp(String storeName, String seller) {
-        int cnt = 0;
-        Store store = new Store(storeName, seller);
-        store.remakeStoreFromFile();
+    /**
+     * Returns true if there already exists a session object in this store (in the field sessions) at the entered
+     * year, month, day, and hour. This method is never called directly, but is called in other methods
+     * that are used when a customer applies for an appointment so that there can never be two
+     * session objects with the same time at the same store.
+     */
+    public boolean checkIfSessionAtTimeAlreadyExists(int year , int month, int day , int hour) {
+        for (Session session : sessions) {
+            if (session.getYear() == year &&
+            session.getMonth() == month &&
+            session.getDay() == day &&
+            session.getHour() == hour) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-        for (int i = 0; i < years.length; i++) {
-            for (int j = 0; j < 12; j++) {
-                Month month = new Month(j, i + 2022, name);
-                for (int k = 0; k < month.numberOfDaysInMonth(); k++) {
-                    Day day = new Day(k + 1, j, i + 2022, name);
-                    for (int l = 0; l < 24; l++) {
-                        for (int m = 0; m < 31; m++) {
-                            day.setSessionAtHour(l, new Session(l, m, month.getMonth(), 2022, name));
-                            Session tmpSession = day.getSessionAtHour(l);
-                            if (cnt <= tmpSession.getEnrolledCustomers().size() +
-                                    tmpSession.getWaitingCustomers().size()) {
-                                int tmp = month.getFirstDay(i + 2022, month.getMonth()) - 1;
-                                cnt = (tmpSession.getDay() + tmp) % 7;
-                            }
-                        }
-                    }
+    /**
+     * Creates a new session if a session at the appropriate time does not exist.
+     * Adds customer to the waitlist at this session. This method can be treated as skeleton code
+     * for similar methods like approveAppointment, denyAppointment, etc.
+     * NOTE: This method does not update any fields in any customer object. To do so,
+     * other methods must be called from the Customer class.
+     */
+    public void requestAppointmentAtTime(int year , int month, int day , int hour ,
+                                         String customerName) {
+        if (!checkIfSessionAtTimeAlreadyExists(year , month , day ,hour)) {
+            Session session = new Session(year , month , day ,hour, name);
+            session.addToWaitingList(customerName);
+            sessions.add(session);
+        } else {
+            for (Session session : sessions) {
+                if (session.getYear() == year &&
+                        session.getMonth() == month &&
+                        session.getDay() == day &&
+                        session.getHour() == hour) {
+                    session.addToWaitingList(customerName);
                 }
             }
         }
-        switch (String.valueOf(cnt)) {
-            case "0":
-                return "Sunday";
-            case "1":
-                return "Monday";
-            case "2":
-                return "Tuesday";
-            case "3":
-                return "Wednesday";
-            case "4":
-                return "Thursday";
-            case "5":
-                return "Friday";
-            case "6":
-                return "Saturday";
-            default:
-                return "INVALID";
+    }
+
+    /**
+     * Removes customer from waitlist at the specified session, if applicable, or does nothing.
+     * NOTE: This method does not update any fields in any customer object. To do so,
+     * other methods must be called from the Customer class.
+     */
+    public void declineAppointmentAtTime(int year , int month, int day , int hour ,
+                                         String customerName) {
+        try {
+            for (Session session : sessions) {
+                if (session.getYear() == year &&
+                        session.getMonth() == month &&
+                        session.getDay() == day &&
+                        session.getHour() == hour) {
+                    session.removeFromWaitingList(customerName);
+                }
+            }
+        } catch (Exception exception) {
+            return;
         }
     }
 
-    public ArrayList<Session> getWaitingRequest() {
-        return waitingRequest;
+    /**
+     * Searches for customerName in the waitling list of the session at this store specified by the
+     * year, month, day, and hour parameters. If found, this customerName is moved from
+     * waitingCustomers to enrolledCustomers.
+     * @param year
+     * @param month
+     * @param day
+     * @param hour
+     * @param customerName
+     */
+    public void approveAppointmentAtTime(int year , int month, int day , int hour ,
+                                         String customerName) {
+        try {
+            for (Session session : sessions) {
+                if (session.getYear() == year &&
+                        session.getMonth() == month &&
+                        session.getDay() == day &&
+                        session.getHour() == hour) {
+                    session.removeFromWaitingList(customerName);
+                    session.addToEnrolledList(customerName);
+                }
+            }
+        } catch (Exception exception) {
+            return;
+        }
     }
 
-    public ArrayList<Session> getApprovedRequest() {
-        return approvedRequest;
-    }
-
-    public Set<String> getUniqueCustomers() {
-        return uniqueCustomers;
+    /**
+     * Deletes the customerName from the enrolledCustomers field of the specified session.
+     * @param year
+     * @param month
+     * @param day
+     * @param hour
+     * @param customerName
+     */
+    public void cancelAlreadyApprovedAppointment(int year , int month, int day , int hour ,
+                                         String customerName) {
+        try {
+            for (Session session : sessions) {
+                if (session.getYear() == year &&
+                        session.getMonth() == month &&
+                        session.getDay() == day &&
+                        session.getHour() == hour) {
+                    session.removeFromEnrolledList(customerName);
+                }
+            }
+        } catch (Exception exception) {
+            return;
+        }
     }
 }

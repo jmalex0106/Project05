@@ -1,18 +1,26 @@
 import java.util.ArrayList;
 import java.io.*;
 
-public class Seller extends User {
+public class Seller {
+    private String name;
     private ArrayList<Store> stores;
 
-    public Seller(String name, String email) {
-        super(name, email);
+    public Seller(String name) {
+        this.name = name;
         stores = new ArrayList<>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public ArrayList<Store> getStores() {
         return stores;
     }
-
 
     public void makeFileFromSeller() {
         try {

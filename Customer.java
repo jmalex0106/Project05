@@ -2,9 +2,18 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class Customer extends User {
+public class Customer {
+    private String name;
     ArrayList<Session> waitingRequest;
     ArrayList<Session> approvedRequest;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public ArrayList<Session> getWaitingRequest() {
         return waitingRequest;
@@ -30,7 +39,6 @@ public class Customer extends User {
                             Integer.parseInt(line.split(",")[3]),
                             Integer.parseInt(line.split(",")[4]),
                             line.split(",")[5].trim());
-                    session.setName(name);
                     if (line.split(",")[0].equals("approved")) {
                         approvedRequest.add(session);
                     } else if (line.split(",")[0].equals("waiting")) {
@@ -56,8 +64,8 @@ public class Customer extends User {
         }
     }
 
-    public Customer(String name, String email) {
-        super(name, email);
+    public Customer(String name) {
+        this.name = name;
         waitingRequest = new ArrayList<>();
         approvedRequest = new ArrayList<>();
     }
@@ -65,19 +73,14 @@ public class Customer extends User {
     // Customers can make or cancel appointment requests.
     public void requestAppointment(Session session) {
         waitingRequest.add(session);
-        session.addToWaitingList(this);
-        System.out.println("Appointment requested!");
     }
 
     public void cancelAppointment(Session session) {
         if (waitingRequest.contains(session)) {
             waitingRequest.remove(session);
-            session.removeFromWaitingList(this);
         } else if (approvedRequest.contains(session)) {
             approvedRequest.remove(session);
-            session.removeFromWaitingList(this);
         } else {
-            System.out.println("The session does not exist");
         }
     }
 
