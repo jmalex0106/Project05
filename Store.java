@@ -447,7 +447,9 @@ public class Store {
     }
 
     /**
-     * Checks if the store is open at the particular time entered.
+     * Checks if the store is open at the particular time entered. Note that invalid dates or
+     * dates in the past will still be processed with this method. When calling this method on
+     * the server side, you must first call checkIfDateIsValidAndFuture.
      * @param year
      * @param day
      * @param month
@@ -456,35 +458,31 @@ public class Store {
      * @return
      */
     public boolean checkIfStoreIsOpen(int year , int month, int day , int hour) {
-        try {
-            Calendar calender = Calendar.getInstance();
-            calender.set(Calendar.YEAR, year);
-            calender.set(Calendar.MONTH, month);
-            calender.set(Calendar.DAY_OF_MONTH, day);
-            calender.set(Calendar.HOUR, hour);
-            //Checks if the store is open on this particular day
-            if (!isOpen[calender.get(Calendar.DAY_OF_WEEK) - 1]) {
-                return false;
-            }
-            //Gets the index of the day n in the arrays openingTimes, closingTimes, capacities, and
-            //locations
-            int index = 0;
-            for (int i = 0; i < calender.get(Calendar.DAY_OF_WEEK) - 1; i++) {
-                if (isOpen[i]) {
-                    index++;
-                }
-            }
-            //Checks if session time is within the open hours of the store
-            if (openingTimes[index] > calender.get(Calendar.HOUR)) {
-                return false;
-            }
-            if (closingTimes[index] <= calender.get(Calendar.HOUR)) {
-                return false;
-            }
-            return true;
-        } catch (Exception exception) {
+        Calendar calender = Calendar.getInstance();
+        calender.set(Calendar.YEAR, year);
+        calender.set(Calendar.MONTH, month);
+        calender.set(Calendar.DAY_OF_MONTH, day);
+        calender.set(Calendar.HOUR, hour);
+        //Checks if the store is open on this particular day
+        if (!isOpen[calender.get(Calendar.DAY_OF_WEEK) - 1]) {
             return false;
         }
+        //Gets the index of the day n in the arrays openingTimes, closingTimes, capacities, and
+        //locations
+        int index = 0;
+        for (int i = 0; i < calender.get(Calendar.DAY_OF_WEEK) - 1; i++) {
+            if (isOpen[i]) {
+                index++;
+            }
+        }
+        //Checks if session time is within the open hours of the store
+        if (openingTimes[index] > calender.get(Calendar.HOUR)) {
+            return false;
+        }
+        if (closingTimes[index] <= calender.get(Calendar.HOUR)) {
+            return false;
+        }
+        return true;
     }
 
     /**
