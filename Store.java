@@ -2,14 +2,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.*;
-import java.nio.BufferOverflowException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.CyclicBarrier;
-import java.util.spi.CalendarNameProvider;
-
 public class Store {
     private static final int[] days = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //days in normal years
     private static final int[] leapDays = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //days in leap years
@@ -35,7 +31,7 @@ public class Store {
 
     /**
      * A basic constructor for the store object. Sets the name of the store and the seller name,
-     * and sets all of the sessions to blank sessions.
+     * and sets all the sessions to blank sessions.
      *
      * @param name   - the name of this store.
      * @param seller - the name of the owner of this store.
@@ -380,15 +376,6 @@ public class Store {
         return uniqueCustomers.size();
     }
 
-    /**
-     * This method is called whenever the tutor approves a new
-     *
-     * @param name
-     */
-    public void addCustomer(String name) {
-        uniqueCustomers.add(name);
-    }
-
     public void remakeStoreFromFile() {
         Store store = new Store(name, seller);
         try {
@@ -469,31 +456,35 @@ public class Store {
      * @return
      */
     public boolean checkIfStoreIsOpen(int year , int month, int day , int hour) {
-        Calendar calender = Calendar.getInstance();
-        calender.set(Calendar.YEAR, year);
-        calender.set(Calendar.MONTH, month);
-        calender.set(Calendar.DAY_OF_MONTH, day);
-        calender.set(Calendar.HOUR, hour);
-        //Checks if the store is open on this particular day
-        if (!isOpen[calender.get(Calendar.DAY_OF_WEEK) - 1]) {
-           return false;
-        }
-        //Gets the index of the day n in the arrays openingTimes, closingTimes, capacities, and
-        //locations
-        int index = 0;
-        for (int i = 0; i < calender.get(Calendar.DAY_OF_WEEK) - 1; i++) {
-            if (isOpen[i]) {
-                index++;
+        try {
+            Calendar calender = Calendar.getInstance();
+            calender.set(Calendar.YEAR, year);
+            calender.set(Calendar.MONTH, month);
+            calender.set(Calendar.DAY_OF_MONTH, day);
+            calender.set(Calendar.HOUR, hour);
+            //Checks if the store is open on this particular day
+            if (!isOpen[calender.get(Calendar.DAY_OF_WEEK) - 1]) {
+                return false;
             }
-        }
-        //Checks if session time is within the open hours of the store
-        if (openingTimes[index] > calender.get(Calendar.HOUR)) {
+            //Gets the index of the day n in the arrays openingTimes, closingTimes, capacities, and
+            //locations
+            int index = 0;
+            for (int i = 0; i < calender.get(Calendar.DAY_OF_WEEK) - 1; i++) {
+                if (isOpen[i]) {
+                    index++;
+                }
+            }
+            //Checks if session time is within the open hours of the store
+            if (openingTimes[index] > calender.get(Calendar.HOUR)) {
+                return false;
+            }
+            if (closingTimes[index] <= calender.get(Calendar.HOUR)) {
+                return false;
+            }
+            return true;
+        } catch (Exception exception) {
             return false;
         }
-        if (closingTimes[index] <= calender.get(Calendar.HOUR)) {
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -563,7 +554,8 @@ public class Store {
     /**
      * Searches for customerName in the waitling list of the session at this store specified by the
      * year, month, day, and hour parameters. If found, this customerName is moved from
-     * waitingCustomers to enrolledCustomers.
+     * waitingCustomers to enrolledCustomers and this customer's name is added to the field
+     * uniqueCustomers in this store.
      * @param year
      * @param month
      * @param day
@@ -580,6 +572,7 @@ public class Store {
                         session.getHour() == hour) {
                     session.removeFromWaitingList(customerName);
                     session.addToEnrolledList(customerName);
+                    uniqueCustomers.add(customerName);
                 }
             }
         } catch (Exception exception) {
