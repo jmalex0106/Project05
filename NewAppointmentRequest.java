@@ -45,7 +45,7 @@ public class NewAppointmentRequest implements Runnable {
 
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
 
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 10;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.ipadx = 220;
         gridBagConstraints.ipady = 115;
@@ -55,9 +55,16 @@ public class NewAppointmentRequest implements Runnable {
         storeInfoLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         panel2.add(storeInfoLabel, gridBagConstraints);
 
-        gridBagConstraints.ipadx = 180;
-        gridBagConstraints.ipady = confirmButton.getWidth()+4;
-        gridBagConstraints.gridy = 5;
+
+        // DON'T  Change these parameters ----------------------------------
+        // where the next component is
+        gridBagConstraints.gridy = 500;
+        // modify width and height of the component
+
+        gridBagConstraints.ipady = confirmButton.getHeight()+4;
+        gridBagConstraints.ipadx = 175;
+        // DON'T  Change these parameters ----------------------------------
+
 
         JButton backButton = new JButton("Back");
         panel2.add(backButton, gridBagConstraints);
