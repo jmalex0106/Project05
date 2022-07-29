@@ -2,14 +2,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.*;
-import java.nio.BufferOverflowException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.CyclicBarrier;
-import java.util.spi.CalendarNameProvider;
-
 public class Store {
     private static final int[] days = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //days in normal years
     private static final int[] leapDays = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //days in leap years
@@ -35,7 +31,7 @@ public class Store {
 
     /**
      * A basic constructor for the store object. Sets the name of the store and the seller name,
-     * and sets all of the sessions to blank sessions.
+     * and sets all the sessions to blank sessions.
      *
      * @param name   - the name of this store.
      * @param seller - the name of the owner of this store.
@@ -279,11 +275,14 @@ public class Store {
      * Sets up a store. This method is ONLY to be called when a brand-new store has been
      * created for the first time (when a tutor makes a new store for the first time)
      */
-    public void setupStore() {
-        setupStoreInputChecks(isOpen, openingTimes, closingTimes,
-                capacities, locations);
-        //adds store as a line to AllStores.txt, which lists all existing stores
+    public boolean setupStore() {
+        //Checks if inputs are valid
+        if (!setupStoreInputChecks(isOpen, openingTimes, closingTimes,
+                capacities, locations)) {
+            return false;
+        }
         try {
+            //adds store as a line to AllStores.txt, which lists all existing stores
             File file = new File("AllStores.txt");
             FileOutputStream fileOutputStream = new FileOutputStream(file, true);
             PrintWriter printWriter = new PrintWriter(fileOutputStream);
@@ -292,8 +291,9 @@ public class Store {
             add += getSeller();
             printWriter.println(add);
             printWriter.close();
+            return true;
         } catch (Exception exception) {
-            System.out.println("An error has occurred");
+            return false;
         }
     }
 
@@ -302,7 +302,7 @@ public class Store {
      * called on the server side to save changes made to a store object.
      * TODO-figure out how this works and provide better docs
      */
-    public void makeFileFromStore() {
+    public boolean makeFileFromStore() {
         try {
             File file = new File(name + "Store.txt");
             if (!file.exists()) {
@@ -368,8 +368,9 @@ public class Store {
             add = add.trim();
             printWriter.println(add);
             printWriter.close();
+            return true;
         } catch (Exception exception) {
-            System.out.println("An error has occurred");
+            return false;
         }
     }
 
@@ -378,15 +379,6 @@ public class Store {
      */
     public int numberOfCustomers() {
         return uniqueCustomers.size();
-    }
-
-    /**
-     * This method is called whenever the tutor approves a new
-     *
-     * @param name
-     */
-    public void addCustomer(String name) {
-        uniqueCustomers.add(name);
     }
 
     public void remakeStoreFromFile() {
@@ -451,6 +443,10 @@ public class Store {
         }
     }
 
+    public ArrayList<Session> getSessions() {
+        return sessions;
+    }
+
     public void setUniqueCustomers(Set<String> uniqueCustomers) {
         this.uniqueCustomers = uniqueCustomers;
     }
@@ -460,7 +456,9 @@ public class Store {
     }
 
     /**
-     * Checks if the store is open at the particular time entered.
+     * Checks if the store is open at the particular time entered. Note that invalid dates or
+     * dates in the past will still be processed with this method. When calling this method on
+     * the server side, you must first call checkIfDateIsValidAndFuture.
      * @param year
      * @param day
      * @param month
@@ -476,7 +474,7 @@ public class Store {
         calender.set(Calendar.HOUR, hour);
         //Checks if the store is open on this particular day
         if (!isOpen[calender.get(Calendar.DAY_OF_WEEK) - 1]) {
-           return false;
+            return false;
         }
         //Gets the index of the day n in the arrays openingTimes, closingTimes, capacities, and
         //locations
@@ -503,15 +501,30 @@ public class Store {
      * session objects with the same time at the same store.
      */
     public boolean checkIfSessionAtTimeAlreadyExists(int year , int month, int day , int hour) {
+        if (sessionAtSpecifiedTime(year , month , day , hour) == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * @param year
+     * @param month
+     * @param day
+     * @param hour
+     * @return session at the specified time, if it exists. If it does not exist, return null.
+     */
+    public Session sessionAtSpecifiedTime(int year , int month , int day , int hour) {
         for (Session session : sessions) {
             if (session.getYear() == year &&
-            session.getMonth() == month &&
-            session.getDay() == day &&
-            session.getHour() == hour) {
-                return true;
+                    session.getMonth() == month &&
+                    session.getDay() == day &&
+                    session.getHour() == hour) {
+                return session;
             }
         }
-        return false;
+        return null;
     }
 
     /**
@@ -541,29 +554,25 @@ public class Store {
 
     /**
      * Removes customer from waitlist at the specified session, if applicable, or does nothing.
-     * NOTE: This method does not update any fields in any customer object. To do so,
-     * other methods must be called from the Customer class.
+     * This method updates the correct store and customer objects and saves them.
      */
     public void declineAppointmentAtTime(int year , int month, int day , int hour ,
-                                         String customerName) {
-        try {
-            for (Session session : sessions) {
-                if (session.getYear() == year &&
-                        session.getMonth() == month &&
-                        session.getDay() == day &&
-                        session.getHour() == hour) {
-                    session.removeFromWaitingList(customerName);
-                }
+                                         Customer customer) {
+        for (Session session : sessions) {
+            if (session.getYear() == year &&
+                    session.getMonth() == month &&
+                    session.getDay() == day &&
+                    session.getHour() == hour) {
+                session.removeFromWaitingList(customer.getName());
             }
-        } catch (Exception exception) {
-            return;
         }
     }
 
     /**
      * Searches for customerName in the waitling list of the session at this store specified by the
      * year, month, day, and hour parameters. If found, this customerName is moved from
-     * waitingCustomers to enrolledCustomers.
+     * waitingCustomers to enrolledCustomers and this customer's name is added to the field
+     * uniqueCustomers in this store.
      * @param year
      * @param month
      * @param day
@@ -580,6 +589,7 @@ public class Store {
                         session.getHour() == hour) {
                     session.removeFromWaitingList(customerName);
                     session.addToEnrolledList(customerName);
+                    uniqueCustomers.add(customerName);
                 }
             }
         } catch (Exception exception) {
