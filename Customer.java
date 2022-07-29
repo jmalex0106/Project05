@@ -23,7 +23,7 @@ public class Customer {
         return approvedRequest;
     }
 
-    public void remakeCustomerFromFile() {
+    public boolean remakeCustomerFromFile() {
         try {
             File file = new File(getName() + ".txt");
             FileReader fileReader = new FileReader(file);
@@ -48,19 +48,9 @@ public class Customer {
                 line = bufferedReader.readLine();
             }
             bufferedReader.close();
+            return true;
         } catch (Exception exception) {
-            System.out.println("An error has occurred");
-        }
-    }
-
-    public void makeFileIfNotFound() {
-        try {
-            File file = new File(getName() + ".txt");
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-        } catch (Exception exception) {
-            System.out.println("An errror has occurred");
+            return false;
         }
     }
 
@@ -84,7 +74,7 @@ public class Customer {
         }
     }
 
-    public void remakeFileFromCustomer() {
+    public boolean remakeFileFromCustomer() {
         try {
             File file = new File(getName() + ".txt");
             if (!file.exists()) {
@@ -122,8 +112,9 @@ public class Customer {
             add = add.trim();
             printWriter.println(add);
             printWriter.close();
+            return true;
         } catch (Exception exception) {
-            System.out.println("An error has occurred.");
+            return false;
         }
     }
 

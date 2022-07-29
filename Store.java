@@ -275,11 +275,14 @@ public class Store {
      * Sets up a store. This method is ONLY to be called when a brand-new store has been
      * created for the first time (when a tutor makes a new store for the first time)
      */
-    public void setupStore() {
-        setupStoreInputChecks(isOpen, openingTimes, closingTimes,
-                capacities, locations);
-        //adds store as a line to AllStores.txt, which lists all existing stores
+    public boolean setupStore() {
+        //Checks if inputs are valid
+        if (!setupStoreInputChecks(isOpen, openingTimes, closingTimes,
+                capacities, locations)) {
+            return false;
+        }
         try {
+            //adds store as a line to AllStores.txt, which lists all existing stores
             File file = new File("AllStores.txt");
             FileOutputStream fileOutputStream = new FileOutputStream(file, true);
             PrintWriter printWriter = new PrintWriter(fileOutputStream);
@@ -288,8 +291,9 @@ public class Store {
             add += getSeller();
             printWriter.println(add);
             printWriter.close();
+            return true;
         } catch (Exception exception) {
-            System.out.println("An error has occurred");
+            return false;
         }
     }
 
@@ -298,7 +302,7 @@ public class Store {
      * called on the server side to save changes made to a store object.
      * TODO-figure out how this works and provide better docs
      */
-    public void makeFileFromStore() {
+    public boolean makeFileFromStore() {
         try {
             File file = new File(name + "Store.txt");
             if (!file.exists()) {
@@ -364,8 +368,9 @@ public class Store {
             add = add.trim();
             printWriter.println(add);
             printWriter.close();
+            return true;
         } catch (Exception exception) {
-            System.out.println("An error has occurred");
+            return false;
         }
     }
 
