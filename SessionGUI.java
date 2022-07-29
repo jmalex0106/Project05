@@ -3,13 +3,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class StoreGUI implements Runnable {
+public class SessionGUI implements Runnable {
     private static String[] waitingList = {"Select Store", "Indiana University"};
     private static String[] approvedList = {"Select Store", "Indiana University"};
 
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new StoreGUI());
+        SwingUtilities.invokeLater(new SessionGUI());
     }
 
     @Override

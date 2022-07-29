@@ -3,17 +3,18 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class SellerStoreGUI implements Runnable {
+public class SellerSessionGUI implements Runnable {
     private static final String[] appList = {"Select Appointment", "Indiana University"};
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new SellerStoreGUI());
+        SwingUtilities.invokeLater(new SellerSessionGUI());
     }
 
 
     @Override
     public void run() {
         JFrame frame = new JFrame("Welcome to Tutoring Service");
+
 
         Container content = frame.getContentPane();
 
@@ -33,10 +34,8 @@ public class SellerStoreGUI implements Runnable {
         backToTutor.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new SellerMenuGUI();
-                frame.dispose();
-
-
+                SwingUtilities.invokeLater(new SellerMenuGUI());
+                frame.setVisible(false);
             }
         });
         panel1.add(backToTutor); // (2,1)

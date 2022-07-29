@@ -3,42 +3,35 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class SellerMenuGUI implements Runnable {
-    private static String[] Store = {"Select Store", "Indiana University"};
-    private static String[] Statistics = {"The most popular appointment", "other options"};
+public class CustomerMenuGUI implements Runnable {
+    private static  String[] Session = {"Select Session", "Indiana University"};
+    private static  String[] Statistics = {"The most popular appointment", "other options"};
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new SellerMenuGUI());
+        SwingUtilities.invokeLater(new CustomerMenuGUI());
     }
 
     @Override
     public void run() {
-        JFrame frame = new JFrame("Welcome Tutor");
+        JFrame frame = new JFrame("Welcome Student");
 
         Container content = frame.getContentPane();
 
         content.setLayout(new BorderLayout());
 
         // Menu Panel - Panel1
-        JPanel panel1 = new JPanel(new GridLayout(3, 3)); // 3x3
+        JPanel panel1 = new JPanel(new GridLayout(3,3)); // 3x3
 
         // // View Store
+        JLabel labelSession = new JLabel("View Appointment: ");
+        panel1.add(labelSession); // (1,1)
 
-        JLabel labelStore = new JLabel("View Appointment: ");
-        panel1.add(labelStore); // (1,1)
-
-        JComboBox<String> storeDropdown = new JComboBox<>(Store);
+        JComboBox<String> storeDropdown = new JComboBox<>(Session);
         panel1.add(storeDropdown); // (1,2)
 
-        JButton confirmStore = new JButton("Confirm"); // add action listener
-        confirmStore.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SellerSessionGUI ssg = new SellerSessionGUI();
+        JButton confirmSession = new JButton("Confirm"); // add action listener
 
-            }
-        });
-        panel1.add(confirmStore); // (1, 3)
+        panel1.add(confirmSession); // (1, 3)
 
         // View Statistics
         JLabel labelStatistics = new JLabel("View Statistics: ");
@@ -53,13 +46,20 @@ public class SellerMenuGUI implements Runnable {
         panel1.add(confirmStat); // (2,3)
 
         // // Open New Store
-        JButton openNewStore = new JButton("Open new Session");
-        openNewStore.setSize(50, 50); // add action listener
-        panel1.add(openNewStore);// (3,1)
+        JButton requestNewAppointment = new JButton("Request New Appointment");
+        requestNewAppointment.setSize(50,50); // add action listener
+        panel1.add(requestNewAppointment);// (3,1)
 
         // // Return to Main Menu
 
         JButton returnMain = new JButton("Main Menu");
+        returnMain.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SwingUtilities.invokeLater(new MainMenuGUI());
+                frame.dispose();
+            }
+        });
         panel1.add(returnMain); // (3,2)
 
         // // Exit
@@ -80,5 +80,14 @@ public class SellerMenuGUI implements Runnable {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
 
+
+
+        confirmSession.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SellerSessionGUI ssg = new SellerSessionGUI();
+
+            }
+        });
     }
 }

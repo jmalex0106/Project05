@@ -37,12 +37,7 @@ public class RescheduleGUI implements Runnable {
         // Back & Exit Button
         JButton back = new JButton("Back");
         JButton exit = new JButton("Exit");
-        exit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose();
-            }
-        });
+
         panel1.add(back);
         panel1.add(exit);
 
@@ -54,6 +49,13 @@ public class RescheduleGUI implements Runnable {
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+
+        exit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+            }
+        });
 
 
 
