@@ -5,16 +5,24 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+/**
+ * TODO ADD DESCRIPTIVE JAVADOCS
+ *
+ * @author Moxiao Li, Junmo Kim, Aidan Davis Lab 03 Group 08
+ * @version date
+ */
+
 public class ServerMethods {
-    private static final String[] monthNames = new String[]{"January" , "February" ,
-            "March" , "April" , "May" , "June" , "July" , "August" , "September" ,
-            "October" , "November" , "December"};
-    private static final String[] dayNames = new String[]{"Sunday" , "Monday" ,
-            "Tuesday" , "Wednesday" , "Thursday" , "Friday" , "Saturday"
+    private static final String[] MONTH_NAMES = new String[]{"January", "February",
+            "March", "April", "May", "June", "July", "August", "September",
+            "October", "November", "December"};
+    private static final String[] DAY_NAMES = new String[]{"Sunday", "Monday",
+            "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
     };
 
     public ServerMethods() {
     }
+
     /**
      * @param username - the username entered
      * @param password - the password entered
@@ -161,6 +169,7 @@ public class ServerMethods {
             }
             bufferedReader.close();
         } catch (Exception exception) {
+            int catchInt = 0;
         }
         return output;
     }
@@ -220,7 +229,7 @@ public class ServerMethods {
             }
             //Sets the int capacity to the capacity of the store at the requested session time
             int index = 0;
-            for (int i = 0; i < dayOfWeek(year , month , day); i++) {
+            for (int i = 0; i < dayOfWeek(year, month, day); i++) {
                 if (store.getIsOpen()[i]) {
                     index++;
                 }
@@ -228,14 +237,14 @@ public class ServerMethods {
             int output = 0;
             int capacity = store.getCapacities()[index];
             int requestedSessionCapacity =
-                    store.sessionAtSpecifiedTime(year,month,day,hour).getEnrolledCustomers().size();
+                    store.sessionAtSpecifiedTime(year, month, day, hour).getEnrolledCustomers().size();
             if (capacity > requestedSessionCapacity) {
                 output = 0;
             } else {
                 output = 1;
             }
-            store.requestAppointmentAtTime(year , month , day , hour, customer.getName());
-            customer.requestAppointment(store.sessionAtSpecifiedTime(year,month,day,hour));
+            store.requestAppointmentAtTime(year, month, day, hour, customer.getName());
+            customer.requestAppointment(store.sessionAtSpecifiedTime(year, month, day, hour));
             store.makeFileFromStore();
             customer.remakeFileFromCustomer();
             return output;
@@ -248,10 +257,10 @@ public class ServerMethods {
      * Removes customer from waitlist at the specified session, if applicable, or does nothing.
      * This method updates the correct store and customer objects and saves them.
      */
-    public void declineAppointmentAtTime(int year , int month, int day , int hour ,
-                                         Customer customer , Store store) {
-        store.declineAppointmentAtTime(year,month,day,hour,customer);
-        customer.removeFromWaitlistAtTime(year,month,day,hour, store.getName());
+    public void declineAppointmentAtTime(int year, int month, int day, int hour,
+                                         Customer customer, Store store) {
+        store.declineAppointmentAtTime(year, month, day, hour, customer);
+        customer.removeFromWaitlistAtTime(year, month, day, hour, store.getName());
         store.makeFileFromStore();
         customer.remakeFileFromCustomer();
     }
@@ -260,10 +269,10 @@ public class ServerMethods {
      * Removes customer from waitlist at the specified session and adds them to the enrolledlist.
      * This method updates the correct store and customer objects and saves them.
      */
-    public void approveAppointmentAtTime(int year , int month, int day , int hour ,
-                                         Customer customer , Store store) {
-        store.approveAppointmentAtTime(year,month,day,hour,customer.getName());
-        customer.approveAppointmentAtTime(year,month,day,hour, store.getName());
+    public void approveAppointmentAtTime(int year, int month, int day, int hour,
+                                         Customer customer, Store store) {
+        store.approveAppointmentAtTime(year, month, day, hour, customer.getName());
+        customer.approveAppointmentAtTime(year, month, day, hour, store.getName());
         store.makeFileFromStore();
         customer.remakeFileFromCustomer();
     }
@@ -272,10 +281,10 @@ public class ServerMethods {
      * Removes customer from approvedlist at the specified session, if applicable, or does nothing.
      * This method updates the correct store and customer objects and saves them.
      */
-    public void cancelAppointmentAtTime(int year , int month, int day , int hour ,
-                                         Customer customer , Store store) {
-        store.declineAppointmentAtTime(year,month,day,hour,customer);
-        customer.removeFromApprovedlistAtTime(year,month,day,hour, store.getName());
+    public void cancelAppointmentAtTime(int year, int month, int day, int hour,
+                                        Customer customer, Store store) {
+        store.declineAppointmentAtTime(year, month, day, hour, customer);
+        customer.removeFromApprovedlistAtTime(year, month, day, hour, store.getName());
         store.makeFileFromStore();
         customer.remakeFileFromCustomer();
     }
@@ -320,11 +329,7 @@ public class ServerMethods {
             return false;
         }
         //Checks if hour is strictly in the future or past, or if the hour is the current hour
-        if (hour > Integer.parseInt(formattedCurrentDate.split("-")[3])) {
-            return true;
-        } else {
-            return false;
-        }
+        return (hour > Integer.parseInt(formattedCurrentDate.split("-")[3]));
     }
 
     /**
@@ -386,21 +391,23 @@ public class ServerMethods {
      * "feb" , "FEB" , "bR" all return 1 because only "february" has these as substrings.
      * "ju" would return -1, since it is a substring of both "June" and "July".
      * "dx" would return -1, since no month's name contains "dx" as a substring.
+     *
      * @param monthString
      * @return return 0 for January , 1 for February , 11 for December , and -1 for an invalid
      * month
      */
-    public int monthFormat (String monthString) {
+    public int monthFormat(String monthString) {
         //Checks if monthString is an integer
         try {
             int i = Integer.parseInt(monthString);
             return i - 1;
         } catch (NumberFormatException numberFormatException) {
+            int catchInt = 0;
         }
         int numberSubstringCount = 0;
         int output = 0;
-        for (int i = 0; i < monthNames.length; i++) {
-            if (monthNames[i].toLowerCase().contains(monthString.toLowerCase())) {
+        for (int i = 0; i < MONTH_NAMES.length; i++) {
+            if (MONTH_NAMES[i].toLowerCase().contains(monthString.toLowerCase())) {
                 numberSubstringCount++;
                 output = i;
             }
@@ -420,21 +427,23 @@ public class ServerMethods {
      * "mon" , "MO" , "onday" all return 1 because only "Monday" has these as substrings.
      * "nday" would return -1, since it is a substring of both "Sunday" and "Monday".
      * "dx" would return -1, since no day's name contains "dx" as a substring.
+     *
      * @param dayString
      * @return return 0 for Sunday , 1 for Monday , 6 for Saturday , and -1 for an invalid
      * day
      */
-    public int dayFormat (String dayString) {
+    public int dayFormat(String dayString) {
         //Checks if dayString is an integer
         try {
             int i = Integer.parseInt(dayString);
             return i - 1;
         } catch (NumberFormatException numberFormatException) {
+            int catchInt = 0;
         }
         int numberSubstringCount = 0;
         int output = 0;
-        for (int i = 0; i < dayNames.length; i++) {
-            if (dayNames[i].toLowerCase().contains(dayString.toLowerCase())) {
+        for (int i = 0; i < DAY_NAMES.length; i++) {
+            if (DAY_NAMES[i].toLowerCase().contains(dayString.toLowerCase())) {
                 numberSubstringCount++;
                 output = i;
             }
@@ -452,13 +461,14 @@ public class ServerMethods {
      * Integer followed by ":00" returns the integer. So "16:00" returns 16.
      * AM and PM notation processing
      * 12 noon vs midnight processing
+     *
      * @param hourString
      * @return
      */
     public int hourFormat(String hourString) {
-        String toProcess = hourString.replace(" " , "");
-        toProcess = toProcess.replace(".","");
-        toProcess = toProcess.replace(":00","");
+        String toProcess = hourString.replace(" ", "");
+        toProcess = toProcess.replace(".", "");
+        toProcess = toProcess.replace(":00", "");
         toProcess = toProcess.toLowerCase();
         int output = 0;
         if (toProcess.equals("noon")) {
@@ -471,17 +481,18 @@ public class ServerMethods {
             output = Integer.parseInt(toProcess);
             return output;
         } catch (NumberFormatException numberFormatException) {
+            int catchInt = 0;
         }
         try {
             if (toProcess.contains("am")) {
-                output = Integer.parseInt(toProcess.replace("am",""));
+                output = Integer.parseInt(toProcess.replace("am", ""));
                 if (output != 12) {
                     return output;
                 } else {
                     return 0;
                 }
             } else if (toProcess.contains("pm")) {
-                output = Integer.parseInt(toProcess.replace("pm",""));
+                output = Integer.parseInt(toProcess.replace("pm", ""));
                 if (output != 12) {
                     return output + 12;
                 } else {
@@ -489,6 +500,7 @@ public class ServerMethods {
                 }
             }
         } catch (NumberFormatException numberFormatException) {
+            int catchInt = 0;
         }
         return -1;
     }
@@ -496,15 +508,16 @@ public class ServerMethods {
     /**
      * Converts a string as entered by a user into a boolean. "1","yes","true","open"
      * return open, without regard to case. Other strings return false.
+     *
      * @param booleanString
      * @return
      */
-    public boolean booleanFormat (String booleanString) {
+    public boolean booleanFormat(String booleanString) {
         if (booleanString == null) {
             return false;
         }
         switch (booleanString.trim().toLowerCase()) {
-            case "1", "yes" , "open" -> {
+            case "1", "yes", "open" -> {
                 return true;
             }
             default -> {
@@ -516,13 +529,14 @@ public class ServerMethods {
     /**
      * This method is only to be called when a tutor opens a brand new store for the
      * first time.
+     *
      * @param seller
      * @param storeName
      * @param csvPath
      * @return 0 if a new store has been made successfully, 1 if the name is taken, 2
      * if the inputs are invalid or the CSV import gives an error.
      */
-    public int setupNewStore(Seller seller , String storeName , String csvPath) {
+    public int setupNewStore(Seller seller, String storeName, String csvPath) {
         try {
             File file = new File("AllStores.txt");
             FileReader fileReader = new FileReader(file);
@@ -534,11 +548,11 @@ public class ServerMethods {
                 }
             }
             bufferedReader.close();
-            Store store = new Store(storeName , seller.getName());
+            Store store = new Store(storeName, seller.getName());
             //Reads the csv file at csvPath and imports the variables to the store
-            store.setupStoreInputChecks(makeIsOpenFromCSV(csvPath) ,
-                    makeOpeningTimesFromCSV(csvPath) , makeClosingTimesFromCSV(csvPath) ,
-                    makeCapacitiesFromCSV(csvPath) , makeLocationsFromCSV(csvPath));
+            store.setupStoreInputChecks(makeIsOpenFromCSV(csvPath),
+                    makeOpeningTimesFromCSV(csvPath), makeClosingTimesFromCSV(csvPath),
+                    makeCapacitiesFromCSV(csvPath), makeLocationsFromCSV(csvPath));
             store.setupStore();
             store.makeFileFromStore();
             return 0;
@@ -549,10 +563,11 @@ public class ServerMethods {
 
     /**
      * Reads the CSV at the created path and puts the boxes in a string array.
+     *
      * @param csvPath
      * @return
      */
-    public String[][] csvPathToString (String csvPath) {
+    public String[][] csvPathToString(String csvPath) {
         String[][] output = new String[7][5];
         try {
             FileReader fileReader = new FileReader(csvPath);
@@ -566,6 +581,7 @@ public class ServerMethods {
             }
             bufferedReader.close();
         } catch (Exception exception) {
+            int catchInt = 0;
         }
         return output;
     }
@@ -573,7 +589,7 @@ public class ServerMethods {
     public boolean[] makeIsOpenFromCSV(String csvPath) {
         String[][] csvArray = csvPathToString(csvPath);
         boolean[] output = new boolean[7];
-        for (int i = 0; i < 7; i ++) {
+        for (int i = 0; i < 7; i++) {
             output[i] = booleanFormat(csvArray[i][0]);
         }
         return output;
@@ -653,6 +669,7 @@ public class ServerMethods {
 
     /**
      * Exports all of a customer's approved appointments to a CSV file
+     *
      * @param customer
      */
     public void exportCustomerAppointmentsToCSV(Customer customer) {
@@ -682,8 +699,81 @@ public class ServerMethods {
             printWriter.println(add);
             printWriter.close();
         } catch (Exception exception) {
-            System.out.println("An error occurred.");
+            int catchInt = 0;
         }
     }
+
+    //The following methods show statistics to the seller
+    public String showSellerUnsortedStatistics(Seller seller) {
+        return seller.createUnsortedSellerStatisticsToString();
+    }
+
+    public String showSellerSortedStatistics(Seller seller) {
+        return seller.createSortedSellerStatisticsToString();
+    }
+
+    //The following methods show statistics to the customer
+
+    /**
+     * reads AllStores.txt and creates all store and puts them into an array.
+     *
+     * @return
+     */
+    public ArrayList<Store> allStores() {
+        ArrayList<Store> output = new ArrayList<Store>();
+        try {
+            File file = new File("AllStores.txt");
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                Store store = new Store(line.split(",")[0], line.split(",")[1]);
+                store.remakeStoreFromFile();
+                output.add(store);
+            }
+            return output;
+        } catch (Exception exception) {
+            int catchInt = 0;
+        }
+        return output;
+    }
+
+    public String showSortedStatisticsToCustomer() {
+        String output = "";
+        //Sets int maxCustomers to the maximum number of unique customers at a store
+        //that this seller owns
+        int maxCustomers = 0;
+        for (int i = 0; i < allStores().size(); i++) {
+            if (maxCustomers < allStores().get(i).getUniqueCustomers().size()) {
+                maxCustomers = allStores().get(i).getUniqueCustomers().size();
+            }
+        }
+        for (int i = maxCustomers; i <= 0; i--) {
+            for (int j = 0; j < allStores().size(); j++) {
+                if (allStores().get(j).getUniqueCustomers().size() == i) {
+                    output += allStores().get(j).createStatisticsToString();
+                }
+            }
+        }
+        return output;
+    }
+
+    public String[] createStoreStatisticsToStringArrayForAllStores() {
+        String[] output = new String[allStores().size()];
+        for (int i = 0; i < output.length; i++) {
+            output[i] = allStores().get(i).getMostPopularDaysOfWeekToString();
+        }
+        return output;
+    }
+
+    public String showUnsortedStatisticsToCustomer() {
+        String output = "";
+        String[] storeStatisticsArray = createStoreStatisticsToStringArrayForAllStores();
+        for (int i = 0; i < storeStatisticsArray.length; i++) {
+            output += storeStatisticsArray[i];
+        }
+        return output;
+    }
 }
+
 

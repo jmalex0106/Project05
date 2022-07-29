@@ -2,6 +2,13 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Locale;
 
+/**
+ * TODO ADD DESCRIPTIVE JAVADOCS
+ *
+ * @author Moxiao Li, Junmo Kim, Aidan Davis Lab 03 Group 08
+ * @version date
+ */
+
 public class Customer {
     private String name;
     ArrayList<Session> waitingRequest;
@@ -29,8 +36,8 @@ public class Customer {
             FileReader fileReader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line;
-            String name = file.getName();
-            name = name.replace(".txt", "");
+            String remakeName = file.getName();
+            this.name = remakeName.replace(".txt", "");
             line = bufferedReader.readLine();
             while (line != null) {
                 if (line.split(",").length == 6) {
@@ -118,31 +125,31 @@ public class Customer {
         }
     }
 
-    public void removeFromWaitlistAtTime(int year,int month , int day , int hour, String storeName) {
-        for (Session session:waitingRequest) {
+    public void removeFromWaitlistAtTime(int year, int month, int day, int hour, String storeName) {
+        for (Session session : waitingRequest) {
             if (session.getYear() == year &&
                     session.getMonth() == month &&
                     session.getDay() == day &&
                     session.getHour() == hour &&
-                    session.getStore().equals(storeName)){
+                    session.getStore().equals(storeName)) {
                 waitingRequest.remove(session);
             }
         }
     }
 
-    public void removeFromApprovedlistAtTime(int year,int month , int day , int hour, String storeName) {
-        for (Session session:approvedRequest) {
+    public void removeFromApprovedlistAtTime(int year, int month, int day, int hour, String storeName) {
+        for (Session session : approvedRequest) {
             if (session.getYear() == year &&
                     session.getMonth() == month &&
                     session.getDay() == day &&
                     session.getHour() == hour &&
-                    session.getStore().equals(storeName)){
+                    session.getStore().equals(storeName)) {
                 approvedRequest.remove(session);
             }
         }
     }
 
-    public void approveAppointmentAtTime(int year , int month, int day , int hour ,
+    public void approveAppointmentAtTime(int year, int month, int day, int hour,
                                          String storeName) {
         try {
             for (Session session : waitingRequest) {

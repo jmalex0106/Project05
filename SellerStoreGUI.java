@@ -3,8 +3,16 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * TODO ADD DESCRIPTIVE JAVADOCS
+ *
+ * @author Moxiao Li, Junmo Kim, Aidan Davis Lab 03 Group 08
+ *
+ * @version date
+ */
+
 public class SellerStoreGUI implements Runnable {
-    private static final String[] appList = {"Select Appointment", "Indiana University"};
+    private static final String[] APP_LIST = {"Select Appointment", "Indiana University"};
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new SellerStoreGUI());
@@ -22,7 +30,7 @@ public class SellerStoreGUI implements Runnable {
         // Menu Panel
         JPanel panel1 = new JPanel(new GridLayout(2, 2)); // 2x2
 
-        JComboBox<String> appointmentDropDown = new JComboBox<>(appList);
+        JComboBox<String> appointmentDropDown = new JComboBox<>(APP_LIST);
         panel1.add(appointmentDropDown); // (1,1)
 
         JButton appointmentConfirm = new JButton("Confirm");

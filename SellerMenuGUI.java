@@ -3,14 +3,22 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * TODO ADD DESCRIPTIVE JAVADOCS
+ *
+ * @author Moxiao Li, Junmo Kim, Aidan Davis Lab 03 Group 08
+ *
+ * @version date
+ */
 public class SellerMenuGUI implements Runnable {
-    private static final String[] Store = {"Select Store", "Indiana University"};
-    private static final String[] Statistics = {"The most popular appointment", "other options"};
+    private static final String[] STORE = {"Select Store", "Indiana University"};
 
+    private static final String[] STATISTICS = {"The most popular appointment", "other options"};
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new SellerMenuGUI());
     }
+
     @Override
     public void run() {
         JFrame frame = new JFrame("Welcome Tutor");
@@ -20,9 +28,8 @@ public class SellerMenuGUI implements Runnable {
         content.setLayout(new BorderLayout());
 
 
-
         // Menu Panel - Panel1
-        JPanel panel1 = new JPanel(new GridLayout(3,3)); // 3x3
+        JPanel panel1 = new JPanel(new GridLayout(3, 3)); // 3x3
         // GridBagConstraints gridBagConstraints = new GridBagConstraints();
 
         // // View Store
@@ -32,7 +39,7 @@ public class SellerMenuGUI implements Runnable {
         panel1.add(labelStore); // (1,1)
 
         // gridBagConstraints.gridx = 1;
-        JComboBox<String> storeDropdown = new JComboBox<>(Store);
+        JComboBox<String> storeDropdown = new JComboBox<>(STORE);
         panel1.add(storeDropdown); // (1,2)
 
         // gridBagConstraints.gridx = 2;
@@ -54,7 +61,7 @@ public class SellerMenuGUI implements Runnable {
         panel1.add(labelStatistics); // (2, 1)
 
         // gridBagConstraints.gridx = 1;
-        JComboBox<String> statDropdown = new JComboBox<>(Statistics);
+        JComboBox<String> statDropdown = new JComboBox<>(STATISTICS);
         panel1.add(statDropdown); // (2,2)
 
         // gridBagConstraints.gridx = 2;
@@ -66,8 +73,8 @@ public class SellerMenuGUI implements Runnable {
         // gridBagConstraints.gridy = 2;
 
         JButton openNewStore = new JButton("Open new Store");
-        openNewStore.setSize(50,50); // add action listener
-        panel1.add(openNewStore);// (3,1)
+        openNewStore.setSize(50, 50); // add action listener
+        panel1.add(openNewStore); // (3,1)
 
         // // Return to Main Menu
         // gridBagConstraints.gridy = 2;

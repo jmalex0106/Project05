@@ -2,13 +2,24 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
+
+/**
+ * TODO ADD DESCRIPTIVE JAVADOCS
+ *
+ * @author Moxiao Li, Junmo Kim, Aidan Davis Lab 03 Group 08
+ * @version date
+ */
+
 public class Store {
-    private static final int[] days = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //days in normal years
-    private static final int[] leapDays = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //days in leap years
+    private static final String[] DAY_NAMES = new String[]{"Sunday", "Monday",
+            "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+    private static final int[] DAYS = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //days in normal years
+    private static final int[] LEAP_DAYS = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //days in leap years
     private String name;  //The name of the store
     private String seller;  //The name of the seller that owns this store
     private boolean[] isOpen;  //A length 7 array. Position 0 = Sunday, 6 = Saturday. A value
@@ -77,131 +88,6 @@ public class Store {
     }
 
     /**
-     * TODO - Provide documentation. I have no idea how this work. Fix maybe???
-     */
-    public void importFromCsv() {
-        try {
-            File f = new File(name + "Store.txt");
-            FileReader fr = new FileReader(f);
-            BufferedReader bfr = new BufferedReader(fr);
-            ArrayList<String> list = new ArrayList<String>();
-            String line = bfr.readLine();
-            while (line != null) {
-                list.add(line);
-                line = bfr.readLine();
-            }
-            bfr.close();
-            this.isOpen = new boolean[7];
-
-
-            for (int i = 0; i < list.size(); i++) {
-                String[] tmpArr = list.get(i).split(",");
-                isOpen[i] = Boolean.parseBoolean(tmpArr[1]);
-            }
-
-            int daysOpen = 0;
-            for (int i = 0; i < isOpen.length; i++) {
-                if (isOpen[i]) {
-                    daysOpen++;
-                }
-            }
-
-            ArrayList<Integer> idxs = new ArrayList<Integer>();
-
-            for (int i = 0; i < list.size(); i++) {
-                String[] tmpArr = list.get(i).split(",");
-                if (Boolean.parseBoolean(tmpArr[1])) {
-                    idxs.add(i);
-                }
-            }
-
-            this.openingTimes = new int[daysOpen];
-            this.closingTimes = new int[daysOpen];
-            this.capacities = new int[daysOpen];
-
-            for (int i = 0; i < daysOpen; i++) {
-                String[] arr = list.get(idxs.get(i)).split(",");
-                openingTimes[i] = Integer.parseInt(arr[2]);
-                closingTimes[i] = Integer.parseInt(arr[3]);
-                capacities[i] = Integer.parseInt(arr[4]);
-            }
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * TODO - Fix maybe??? Add docs, I have no idea how this works
-     */
-    public int makeCsvFromTxt() {
-        int ans = 0;
-        try {
-            File f = new File(name + "Store.txt");
-            FileReader fr = new FileReader(f);
-            BufferedReader bfr = new BufferedReader(fr);
-            ArrayList<String> list = new ArrayList<String>();
-            String line = bfr.readLine();
-            while (line != null) {
-                list.add(line);
-                line = bfr.readLine();
-            }
-            bfr.close();
-
-            int daysOpen = 0;
-            boolean[] isOpen = new boolean[7];
-
-            for (int i = 1; i < 8; i++) {
-                if (!list.get(i).equals("false")) {
-                    isOpen[i - 1] = true;
-                } else {
-                    isOpen[i - 1] = false;
-                }
-            }
-
-            String[] weekdays = {"Sunday", "Monday", "Tuesday", "Wednesday",
-                    "Thursday", "Friday", "Saturday"};
-
-            int[] openingTimes = new int[7];
-            int[] closingTimes = new int[7];
-            int[] capacity = new int[7];
-            String[] location = {"", "", "", "", "", "", "", ""};
-
-            for (int i = 1; i < 8; i++) {
-                for (int j = 0; j < isOpen.length; j++) {
-                    if (!list.get(i).equals("false")) {
-                        String[] tmpArr = list.get(i).split(",");
-                        openingTimes[i - 1] = Integer.parseInt(tmpArr[1]);
-                        closingTimes[i - 1] = Integer.parseInt(tmpArr[2]);
-                        capacity[i - 1] = Integer.parseInt(tmpArr[3]);
-                        location[i - 1] = tmpArr[4];
-                    } else {
-                        openingTimes[i - 1] = 0;
-                        closingTimes[i - 1] = 0;
-                        capacity[i - 1] = 0;
-                        location[i - 1] = "";
-                    }
-                }
-            }
-
-            BufferedWriter fw = new BufferedWriter(new FileWriter(name + "Store.csv"));
-            for (int i = 0; i < isOpen.length; i++) {
-                fw.write(weekdays[i] + "," +
-                        isOpen[i] + "," + openingTimes[i] + "," +
-                        closingTimes[i] + "," + capacity[i] + "," + location[i]);
-                fw.newLine();
-                ans++;
-            }
-            fw.flush();
-            fw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return ans;
-    }
-
-    /**
      * Checks the fields of a store to make sure they are valid. If they are valid, it sets the
      * fields of the store object and returns true. If any are not valid, it returns false and does
      * nothing. This method is never called directly, but only from other methods in Store.
@@ -213,61 +99,62 @@ public class Store {
      * @param locations
      * @return
      */
-    public boolean setupStoreInputChecks(boolean[] isOpen, int[] openingTimes,
-                                         int[] closingTimes, int[] capacities, String[] locations) {
-        if (isOpen.length != 7) {
+    public boolean setupStoreInputChecks(boolean[] isOpenCheck, int[] openingTimesCheck,
+                                         int[] closingTimesCheck,
+                                         int[] capacitiesCheck, String[] locationsCheck) {
+        if (isOpenCheck.length != 7) {
             return false;
         }
         int daysOpen = 0;
-        for (int i = 0; i < isOpen.length; i++) {
-            if (isOpen[i]) {
+        for (int i = 0; i < isOpenCheck.length; i++) {
+            if (isOpenCheck[i]) {
                 daysOpen++;
             }
         }
         if (daysOpen == 0) {
             return false;
         }
-        if (openingTimes.length != daysOpen) {
+        if (openingTimesCheck.length != daysOpen) {
             return false;
         }
-        if (closingTimes.length != daysOpen) {
+        if (closingTimesCheck.length != daysOpen) {
             return false;
         }
-        if (locations.length != daysOpen) {
+        if (locationsCheck.length != daysOpen) {
             return false;
         }
-        if (capacities.length != daysOpen) {
+        if (capacitiesCheck.length != daysOpen) {
             return false;
         }
         int t = 0;
         for (int i = 0; i < daysOpen; i++) {
-            if (isOpen[i]) {
-                if (openingTimes[t] < 0) {
+            if (isOpenCheck[i]) {
+                if (openingTimesCheck[t] < 0) {
                     return false;
                 }
-                if (openingTimes[t] > 23) {
+                if (openingTimesCheck[t] > 23) {
                     return false;
                 }
-                if (closingTimes[t] < 0) {
+                if (closingTimesCheck[t] < 0) {
                     return false;
                 }
-                if (closingTimes[t] > 23) {
+                if (closingTimesCheck[t] > 23) {
                     return false;
                 }
-                if (openingTimes[t] >= closingTimes[t]) {
+                if (openingTimesCheck[t] >= closingTimesCheck[t]) {
                     return false;
                 }
-                if (capacities[t] <= 0) {
+                if (capacitiesCheck[t] <= 0) {
                     return false;
                 }
                 t++;
             }
         }
-        this.isOpen = isOpen;
-        this.openingTimes = openingTimes;
-        this.closingTimes = closingTimes;
-        this.capacities = capacities;
-        this.locations = locations;
+        this.isOpen = isOpenCheck;
+        this.openingTimes = openingTimesCheck;
+        this.closingTimes = closingTimesCheck;
+        this.capacities = capacitiesCheck;
+        this.locations = locationsCheck;
         return true;
     }
 
@@ -382,7 +269,6 @@ public class Store {
     }
 
     public void remakeStoreFromFile() {
-        Store store = new Store(name, seller);
         try {
             File f = new File(name + "Store.txt");
             FileReader fr = new FileReader(f);
@@ -395,48 +281,49 @@ public class Store {
             }
             bfr.close();
 
-            boolean[] isOpen = new boolean[7];
+            boolean[] isOpenRemake = new boolean[7];
             int daysOpen = 0;
 
             for (int i = 1; i < 8; i++) {
                 if (!list.get(i).equals("false")) {
-                    isOpen[i - 1] = true;
+                    isOpenRemake[i - 1] = true;
                     daysOpen++;
                 } else {
-                    isOpen[i - 1] = false;
+                    isOpenRemake[i - 1] = false;
                 }
             }
-            int[] openingTimes = new int[daysOpen];
-            int[] closingTimes = new int[daysOpen];
-            int[] capacity = new int[daysOpen];
-            String[] location = new String[daysOpen];
+            int[] openingTimesRemake = new int[daysOpen];
+            int[] closingTimesRemake = new int[daysOpen];
+            int[] capacityRemake = new int[daysOpen];
+            String[] locationRemake = new String[daysOpen];
 
             for (int i = 1; i < 8; i++) {
                 for (int j = 0; j < daysOpen; j++) {
                     if (!list.get(i).equals("false")) {
                         String[] tmpArr = list.get(i).split(",");
-                        openingTimes[j] = Integer.parseInt(tmpArr[1]);
-                        closingTimes[j] = Integer.parseInt(tmpArr[2]);
-                        capacity[j] = Integer.parseInt(tmpArr[3]);
-                        location[j] = tmpArr[4];
+                        openingTimesRemake[j] = Integer.parseInt(tmpArr[1]);
+                        closingTimesRemake[j] = Integer.parseInt(tmpArr[2]);
+                        capacityRemake[j] = Integer.parseInt(tmpArr[3]);
+                        locationRemake[j] = tmpArr[4];
                     }
                 }
             }
-            store.setupStoreInputChecks(isOpen, openingTimes, closingTimes, capacity, location);
+            setupStoreInputChecks(isOpenRemake, openingTimesRemake,
+                    closingTimesRemake, capacityRemake, locationRemake);
             //Code to make uniqueCustomers
             File file = new File(name + "Store.txt");
             FileReader fileReader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line1 = "";
-            Set<String> uniqueCustomers = new HashSet<String>();
+            Set<String> uniqueCustomersRemake = new HashSet<String>();
             for (int i = 0; i < 9; i++) {
                 line1 = bufferedReader.readLine();
             }
             do {
-                uniqueCustomers.add(line1);
+                uniqueCustomersRemake.add(line1);
                 line1 = bufferedReader.readLine();
             } while (!line1.equals("BREAK"));
-            store.setUniqueCustomers(uniqueCustomers);
+            this.uniqueCustomers = uniqueCustomersRemake;
             bufferedReader.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -459,6 +346,7 @@ public class Store {
      * Checks if the store is open at the particular time entered. Note that invalid dates or
      * dates in the past will still be processed with this method. When calling this method on
      * the server side, you must first call checkIfDateIsValidAndFuture.
+     *
      * @param year
      * @param day
      * @param month
@@ -466,7 +354,7 @@ public class Store {
      * @param hour
      * @return
      */
-    public boolean checkIfStoreIsOpen(int year , int month, int day , int hour) {
+    public boolean checkIfStoreIsOpen(int year, int month, int day, int hour) {
         Calendar calender = Calendar.getInstance();
         calender.set(Calendar.YEAR, year);
         calender.set(Calendar.MONTH, month);
@@ -488,10 +376,7 @@ public class Store {
         if (openingTimes[index] > calender.get(Calendar.HOUR)) {
             return false;
         }
-        if (closingTimes[index] <= calender.get(Calendar.HOUR)) {
-            return false;
-        }
-        return true;
+        return !(closingTimes[index] <= calender.get(Calendar.HOUR));
     }
 
     /**
@@ -500,12 +385,8 @@ public class Store {
      * that are used when a customer applies for an appointment so that there can never be two
      * session objects with the same time at the same store.
      */
-    public boolean checkIfSessionAtTimeAlreadyExists(int year , int month, int day , int hour) {
-        if (sessionAtSpecifiedTime(year , month , day , hour) == null) {
-            return false;
-        } else {
-            return true;
-        }
+    public boolean checkIfSessionAtTimeAlreadyExists(int year, int month, int day, int hour) {
+        return !(sessionAtSpecifiedTime(year, month, day, hour) == null);
     }
 
     /**
@@ -515,7 +396,7 @@ public class Store {
      * @param hour
      * @return session at the specified time, if it exists. If it does not exist, return null.
      */
-    public Session sessionAtSpecifiedTime(int year , int month , int day , int hour) {
+    public Session sessionAtSpecifiedTime(int year, int month, int day, int hour) {
         for (Session session : sessions) {
             if (session.getYear() == year &&
                     session.getMonth() == month &&
@@ -534,10 +415,10 @@ public class Store {
      * NOTE: This method does not update any fields in any customer object. To do so,
      * other methods must be called from the Customer class.
      */
-    public void requestAppointmentAtTime(int year , int month, int day , int hour ,
+    public void requestAppointmentAtTime(int year, int month, int day, int hour,
                                          String customerName) {
-        if (!checkIfSessionAtTimeAlreadyExists(year , month , day ,hour)) {
-            Session session = new Session(year , month , day ,hour, name);
+        if (!checkIfSessionAtTimeAlreadyExists(year, month, day, hour)) {
+            Session session = new Session(year, month, day, hour, name);
             session.addToWaitingList(customerName);
             sessions.add(session);
         } else {
@@ -556,7 +437,7 @@ public class Store {
      * Removes customer from waitlist at the specified session, if applicable, or does nothing.
      * This method updates the correct store and customer objects and saves them.
      */
-    public void declineAppointmentAtTime(int year , int month, int day , int hour ,
+    public void declineAppointmentAtTime(int year, int month, int day, int hour,
                                          Customer customer) {
         for (Session session : sessions) {
             if (session.getYear() == year &&
@@ -573,13 +454,14 @@ public class Store {
      * year, month, day, and hour parameters. If found, this customerName is moved from
      * waitingCustomers to enrolledCustomers and this customer's name is added to the field
      * uniqueCustomers in this store.
+     *
      * @param year
      * @param month
      * @param day
      * @param hour
      * @param customerName
      */
-    public void approveAppointmentAtTime(int year , int month, int day , int hour ,
+    public void approveAppointmentAtTime(int year, int month, int day, int hour,
                                          String customerName) {
         try {
             for (Session session : sessions) {
@@ -599,14 +481,15 @@ public class Store {
 
     /**
      * Deletes the customerName from the enrolledCustomers field of the specified session.
+     *
      * @param year
      * @param month
      * @param day
      * @param hour
      * @param customerName
      */
-    public void cancelAlreadyApprovedAppointment(int year , int month, int day , int hour ,
-                                         String customerName) {
+    public void cancelAlreadyApprovedAppointment(int year, int month, int day, int hour,
+                                                 String customerName) {
         try {
             for (Session session : sessions) {
                 if (session.getYear() == year &&
@@ -620,4 +503,88 @@ public class Store {
             return;
         }
     }
+
+    /**
+     * Creates a string array representing the most popular day of the week at this store.
+     * A day of the week is the most popular if it has strictly more approved customers on
+     * that day than any other. If multiple days are tied for the top spot, then all of the
+     * top days are added to the output string array. This string array is then converted into
+     * a toString that tells about this store's popularity over the days of the week.
+     */
+    public String getMostPopularDaysOfWeekToString() {
+        int[] dayCounters = new int[7];
+        //sets day Counters all to 0
+        for (int i = 0; i < dayCounters.length; i++) {
+            dayCounters[i] = 0;
+        }
+        for (Session session : sessions) {
+            dayCounters[LocalDate.of(session.getYear(), session.getMonth() + 1,
+                    session.getDay()).getDayOfWeek().getValue()]
+                    += session.getEnrolledCustomers().size();
+        }
+        //converts dayCounters into a list of the most popular days
+        //Sets int maxCustomers to the max number of customers on a certain day of the week
+        int maxCustomers = 0;
+        for (int i = 0; i < dayCounters.length; i++) {
+            if (maxCustomers < dayCounters[i]) {
+                maxCustomers = dayCounters[i];
+            }
+        }
+        //Sets int popularDaysTieCount to the number of days of the week that have
+        //maxCustomers number of customers
+        int popularDaysTieCount = 0;
+        for (int i = 0; i < dayCounters.length; i++) {
+            if (maxCustomers == dayCounters[i]) {
+                popularDaysTieCount++;
+            }
+        }
+        //Sets String array popularDays to the most popular days
+        String[] popularDays = new String[popularDaysTieCount];
+        int index = 0;
+        for (int i = 0; i < dayCounters.length; i++) {
+            if (maxCustomers == dayCounters[i]) {
+                popularDays[index] = DAY_NAMES[i];
+                index++;
+            }
+        }
+        //Converts popularDays into a string to display to the user
+        String output = "";
+        if (popularDaysTieCount == 1) {
+            output = "The most popular day of the week at this store is " +
+                    popularDays[0] + "with " + maxCustomers + " total customers";
+        } else if (popularDaysTieCount == isOpen.length) {
+            output = "All days that this store are tied for most popular at " +
+                    maxCustomers + " total customers.";
+        } else {
+            output = "The days ";
+            for (int i = 0; i < popularDays.length; i++) {
+                output += popularDays[i];
+                if (i == popularDays.length - 2 && popularDays.length != 2) {
+                    output += ", and ";
+                } else if (i == popularDays.length - 2 && popularDays.length == 2) {
+                    output += " and ";
+                } else if (i != popularDays.length - 1) {
+                    output += ", ";
+                }
+            }
+            output += " are all tied for most popular day at this store with " +
+                    maxCustomers + " total customers";
+        }
+        output += "\n";
+        return output;
+    }
+
+    /**
+     * Creates a statistics toString for this store
+     *
+     * @return
+     */
+    public String createStatisticsToString() {
+        String output = "Your tutoring service " + name +
+                "has " + uniqueCustomers.size() +
+                "unique customers with approved appointments!\n" +
+                getMostPopularDaysOfWeekToString();
+        return output;
+    }
 }
+

@@ -1,9 +1,12 @@
 import java.io.*;
 import java.util.ArrayList;
+
 /**
- * Session
- * <p>
- * Each session represents a one-hour block of time.
+ * TODO ADD DESCRIPTIVE JAVADOCS
+ *
+ * @author Moxiao Li, Junmo Kim, Aidan Davis Lab 03 Group 08
+ *
+ * @version date
  */
 public class Session {
     private int hour;  //The hour of day that the session occurs at. For example, 13 is the 13:00 to 14:00
@@ -17,13 +20,14 @@ public class Session {
     private ArrayList<String> waitingCustomers;  //An array list of customers who are waiting to be
     //approved for this session.
 
-    private static final String SUCCESSFULRESERVATION = "Tutoring reservation made successfully for %s from %d:00" +
+    private static final String SUCCESSFUL_RESERVATION = "Tutoring reservation made successfully for %s from %d:00" +
             " to %d:00 on %s %d%s, %d\n";
-    private static final String SUCCESSFULWAITLIST = "Waitlist reservation made successfully for %s from %d:00" +
+    private static final String SUCCESSFUL_WAITLIST = "Waitlist reservation made successfully for %s from %d:00" +
             " to %d:00 on %s %d%s, %d\n";
 
     /**
      * A basic constructor for a session object
+     *
      * @param hour
      * @param day
      * @param month
