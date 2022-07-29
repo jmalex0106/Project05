@@ -438,6 +438,10 @@ public class Store {
         }
     }
 
+    public ArrayList<Session> getSessions() {
+        return sessions;
+    }
+
     public void setUniqueCustomers(Set<String> uniqueCustomers) {
         this.uniqueCustomers = uniqueCustomers;
     }
@@ -492,15 +496,30 @@ public class Store {
      * session objects with the same time at the same store.
      */
     public boolean checkIfSessionAtTimeAlreadyExists(int year , int month, int day , int hour) {
+        if (sessionAtSpecifiedTime(year , month , day , hour) == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * @param year
+     * @param month
+     * @param day
+     * @param hour
+     * @return session at the specified time, if it exists. If it does not exist, return null.
+     */
+    public Session sessionAtSpecifiedTime(int year , int month , int day , int hour) {
         for (Session session : sessions) {
             if (session.getYear() == year &&
-            session.getMonth() == month &&
-            session.getDay() == day &&
-            session.getHour() == hour) {
-                return true;
+                    session.getMonth() == month &&
+                    session.getDay() == day &&
+                    session.getHour() == hour) {
+                return session;
             }
         }
-        return false;
+        return null;
     }
 
     /**
@@ -530,22 +549,17 @@ public class Store {
 
     /**
      * Removes customer from waitlist at the specified session, if applicable, or does nothing.
-     * NOTE: This method does not update any fields in any customer object. To do so,
-     * other methods must be called from the Customer class.
+     * This method updates the correct store and customer objects and saves them.
      */
     public void declineAppointmentAtTime(int year , int month, int day , int hour ,
-                                         String customerName) {
-        try {
-            for (Session session : sessions) {
-                if (session.getYear() == year &&
-                        session.getMonth() == month &&
-                        session.getDay() == day &&
-                        session.getHour() == hour) {
-                    session.removeFromWaitingList(customerName);
-                }
+                                         Customer customer) {
+        for (Session session : sessions) {
+            if (session.getYear() == year &&
+                    session.getMonth() == month &&
+                    session.getDay() == day &&
+                    session.getHour() == hour) {
+                session.removeFromWaitingList(customer.getName());
             }
-        } catch (Exception exception) {
-            return;
         }
     }
 

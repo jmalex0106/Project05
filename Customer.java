@@ -126,4 +126,46 @@ public class Customer {
             System.out.println("An error has occurred.");
         }
     }
+
+    public void removeFromWaitlistAtTime(int year,int month , int day , int hour, String storeName) {
+        for (Session session:waitingRequest) {
+            if (session.getYear() == year &&
+                    session.getMonth() == month &&
+                    session.getDay() == day &&
+                    session.getHour() == hour &&
+                    session.getStore().equals(storeName)){
+                waitingRequest.remove(session);
+            }
+        }
+    }
+
+    public void removeFromApprovedlistAtTime(int year,int month , int day , int hour, String storeName) {
+        for (Session session:approvedRequest) {
+            if (session.getYear() == year &&
+                    session.getMonth() == month &&
+                    session.getDay() == day &&
+                    session.getHour() == hour &&
+                    session.getStore().equals(storeName)){
+                approvedRequest.remove(session);
+            }
+        }
+    }
+
+    public void approveAppointmentAtTime(int year , int month, int day , int hour ,
+                                         String storeName) {
+        try {
+            for (Session session : waitingRequest) {
+                if (session.getYear() == year &&
+                        session.getMonth() == month &&
+                        session.getDay() == day &&
+                        session.getHour() == hour &&
+                        session.getStore().equals(storeName)) {
+                    waitingRequest.remove(session);
+                    approvedRequest.add(session);
+                }
+            }
+        } catch (Exception exception) {
+            return;
+        }
+    }
 }
