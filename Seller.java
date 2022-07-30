@@ -1,6 +1,13 @@
 import java.util.ArrayList;
 import java.io.*;
 
+/**
+ * TODO ADD DESCRIPTIVE JAVADOCS
+ *
+ * @author Moxiao Li, Junmo Kim, Aidan Davis Lab 03 Group 08
+ * @version date
+ */
+
 public class Seller {
     private String name;
     private ArrayList<Store> stores;
@@ -83,10 +90,46 @@ public class Seller {
                 }
                 line = bufferedReader.readLine();
             }
-        } catch (Exception exception){
+        } catch (Exception exception) {
             //Exception handling
         }
         return output;
     }
-}
 
+    public String[] createStoreStatisticsToStringArray() {
+        String[] output = new String[stores.size()];
+        for (int i = 0; i < output.length; i++) {
+            output[i] = stores.get(i).getMostPopularDaysOfWeekToString();
+        }
+        return output;
+    }
+
+    public String createUnsortedSellerStatisticsToString() {
+        String output = "";
+        String[] storeStatisticsArray = createStoreStatisticsToStringArray();
+        for (int i = 0; i < storeStatisticsArray.length; i++) {
+            output += storeStatisticsArray[i];
+        }
+        return output;
+    }
+
+    public String createSortedSellerStatisticsToString() {
+        String output = "";
+        //Sets int maxCustomers to the maximum number of unique customers at a store
+        //that this seller owns
+        int maxCustomers = 0;
+        for (int i = 0; i < stores.size(); i++) {
+            if (maxCustomers < stores.get(i).getUniqueCustomers().size()) {
+                maxCustomers = stores.get(i).getUniqueCustomers().size();
+            }
+        }
+        for (int i = maxCustomers; i <= 0; i--) {
+            for (int j = 0; j < stores.size(); j++) {
+                if (stores.get(j).getUniqueCustomers().size() == i) {
+                    output += stores.get(j).createStatisticsToString();
+                }
+            }
+        }
+        return output;
+    }
+}
