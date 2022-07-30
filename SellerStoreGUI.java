@@ -3,13 +3,28 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class SellerStoreGUI implements Runnable {
-    private static final String[] appList = {"Select Appointment", "Indiana University"};
+/**
+ * TODO ADD DESCRIPTIVE JAVADOCS
+ *
+ * @author Moxiao Li, Junmo Kim, Aidan Davis Lab 03 Group 08
+ * @version date
+ */
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new SellerStoreGUI());
+public class SellerStoreGUI implements Runnable {
+    private static final String[] APP_LIST = {"Select Appointment"};
+
+    private Seller seller;
+
+    private Store store;
+
+    public SellerStoreGUI(Seller seller, Store store) {
+        this.seller = seller;
+        this.store = store;
     }
 
+    public void playGUI() {
+        SwingUtilities.invokeLater(new SellerStoreGUI(seller, store));
+    }
 
     @Override
     public void run() {
@@ -22,7 +37,7 @@ public class SellerStoreGUI implements Runnable {
         // Menu Panel
         JPanel panel1 = new JPanel(new GridLayout(2, 2)); // 2x2
 
-        JComboBox<String> appointmentDropDown = new JComboBox<>(appList);
+        JComboBox<String> appointmentDropDown = new JComboBox<>(APP_LIST);
         panel1.add(appointmentDropDown); // (1,1)
 
         JButton appointmentConfirm = new JButton("Confirm");
@@ -33,10 +48,8 @@ public class SellerStoreGUI implements Runnable {
         backToTutor.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new SellerMenuGUI();
+                new SellerMenuGUI(seller).playGUI();
                 frame.dispose();
-
-
             }
         });
         panel1.add(backToTutor); // (2,1)
@@ -58,7 +71,5 @@ public class SellerStoreGUI implements Runnable {
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-
-
     }
 }
