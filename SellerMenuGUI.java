@@ -7,26 +7,50 @@ import java.awt.event.ActionListener;
  * TODO ADD DESCRIPTIVE JAVADOCS
  *
  * @author Moxiao Li, Junmo Kim, Aidan Davis Lab 03 Group 08
- *
  * @version date
  */
 public class SellerMenuGUI implements Runnable {
-    private static final String[] STORE = {"Select Store", "Indiana University"};
+    private Seller seller;  //The seller that is associated with this GUI
 
-    private static final String[] STATISTICS = {"The most popular appointment", "other options"};
+    public SellerMenuGUI(Seller seller) {
+        this.seller = seller;
+    }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new SellerMenuGUI());
+    /**
+     * Returns the names of all the stores that this seller owns in a String array to display
+     *
+     * @return
+     */
+    public String[] listAllStores() {
+        String[] output = new String[this.seller.getStores().size()];
+        for (int i = 0; i < this.seller.getStores().size(); i++) {
+            output[i] = this.seller.getStores().get(i).getName();
+        }
+        return output;
+    }
+
+    public Store getStoreWithName(String storeName) {
+        for (Store store : this.seller.getStores()) {
+            if (store.getName().equals(storeName)) {
+                return store;
+            }
+        }
+        return this.seller.getStores().get(0);
+    }
+
+    private static final String[] STATISTICS = {"View sorted statistics", "View unsorted statistics"};
+
+    public void playGUI() {
+        SwingUtilities.invokeLater(new SellerMenuGUI(seller));
     }
 
     @Override
     public void run() {
-        JFrame frame = new JFrame("Welcome Tutor");
+        JFrame frame = new JFrame("Welcome " + seller.getName() + "!");
 
         Container content = frame.getContentPane();
 
         content.setLayout(new BorderLayout());
-
 
         // Menu Panel - Panel1
         JPanel panel1 = new JPanel(new GridLayout(3, 3)); // 3x3
@@ -39,7 +63,7 @@ public class SellerMenuGUI implements Runnable {
         panel1.add(labelStore); // (1,1)
 
         // gridBagConstraints.gridx = 1;
-        JComboBox<String> storeDropdown = new JComboBox<>(STORE);
+        JComboBox<String> storeDropdown = new JComboBox<>(listAllStores());
         panel1.add(storeDropdown); // (1,2)
 
         // gridBagConstraints.gridx = 2;
@@ -47,8 +71,11 @@ public class SellerMenuGUI implements Runnable {
         confirmStore.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SellerStoreGUI ssg = new SellerStoreGUI();
-
+                SellerStoreGUI ssg = new SellerStoreGUI(seller,
+                        getStoreWithName(storeDropdown.getSelectedItem().toString()));
+                //TODO make this SellerMenuGUI close when ssg.playGUI is called
+                frame.dispose();
+                ssg.playGUI();
             }
         });
         panel1.add(confirmStore); // (1, 3)
@@ -66,6 +93,15 @@ public class SellerMenuGUI implements Runnable {
 
         // gridBagConstraints.gridx = 2;
         JButton confirmStat = new JButton("Confirm");
+        confirmStat.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO: send selection (sorted or unsorted statistics) to server,
+                //TODO: receive appropriate statistics toString from server, and display
+                //TODO: the statisticsViewGUI for this seller.
+                frame.dispose();
+            }
+        });
         panel1.add(confirmStat); // (2,3)
 
         // // Open New Store
@@ -73,7 +109,14 @@ public class SellerMenuGUI implements Runnable {
         // gridBagConstraints.gridy = 2;
 
         JButton openNewStore = new JButton("Open new Store");
-        openNewStore.setSize(50, 50); // add action listener
+        openNewStore.setSize(50, 50);
+        openNewStore.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO display open new Store GUI and delete test line below
+                System.out.println("OPEN STORE BUTTON PRESSED");
+            }
+        });
         panel1.add(openNewStore); // (3,1)
 
         // // Return to Main Menu
@@ -101,6 +144,4 @@ public class SellerMenuGUI implements Runnable {
         frame.setVisible(true);
 
     }
-
-
 }
