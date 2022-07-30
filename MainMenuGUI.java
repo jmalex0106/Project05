@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.net.URI;
 
 public class MainMenuGUI implements Runnable {
+    public static final String[] TUTOR_STUDENT = new String[]{"Student", "Tutor"};
+
     public MainMenuGUI() {
     }
 
@@ -43,20 +45,6 @@ public class MainMenuGUI implements Runnable {
 
         // // sign in button
         JButton signInButton = new JButton("Create new account");
-        signInButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //TODO make the create new account button work. This button needs to:
-                /**
-                 * 1. Display a JOptionPane that lets the user select if the new account is for a tutor or a student
-                 * 2. Send the values entered in the username, password, and email boxes to the server
-                 * 3. Recieve a boolean from the server
-                 * 4. Display a JOptionPane with message depending on this boolean
-                 */
-                frame.dispose();
-                new MainMenuGUI().playGUI();
-            }
-        });
         panel1.add(signInButton); // (2,3)
 
         // Mystery option
@@ -70,10 +58,8 @@ public class MainMenuGUI implements Runnable {
                     Desktop desktop = Desktop.getDesktop();
                     desktop.browse(new URI(videoURL));
                     frame.dispose();
-                    new MainMenuGUI().playGUI();
                 } catch (Exception exception) {
                     frame.dispose();
-                    new MainMenuGUI().playGUI();
                 }
             }
         });
@@ -120,6 +106,37 @@ public class MainMenuGUI implements Runnable {
                     //TODO play customerMenuGUI
                     frame.dispose();
                 }
+            }
+        });
+
+        signInButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = usernameTextField.getText();
+                String password = passwordTextField.getText();
+                String email = emailTextField.getText();
+                int isTutorInt = JOptionPane.showOptionDialog(frame, "Select whether your account is " +
+                                "for a tutor or a student:",
+                        "Create Account",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, TUTOR_STUDENT, TUTOR_STUDENT[0]);
+                frame.dispose();
+                boolean isTutor = false;
+                if (isTutorInt == 1) {
+                    isTutor = true;
+                }
+                //TODO send username,password,email,and isTutor to server. Server runs ServerMethods.createNewAccount
+                //TODO and sends back a boolean. Set boolean accountCreated to this boolean.
+                boolean accountCreated = true;
+                if (accountCreated) {
+                    JOptionPane.showMessageDialog(null,
+                            "Account created successfully for " + username +
+                                    "\n Please log in!");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Invalid account information\n" +
+                            "Please ensure your username is unique, your password is long enough, and your" +
+                            " email is valid.");
+                }
+                new MainMenuGUI().playGUI();
             }
         });
     }

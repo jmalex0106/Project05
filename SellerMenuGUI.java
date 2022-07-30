@@ -123,6 +123,13 @@ public class SellerMenuGUI implements Runnable {
         // gridBagConstraints.gridy = 2;
         // gridBagConstraints.gridx = 2;
         JButton returnMain = new JButton("Main Menu");
+        returnMain.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+                new MainMenuGUI().playGUI();
+            }
+        });
         panel1.add(returnMain); // (3,2)
 
         // // Exit
