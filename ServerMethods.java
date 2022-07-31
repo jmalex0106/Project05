@@ -295,6 +295,49 @@ public class ServerMethods {
     }
 
     /**
+     * Cancels the appointment at the index appointmentIndex for a certain customer
+     * @param customer
+     * @param appointmentIndex
+     */
+    public void customerCancelAppointmentAtIndex(Customer customer , int appointmentIndex) {
+        Session sessionToCancel = customer.getApprovedRequest().get(appointmentIndex);
+        customer.getApprovedRequest().remove(appointmentIndex);
+        String storeName = customer.getApprovedRequest().get(appointmentIndex).getStore();
+        String sellerName = "";
+        //Creates store from storeName
+        try {
+            File file = new File ("AllStores.txt");
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                if (line.split(",")[0].equals(storeName)) {
+                    sellerName = line.split(",")[1];
+                }
+                break;
+            }
+            Store store = new Store(storeName , sellerName);
+            store.remakeStoreFromFile();
+            for (Session session : store.getSessions()) {
+                if (session.getYear() ==
+                        customer.getApprovedRequest().get(appointmentIndex).getYear() &&
+                        session.getMonth() ==
+                                customer.getApprovedRequest().get(appointmentIndex).getMonth() &&
+                        session.getDay() ==
+                                customer.getApprovedRequest().get(appointmentIndex).getDay() &&
+                        session.getHour() ==
+                                customer.getApprovedRequest().get(appointmentIndex).getHour()) {
+                    session.removeFromEnrolledList(customer.getName());
+                }
+            }
+            store.makeFileFromStore();
+        } catch (Exception exception) {
+            int catchInt = 1;
+        }
+        customer.remakeFileFromCustomer();
+    }
+
+    /**
      * @param year
      * @param month
      * @param day

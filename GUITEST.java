@@ -11,6 +11,8 @@ public class GUITEST {
         seller.makeFileFromSeller();
         seller.getStores().add(store);
         seller.getStores().add(store1);
+        Session session = new Session(12 , 15 , 8 , 2022, store.getName());
+        store.getSessions().add(session);
         SellerMenuGUI sellerMenuGUI = new SellerMenuGUI(seller);
         sellerMenuGUI.playGUI();
     }
@@ -30,7 +32,7 @@ public class GUITEST {
         seller.getStores().add(store);
         seller.getStores().add(store1);
         Customer customer = new Customer("Tom");
-        new NewAppointmentRequest(customer ,store).playGUI();
+        new NewAppointmentRequest(customer , store).playGUI();
     }
 
     public void CustomerSelectStoreTest() {
@@ -42,7 +44,6 @@ public class GUITEST {
         new MainMenuGUI().playGUI();
     }
     public static void main(String[] args) {
-        GUITEST guitest = new GUITEST();
-        guitest.CustomerMenuGUITest();
+        new GUITEST().MainMenuTest();
     }
 }
