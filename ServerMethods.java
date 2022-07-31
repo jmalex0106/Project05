@@ -181,10 +181,10 @@ public class ServerMethods {
      *
      * @param customer
      * @param storeName
-     * @param year
-     * @param month
-     * @param day
-     * @param hour
+     * @param yearString
+     * @param monthString
+     * @param dayString
+     * @param hourString
      * @return Each int from 0 to 6 corresponds to a different message to be displayed to
      * the user, a customer. These messages are approximations, actual JOptionpane may be different.
      * 0 - You have been added to the waitlist successfully
@@ -197,8 +197,13 @@ public class ServerMethods {
      * 5 - The store you have entered is closed on the date and time you have entered. Please
      * enter a valid date. Waitlist has not been updated.
      */
-    public int requestAppointment(Customer customer, String storeName, int year,
-                                  int month, int day, int hour) {
+    public int requestAppointment(Customer customer, String storeName, String yearString,
+                                  String monthString, String dayString, String hourString) {
+        //Converts year, month , day , and hour to ints
+        int year = Integer.parseInt(yearString.trim());
+        int month = monthFormat(monthString);
+        int day = dayFormat(dayString);
+        int hour = hourFormat(hourString);
         //Searches if the store under storeName exists in AllStores.txt.
         try {
             String storeOwner = "";
