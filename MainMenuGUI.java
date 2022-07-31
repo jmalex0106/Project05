@@ -103,7 +103,7 @@ public class MainMenuGUI implements Runnable {
                 } else if (login == 2) {
                     //TODO receive the appropriate customer from server and set customer
                     Customer customer = new Customer("Tom");
-                    //TODO play customerMenuGUI
+                    new CustomerMenuGUI(customer).playGUI();
                     frame.dispose();
                 }
             }
