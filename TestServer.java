@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.*;
-import java.util.Scanner;
 
 public class TestServer {
     ServerSocket serverSocket;
@@ -13,14 +12,12 @@ public class TestServer {
     ServerMethods serverMethods;
     BufferedReader messageIn;
     BufferedWriter messageOut;
-    Scanner scanner;
 
     public TestServer() {
         threads = new ArrayList<Thread>();
         System.out.println("Server Started...");
         System.out.println("Awaiting clients to connect...");
         serverMethods = new ServerMethods();
-        scanner = new Scanner(System.in);
     }
 
     public void openServer() {
@@ -135,9 +132,9 @@ public class TestServer {
                         //TODO: need to tweak this if statement a bit
                         for (int i = 0; i < sessions.size(); i++) {
                             if (sessions.get(i).getYear() == currentYear &&
-                            sessions.get(i).getMonth() == currentMonth &&
-                            sessions.get(i).getDay() >= currentDay &&
-                            sessions.get(i).getEnrolledCustomers().size() != 0) {
+                                    sessions.get(i).getMonth() == currentMonth &&
+                                    sessions.get(i).getDay() >= currentDay &&
+                                    sessions.get(i).getEnrolledCustomers().size() != 0) {
                                 mySessions.add(sessions.get(i));
                             }
                         }
@@ -157,7 +154,7 @@ public class TestServer {
 
                         ArrayList<ArrayList<String>> waitList = new ArrayList<>();
                         for (int i = 0; i < mySessions.size(); i++) {
-                           waitList.add(mySessions.get(i).getWaitingCustomers());
+                            waitList.add(mySessions.get(i).getWaitingCustomers());
                         }
 
                         String[] waitStr = waitList.toArray(new String[waitList.size()]);
