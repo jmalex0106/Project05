@@ -2,20 +2,24 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.Socket;
 import java.util.ArrayList;
 
 public class SelectStoreToRequestGUI implements Runnable {
     private Customer customer;
     private Store[] allStores;
+    private Socket socket;
 
-    public SelectStoreToRequestGUI(Customer customer) {
+    public SelectStoreToRequestGUI(Customer customer , Socket socket) {
         this.customer = customer;
         //TODO server runs ServerMethods.allStores() and sends an array list of stores to client
         //TODO this.allStores is set to this array list of stores and converts it to an array.
+        this.socket = socket;
     }
 
     public void playGUI() {
-        SwingUtilities.invokeLater(new SelectStoreToRequestGUI(customer));
+        SwingUtilities.invokeLater(
+                new SelectStoreToRequestGUI(customer , socket));
     }
 
     @Override
@@ -42,7 +46,7 @@ public class SelectStoreToRequestGUI implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
-                new CustomerMenuGUI(customer).playGUI();
+                new CustomerMenuGUI(customer , socket).playGUI();
             }
         });
         panel1.add(backButton);  // (2,2)

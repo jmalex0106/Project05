@@ -15,12 +15,14 @@ import java.net.Socket;
  */
 public class CustomerMenuGUI implements Runnable {
     private Customer customer;
-    public CustomerMenuGUI(Customer customer) {
+    private Socket socket;
+    public CustomerMenuGUI(Customer customer , Socket socket) {
         this.customer = customer;
+        this.socket = socket;
     }
 
     public void playGUI() {
-        SwingUtilities.invokeLater(new CustomerMenuGUI(customer));
+        SwingUtilities.invokeLater(new CustomerMenuGUI(customer, socket));
     }
 
     @Override
@@ -67,7 +69,7 @@ public class CustomerMenuGUI implements Runnable {
         cancelAppointment.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new CustomerCancelAppointmentGUI(customer)
+                new CustomerCancelAppointmentGUI(customer , socket)
                         .playGUI();
             }
         });
@@ -94,7 +96,7 @@ public class CustomerMenuGUI implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
-                new CustomerSelectStoreGUI(customer).playGUI();
+                new CustomerSelectStoreGUI(customer , socket).playGUI();
             }
         });
         panel1.add(requestNewAppointment);// (3,1)

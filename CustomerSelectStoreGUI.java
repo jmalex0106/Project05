@@ -2,16 +2,19 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.Socket;
 
 public class CustomerSelectStoreGUI implements Runnable {
     private Customer customer;
+    private Socket socket;
 
-    public CustomerSelectStoreGUI(Customer customer) {
+    public CustomerSelectStoreGUI(Customer customer , Socket socket) {
         this.customer = customer;
+        this.socket = socket;
     }
 
     public void playGUI() {
-        SwingUtilities.invokeLater(new CustomerSelectStoreGUI(customer));
+        SwingUtilities.invokeLater(new CustomerSelectStoreGUI(customer , socket));
     }
 
     @Override
@@ -41,7 +44,7 @@ public class CustomerSelectStoreGUI implements Runnable {
                 //TODO client sets the variable Store selectedStore to this store.
                 Store selectedStore = new Store("JunmoMath" , "Junmo");
                 frame.dispose();
-                new NewAppointmentRequest(customer , selectedStore).playGUI();
+                new NewAppointmentRequest(customer , selectedStore , socket).playGUI();
             }
         });
 
@@ -50,7 +53,7 @@ public class CustomerSelectStoreGUI implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
-                new CustomerMenuGUI(customer).playGUI();
+                new CustomerMenuGUI(customer , socket).playGUI();
             }
         });
 

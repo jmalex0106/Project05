@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.Socket;
 
 /**
  * TODO ADD DESCRIPTIVE JAVADOCS
@@ -18,13 +19,16 @@ public class SellerStoreGUI implements Runnable {
 
     private Store store;
 
-    public SellerStoreGUI(Seller seller, Store store) {
+    private Socket socket;
+
+    public SellerStoreGUI(Seller seller, Store store , Socket socket) {
         this.seller = seller;
         this.store = store;
+        this.socket = socket;
     }
 
     public void playGUI() {
-        SwingUtilities.invokeLater(new SellerStoreGUI(seller, store));
+        SwingUtilities.invokeLater(new SellerStoreGUI(seller, store , socket));
     }
 
     @Override
@@ -59,7 +63,7 @@ public class SellerStoreGUI implements Runnable {
                 int appointmentSelected = appointmentDropDown.getSelectedIndex();
                 Session session = store.getSessions().get(appointmentSelected);
                 frame.dispose();
-                new SessionGUI(seller , store , session).playGUI();
+                new SessionGUI(seller , store , session , socket).playGUI();
             }
         });
         panel1.add(appointmentConfirm); // (1,2)
@@ -68,7 +72,7 @@ public class SellerStoreGUI implements Runnable {
         backToTutor.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new SellerMenuGUI(seller).playGUI();
+                new SellerMenuGUI(seller , socket).playGUI();
                 frame.dispose();
             }
         });

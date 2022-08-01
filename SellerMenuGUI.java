@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.Socket;
 
 /**
  * TODO ADD DESCRIPTIVE JAVADOCS
@@ -11,9 +12,11 @@ import java.awt.event.ActionListener;
  */
 public class SellerMenuGUI implements Runnable {
     private Seller seller;  //The seller that is associated with this GUI
+    private Socket socket;
 
-    public SellerMenuGUI(Seller seller) {
+    public SellerMenuGUI(Seller seller , Socket socket) {
         this.seller = seller;
+        this.socket = socket;
     }
 
     /**
@@ -41,7 +44,7 @@ public class SellerMenuGUI implements Runnable {
     private static final String[] STATISTICS = {"View sorted statistics", "View unsorted statistics"};
 
     public void playGUI() {
-        SwingUtilities.invokeLater(new SellerMenuGUI(seller));
+        SwingUtilities.invokeLater(new SellerMenuGUI(seller , socket));
     }
 
     @Override
@@ -72,7 +75,7 @@ public class SellerMenuGUI implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 SellerStoreGUI ssg = new SellerStoreGUI(seller,
-                        getStoreWithName(storeDropdown.getSelectedItem().toString()));
+                        getStoreWithName(storeDropdown.getSelectedItem().toString()) , socket);
                 frame.dispose();
                 ssg.playGUI();
             }

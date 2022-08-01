@@ -2,16 +2,19 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.Socket;
 
 public class CustomerCancelAppointmentGUI implements Runnable {
     private Customer customer;
+    private Socket socket;
 
-    public CustomerCancelAppointmentGUI(Customer customer) {
+    public CustomerCancelAppointmentGUI(Customer customer , Socket socket) {
         this.customer = customer;
+        this.socket = socket;
     }
 
     public void playGUI() {
-        SwingUtilities.invokeLater(new CustomerCancelAppointmentGUI(customer));
+        SwingUtilities.invokeLater(new CustomerCancelAppointmentGUI(customer , socket));
     }
 
     @Override
@@ -43,7 +46,7 @@ public class CustomerCancelAppointmentGUI implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
-                new CustomerMenuGUI(customer).playGUI();
+                new CustomerMenuGUI(customer , socket ).playGUI();
             }
         });
 
@@ -56,7 +59,7 @@ public class CustomerCancelAppointmentGUI implements Runnable {
                 //TODO ServerMethods.customerCancelAppointmentAtIndex
                 JOptionPane.showMessageDialog(frame , "Appointment cancelled successfully");
                 frame.dispose();
-                new CustomerMenuGUI(customer).playGUI();
+                new CustomerMenuGUI(customer , socket).playGUI();
             }
         });
         panel.add(backButton);

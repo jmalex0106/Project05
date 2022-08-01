@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.Socket;
 
 /**
  * This GUI opens from SellerStoreGUI after the user has selected a session
@@ -10,15 +11,17 @@ public class SessionGUI implements Runnable {
     private Seller seller;
     private Store store;
     private Session session;
+    private Socket socket;
 
-    public SessionGUI(Seller seller , Store store , Session session) {
+    public SessionGUI(Seller seller , Store store , Session session , Socket socket) {
         this.seller = seller;
         this.store = store;
         this.session = session;
+        this.socket = socket;
     }
 
     public void playGUI () {
-        SwingUtilities.invokeLater(new SessionGUI(seller , store , session));
+        SwingUtilities.invokeLater(new SessionGUI(seller , store , session , socket));
     }
 
     @Override
@@ -63,7 +66,7 @@ public class SessionGUI implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
-                new SellerStoreGUI(seller , store).playGUI();
+                new SellerStoreGUI(seller , store , socket).playGUI();
             }
         });
         panel1.add(back);

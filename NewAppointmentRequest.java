@@ -3,17 +3,21 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.Socket;
 
 public class NewAppointmentRequest implements Runnable {
     private Customer customer;
     private Store store;
-    public NewAppointmentRequest(Customer customer , Store store) {
+    private Socket socket;
+    public NewAppointmentRequest(Customer customer , Store store , Socket socket) {
         this.customer = customer;
         this.store = store;
+        this.socket = socket;
 
     }
     public void playGUI () {
-        SwingUtilities.invokeLater(new NewAppointmentRequest(customer , store));
+        SwingUtilities.invokeLater(
+                new NewAppointmentRequest(customer , store , socket));
     }
 
     @Override
@@ -88,7 +92,7 @@ public class NewAppointmentRequest implements Runnable {
                     }
                 }
                 frame.dispose();
-                new CustomerMenuGUI(customer).playGUI();
+                new CustomerMenuGUI(customer , socket).playGUI();
             }
         });
 
@@ -131,7 +135,7 @@ public class NewAppointmentRequest implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
-                new CustomerMenuGUI(customer).playGUI();
+                new CustomerMenuGUI(customer , socket).playGUI();
             }
         });
         panel2.add(backButton, gridBagConstraints);
