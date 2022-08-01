@@ -68,6 +68,10 @@ public class TestServer {
         }
     }
 
+    public static void main(String[] args) {
+        TestServer testServer = new TestServer();
+        testServer.openServer();
+    }
 
 
     class ServerThread extends Thread {
