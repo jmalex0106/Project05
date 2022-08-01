@@ -50,6 +50,19 @@ public class TestServer {
         System.out.println("Total Clients: " + threads.size());
     }
 
+    public static void send(Socket socket, Object obj) throws IOException {
+        ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+        oos.writeObject(obj);
+        oos.flush();
+    }
+
+    public static String receive(Socket socket) throws IOException {
+        BufferedReader bfr = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        String receivedMsg = bfr.readLine();
+        return receivedMsg;
+    }
+
+
 
     class ServerThread extends Thread {
         TestServer myServer;
