@@ -53,10 +53,19 @@ public class TestServer {
         oos.flush();
     }
 
-    public static String receive(Socket socket) throws IOException {
-        BufferedReader bfr = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        String receivedMsg = bfr.readLine();
-        return receivedMsg;
+    public static void receive(Socket socket) throws IOException { // checks the operation number and performs the operations
+        ObjectInputStream ois = new ObjectInputStream((socket.getInputStream()));
+        try {
+            Object obj = ois.readObject(); //read object
+            if (obj.getClass().isArray()) {
+                String[] tmpArr = (String[]) obj;
+                if (tmpArr.length == 3 && tmpArr[0].equals("1")) {
+                    send(socket, new ServerMethods().searchForValidLogin(tmpArr[1] , tmpArr[2]));
+                }
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -132,9 +141,9 @@ public class TestServer {
                         //TODO: need to tweak this if statement a bit
                         for (int i = 0; i < sessions.size(); i++) {
                             if (sessions.get(i).getYear() == currentYear &&
-                                    sessions.get(i).getMonth() == currentMonth &&
-                                    sessions.get(i).getDay() >= currentDay &&
-                                    sessions.get(i).getEnrolledCustomers().size() != 0) {
+                            sessions.get(i).getMonth() == currentMonth &&
+                            sessions.get(i).getDay() >= currentDay &&
+                            sessions.get(i).getEnrolledCustomers().size() != 0) {
                                 mySessions.add(sessions.get(i));
                             }
                         }
@@ -154,7 +163,7 @@ public class TestServer {
 
                         ArrayList<ArrayList<String>> waitList = new ArrayList<>();
                         for (int i = 0; i < mySessions.size(); i++) {
-                            waitList.add(mySessions.get(i).getWaitingCustomers());
+                           waitList.add(mySessions.get(i).getWaitingCustomers());
                         }
 
                         String[] waitStr = waitList.toArray(new String[waitList.size()]);
