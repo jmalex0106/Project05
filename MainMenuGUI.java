@@ -11,11 +11,17 @@ import java.net.URI;
 public class MainMenuGUI implements Runnable {
     public static final String[] TUTOR_STUDENT = new String[]{"Student", "Tutor"};
     private Socket socket;
-    ClientMethods clientMethods = new ClientMethods();
+    private ObjectOutputStream objectOutputStream;
+    private ObjectInputStream objectInputStream;
 
     public MainMenuGUI() {
         try {
             socket = new Socket("localhost",1234);
+            this.objectOutputStream =
+                    new ObjectOutputStream(socket.getOutputStream());
+            System.out.println("CONSTRUCTED 0");
+            this.objectInputStream =
+                    new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null , "Failed to connect with server");
         }
@@ -117,11 +123,6 @@ public class MainMenuGUI implements Runnable {
                 //TODO from server and set login to this int
                 try {
                     System.out.println("TRY");
-                    ObjectInputStream objectInputStream =
-                            new ObjectInputStream(socket.getInputStream());
-                    System.out.println("CONSTRUCTED 0");
-                    ObjectOutputStream objectOutputStream =
-                            new ObjectOutputStream(socket.getOutputStream());
                     System.out.println("CONSTRUCTED 1");
                     objectOutputStream.writeObject(credentials);
                     objectOutputStream.flush();
@@ -138,7 +139,7 @@ public class MainMenuGUI implements Runnable {
                         //TODO receive the appropriate seller from server and set seller to that seller
                         Seller seller = new Seller("Bob");
                         frame.dispose();
-                        new SellerMenuGUI(seller).playGUI();
+                        new SellerMenuGUI(seller , socket).playGUI();
                     } else if (login == 2) {
                         System.out.println("LOGIN = 2 RUNNING");
                         //TODO receive the appropriate customer from server and set customer
@@ -152,7 +153,7 @@ public class MainMenuGUI implements Runnable {
                             Customer customer = (Customer) customerObject;
                             System.out.println(customer.getName());
                             frame.dispose();
-                            new CustomerMenuGUI(customer).playGUI();
+                            new CustomerMenuGUI(customer , socket).playGUI();
                         }
                     }
                 } catch (IOException ex) {
