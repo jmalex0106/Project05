@@ -73,7 +73,6 @@ public class SellerMenuGUI implements Runnable {
             public void actionPerformed(ActionEvent e) {
                 SellerStoreGUI ssg = new SellerStoreGUI(seller,
                         getStoreWithName(storeDropdown.getSelectedItem().toString()));
-                //TODO make this SellerMenuGUI close when ssg.playGUI is called
                 frame.dispose();
                 ssg.playGUI();
             }
@@ -97,9 +96,11 @@ public class SellerMenuGUI implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //TODO: send selection (sorted or unsorted statistics) to server,
-                //TODO: receive appropriate statistics toString from server, and display
-                //TODO: the statisticsViewGUI for this seller.
-                frame.dispose();
+                //TODO: receive appropriate statistics toString from server, and
+                //TODO: set String statistics to this toString.
+                String statistics = "statistics";
+                JOptionPane.showMessageDialog(frame,
+                        statistics);
             }
         });
         panel1.add(confirmStat); // (2,3)
