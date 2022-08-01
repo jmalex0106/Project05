@@ -2,12 +2,21 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.Socket;
 import java.net.URI;
 
 public class MainMenuGUI implements Runnable {
     public static final String[] TUTOR_STUDENT = new String[]{"Student", "Tutor"};
+    Socket socket;
+    ClientMethods clientMethods = new ClientMethods();
 
     public MainMenuGUI() {
+        try {
+            socket = new Socket("",1234);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void playGUI() {
@@ -89,9 +98,21 @@ public class MainMenuGUI implements Runnable {
                 // grab input information
                 String username = usernameTextField.getText();
                 String password = passwordTextField.getText();
-                //TODO send username and password to server and recieve and int back
+                int result = 0;
+                //TODO send username and password to server and receive and int back
                 //TODO from server and set login to this int
-                int login = 2;
+                String[] credential =  new String[3];
+                int methodNum = 1;
+                credential[0] = String.valueOf(methodNum);
+                credential[1] = username;
+                credential[2] = password;
+                try {
+                    clientMethods.send(socket, credential);
+                    result = Integer.parseInt(clientMethods.receive(socket));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                int login = result;
                 if (login == 0) {
                     JOptionPane.showMessageDialog(frame,
                             "Invalid credentials entered. Please try again");
@@ -103,8 +124,9 @@ public class MainMenuGUI implements Runnable {
                 } else if (login == 2) {
                     //TODO receive the appropriate customer from server and set customer
                     Customer customer = new Customer("Tom");
-                    new CustomerMenuGUI(customer).playGUI();
+                    //TODO play customerMenuGUI
                     frame.dispose();
+                    new CustomerMenuGUI(customer).playGUI();
                 }
             }
         });
