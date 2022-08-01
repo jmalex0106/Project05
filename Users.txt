@@ -1,1 +1,3 @@
 Tutor,Aidan,a@b.c,123456
+Student,tom,tom@gmail.com,tom123
+Student,Junmo,junmo@realemail.yahoo,jun123

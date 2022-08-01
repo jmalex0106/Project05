@@ -1,6 +1,5 @@
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.*;
@@ -53,21 +52,6 @@ public class TestServer {
         oos.flush();
     }
 
-    public static void receive(Socket socket) throws IOException { // checks the operation number and performs the operations
-        ObjectInputStream ois = new ObjectInputStream((socket.getInputStream()));
-        try {
-            Object obj = ois.readObject(); //read object
-            if (obj.getClass().isArray()) {
-                String[] tmpArr = (String[]) obj;
-                if (tmpArr.length == 3 && tmpArr[0].equals("1")) {
-                    send(socket, new ServerMethods().searchForValidLogin(tmpArr[1] , tmpArr[2]));
-                }
-            }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void main(String[] args) {
         TestServer testServer = new TestServer();
         testServer.openServer();
@@ -85,135 +69,34 @@ public class TestServer {
 
         public void run() {
             try {
-                messageIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                messageOut = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                String input = messageIn.readLine();
-
-                /** TODO
-                 * true needs to change when create button clicked
-                 */
-                if (true) {
-                    messageOut.write("Student or Tutor?");
-                    if (input.equalsIgnoreCase("student")) {
-                        String userName = messageIn.readLine();
-                        String email = messageIn.readLine();
-                        String password = messageIn.readLine();
-                        serverMethods.createNewAccount(false, userName, email, password);
-                    } else if (input.equalsIgnoreCase("tutor")) {
-                        String userName = messageIn.readLine();
-                        String email = messageIn.readLine();
-                        String password = messageIn.readLine();
-                        serverMethods.createNewAccount(true, userName, email, password);
+                ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                while (true) {
+                    Object object = objectInputStream.readObject();
+                    if (object instanceof String[]) {
+                        String[] array = (String[]) object;
+                        System.out.println("TAG" + array[0]);
+                        if (array.length == 3 && array[0].equals("loginCredentials")) {
+                            objectOutputStream.writeObject(new ServerMethods().searchForValidLogin(array[1], array[2]));
+                            System.out.println("SENDING");
+                        } else if (array.length == 2 && array[0].equals("requestSeller")) {
+                            Seller seller = new Seller(array[1]);
+                            objectOutputStream.writeObject(seller);
+                            objectOutputStream.flush();
+                        } else if (array.length == 2 && array[0].equals("requestCustomer")) {
+                            Customer customer = new Customer(array[1]);
+                            System.out.println("T 0");
+                            objectOutputStream.writeObject(customer);
+                            System.out.println("T 1");
+                            objectOutputStream.flush();
+                            System.out.println("T 2");
+                        }
                     }
-
                 }
-
-                /** TODO
-                 * checking password
-                 * need to change the input, input when mixed with GUI
-                 * messageOut needs to change to JOptionPane Error
-                 */
-
-                if (serverMethods.searchForValidLogin(input, input) == 1) {
-                    // TODO: go to Tutor GUI
-                    ArrayList<String> allStores = serverMethods.allExistingStores();
-                    ArrayList<String> tutorStoreList = new ArrayList<>();
-                    // TODO: get tutor name
-                    String tutorName = "asdf";
-
-                    for (int i = 0; i < allStores.size(); i++) {
-                        if(allStores.get(i).substring(0, tutorName.length()).equals(tutorName)) {
-                            tutorStoreList.add(allStores.get(i));
-                        }
-                    }
-                    String[] tutorStoreArr = tutorStoreList.toArray(new String[tutorStoreList.size()]);
-                    // TODO: add tutorStoreArr to comboBox
-                    // ex) viewStore = new JComboBox(tutorStoreArr);
-                    if (true) { // TODO: when Confirmed was clicked for viewStore
-                        // TODO: get confirmed data
-                        // ex) String storeName = viewStore.getSelectedItem().toString();
-                        // TODO: go to Tutoring Service GUI
-                        String storeName = "sadf";
-                        Store store = new Store(storeName, tutorName);
-                        store.remakeStoreFromFile();
-                        ArrayList<Session> sessions = store.getSessions();
-                        ArrayList<Session> mySessions = new ArrayList<Session>();
-                        LocalDate currentDate = LocalDate.now();
-                        int currentYear = currentDate.getYear();
-                        int currentMonth = currentDate.getMonthValue();
-                        int currentDay = currentDate.getDayOfMonth();
-                        //TODO: need to tweak this if statement a bit
-                        for (int i = 0; i < sessions.size(); i++) {
-                            if (sessions.get(i).getYear() == currentYear &&
-                            sessions.get(i).getMonth() == currentMonth &&
-                            sessions.get(i).getDay() >= currentDay &&
-                            sessions.get(i).getEnrolledCustomers().size() != 0) {
-                                mySessions.add(sessions.get(i));
-                            }
-                        }
-                        ArrayList<String> appointment = new ArrayList<>();
-                        for (int i = 0; i < mySessions.size(); i++) {
-                            String year = String.valueOf(mySessions.get(i).getYear());
-                            String month = String.valueOf(mySessions.get(i).getMonth());
-                            String day = String.valueOf(mySessions.get(i).getDay());
-                            String hour = String.valueOf(mySessions.get(i).getHour());
-                            String location = store.getLocations()[i];
-                            appointment.add(year + "." + month + "." + day + "." + hour + location);
-                        }
-                        String[] appointmentArr = appointment.toArray(new String[appointment.size()]);
-                        // TODO: add appointment to comboBox
-                        // ex) selectAppointment = new JComboBox(appointmentArr);
-                        // TODO: when confirmed is clicked, go to Session GUI
-
-                        ArrayList<ArrayList<String>> waitList = new ArrayList<>();
-                        for (int i = 0; i < mySessions.size(); i++) {
-                           waitList.add(mySessions.get(i).getWaitingCustomers());
-                        }
-
-                        String[] waitStr = waitList.toArray(new String[waitList.size()]);
-                        // TODO: add waitStr to comboBox
-                        // ex) viewWaitList = new JComboBox(waitStr);
-
-                        ArrayList<ArrayList<String>> approveList = new ArrayList<>();
-                        for (int i = 0; i < mySessions.size(); i++) {
-                            approveList.add(mySessions.get(i).getEnrolledCustomers());
-                        }
-                        String[] approveStr = waitList.toArray(new String[approveList.size()]);
-                        // TODO: if confirmed (approve)
-                        if(true) {
-                            //serverMethods.approveAppointmentAtTime();
-                        }
-                        // TODO: add approveStr to comboBox
-                        // ex) viewWaitApprovedList = new JComboBox(approveStr);
-                        // TODO: if confirmed (decline)
-                        if(true) {
-                            //serverMethods.cancelAppointmentAtTime();
-                        }
-                        // TODO: message disproved
-
-
-                    } else if (true) { // TODO: when Confirmed was clicked for viewSeats
-                        // TODO: go to Tutoring Service GUI
-                    } else if (true) { // TODO: when Confirmed was clicked for openNewStore
-                        // TODO: go to csv import
-                    }
-
-                } else  if (serverMethods.searchForValidLogin(input, input) == 2) {
-                    // TODO: go to Student GUI
-                } else {
-                    // TODO: JOPTION Error
-                    messageOut.write("Invalid Username or Password!");
-                }
-
             } catch (IOException e) {
-                myServer.disconnect(this);
-                System.out.println(super.getName() + "disconnected...");
-            } finally {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                e.printStackTrace();
+            } catch (ClassNotFoundException classNotFoundException) {
+                classNotFoundException.printStackTrace();
             }
         }
     }

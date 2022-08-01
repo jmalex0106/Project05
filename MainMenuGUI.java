@@ -3,19 +3,21 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.URI;
 
 public class MainMenuGUI implements Runnable {
     public static final String[] TUTOR_STUDENT = new String[]{"Student", "Tutor"};
-    Socket socket;
+    private Socket socket;
     ClientMethods clientMethods = new ClientMethods();
 
     public MainMenuGUI() {
         try {
-            socket = new Socket("",1234);
+            socket = new Socket("localhost",1234);
         } catch (IOException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null , "Failed to connect with server");
         }
     }
 
@@ -95,38 +97,68 @@ public class MainMenuGUI implements Runnable {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                System.out.println("Button pressed");
                 // grab input information
                 String username = usernameTextField.getText();
                 String password = passwordTextField.getText();
-                int result = 0;
+                String[] credentials = new String[3];
+                String[] requestCustomer = new String[2];
+                String[] requestSeller = new String[2];
+                requestCustomer[0] = "requestCustomer";
+                requestSeller[0] = "requestSeller";
+                credentials[0] = "loginCredentials";
+                credentials[1] = username;
+                credentials[2] = password;
+                requestCustomer[1] = username;
+                requestSeller[1] = username;
+                int login = 0;
+                System.out.println("TESTLINE");
                 //TODO send username and password to server and receive and int back
                 //TODO from server and set login to this int
-                String[] credential =  new String[3];
-                int methodNum = 1;
-                credential[0] = String.valueOf(methodNum);
-                credential[1] = username;
-                credential[2] = password;
                 try {
-                    clientMethods.send(socket, credential);
-                    result = Integer.parseInt(clientMethods.receive(socket));
+                    System.out.println("TRY");
+                    ObjectInputStream objectInputStream =
+                            new ObjectInputStream(socket.getInputStream());
+                    System.out.println("CONSTRUCTED 0");
+                    ObjectOutputStream objectOutputStream =
+                            new ObjectOutputStream(socket.getOutputStream());
+                    System.out.println("CONSTRUCTED 1");
+                    objectOutputStream.writeObject(credentials);
+                    objectOutputStream.flush();
+                    System.out.println("WRITTEN");
+                    Object loginObject = objectInputStream.readObject();
+                    System.out.println("Login Object " + loginObject);
+                    if (loginObject instanceof Integer) {
+                        login = (Integer) loginObject;
+                    }
+                    if (login == 0) {
+                        JOptionPane.showMessageDialog(frame,
+                                "Invalid credentials entered. Please try again");
+                    } else if (login == 1) {
+                        //TODO receive the appropriate seller from server and set seller to that seller
+                        Seller seller = new Seller("Bob");
+                        frame.dispose();
+                        new SellerMenuGUI(seller).playGUI();
+                    } else if (login == 2) {
+                        System.out.println("LOGIN = 2 RUNNING");
+                        //TODO receive the appropriate customer from server and set customer
+                        objectOutputStream.writeObject(requestCustomer);
+                        objectOutputStream.flush();
+                        System.out.println("FLUSHED");
+                        Object customerObject = objectInputStream.readObject();
+                        System.out.println(customerObject);
+                        if (customerObject instanceof Customer) {
+                            System.out.println("OBJECT IS CUSTOMER");
+                            Customer customer = (Customer) customerObject;
+                            System.out.println(customer.getName());
+                            frame.dispose();
+                            new CustomerMenuGUI(customer).playGUI();
+                        }
+                    }
                 } catch (IOException ex) {
                     ex.printStackTrace();
-                }
-                int login = result;
-                if (login == 0) {
-                    JOptionPane.showMessageDialog(frame,
-                            "Invalid credentials entered. Please try again");
-                } else if (login == 1) {
-                    //TODO receive the appropriate seller from server and set seller to that seller
-                    Seller seller = new Seller("Bob");
-                    frame.dispose();
-                    new SellerMenuGUI(seller).playGUI();
-                } else if (login == 2) {
-                    //TODO receive the appropriate customer from server and set customer
-                    Customer customer = new Customer("Tom");
-                    //TODO play customerMenuGUI
-                    frame.dispose();
-                    new CustomerMenuGUI(customer).playGUI();
+                } catch (ClassNotFoundException classNotFoundException) {
+                    classNotFoundException.printStackTrace();
                 }
             }
         });

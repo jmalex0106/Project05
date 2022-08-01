@@ -9,7 +9,7 @@ import java.util.Locale;
  * @version date
  */
 
-public class Customer {
+public class Customer implements Serializable {
     private String name;
     ArrayList<Session> waitingRequest;
     ArrayList<Session> approvedRequest;

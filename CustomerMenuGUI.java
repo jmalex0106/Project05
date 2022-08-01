@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.Socket;
 
 /**
  * This GUI plays the initial customer menu after a customer logs in.
@@ -13,7 +15,6 @@ import java.awt.event.ActionListener;
  */
 public class CustomerMenuGUI implements Runnable {
     private Customer customer;
-
     public CustomerMenuGUI(Customer customer) {
         this.customer = customer;
     }
