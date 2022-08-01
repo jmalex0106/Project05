@@ -1,18 +1,22 @@
 # Project05
 
-Instructions on how to compile and run your project
+**Instructions on how to compile and run your project**
+
 Take the all of the classes within our compositor and all of the .txt files to run and compile the program. If you decide to make a new .txt file to upload, you have to make sure it is in the specific format that our program takes. 
 
-Users.txt
+**Users.txt**
+
 Each line of users.txt corresponds to a unique user, either a tutor or a seller. 
 Each line has format status,username,email,password 
 Status can either be “Tutor” or “Student”. It is case sensitive. 
 An example Users.txt file is:
 
 Tutor,MoxiaoLi,moxiao@gmail.com,mo12345
+
 Student,JunmoKim,junmo@gmail.com,junmo12345
 
-AllStores.txt
+**AllStores.txt**
+
 Each line of AllStores.txt corresponds to a store that exists.
 Each line has format storeName,sellerName
 
@@ -32,12 +36,19 @@ bobmathStore.txt.
 The first line is the username of the store owner
 
 The next seven lines each correspond to a day of the week (0 = Sunday, etc) and contain opening and closing information about the store for that day, separated by commas, in this order: isOpen,openHour,closeHour,capacity,location. 
+
 isOpen is “true” if the store open that day of the week, closed if not
+
 openHour is the hour that the store will open
+
 closeHour is the hour that the store will close
+
 capacity is the capacity of the store that day
+
 Location is the location of the store that day
+
 NOTE: if isOpen is false on a certain line, the entire line should just be “false”.
+
 The following lines each contain a name of the customer, thus listing out the elements of uniqueCustomers. 
 
 The next line is just the string “BREAK” in all caps.
