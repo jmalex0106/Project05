@@ -60,6 +60,66 @@ public class Store implements Serializable {
         this.sessions = new ArrayList<Session>();
     }
 
+    public void importFromCsv(File file) {
+        try {
+            File f = file;
+            FileReader fr = new FileReader(f);
+            BufferedReader bfr = new BufferedReader(fr);
+            ArrayList<String> list = new ArrayList<String>();
+            String line = bfr.readLine();
+            while (line != null) {
+                list.add(line);
+                line = bfr.readLine();
+            }
+            bfr.close();
+            this.isOpen = new boolean[7];
+
+
+            for (int i = 0; i < list.size(); i++) {
+                String[] tmpArr = list.get(i).split(",");
+                isOpen[i] = Boolean.parseBoolean(tmpArr[1]);
+            }
+
+            int daysOpen = 0;
+            for (int i = 0; i < isOpen.length; i++) {
+                if (isOpen[i]) {
+                    daysOpen++;
+                }
+            }
+
+            ArrayList<Integer> idxs = new ArrayList<Integer>();
+
+            for (int i = 0; i < list.size(); i++) {
+                String[] tmpArr = list.get(i).split(",");
+                if (Boolean.parseBoolean(tmpArr[1])) {
+                    idxs.add(i);
+                }
+            }
+
+            int[] openingTimesArr = new int[daysOpen];
+            int[] closingTimesArr = new int[daysOpen];
+            int[] capacitiesArr = new int[daysOpen];
+            String[] locationsArr = new String[daysOpen];
+
+            for (int i = 0; i < daysOpen; i++) {
+                String[] arr = list.get(idxs.get(i)).split(",");
+                openingTimesArr[i] = Integer.parseInt(arr[2]);
+                closingTimesArr[i] = Integer.parseInt(arr[3]);
+                capacitiesArr[i] = Integer.parseInt(arr[4]);
+                locationsArr[i] = arr[5];
+            }
+            this.openingTimes = openingTimesArr;
+            this.closingTimes = closingTimesArr;
+            this.capacities = capacitiesArr;
+            this.locations = locationsArr;
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public String getName() {
         return name;
     }

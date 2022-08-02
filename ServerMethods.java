@@ -1009,11 +1009,12 @@ public class ServerMethods {
             bufferedReader.close();
             Store store = new Store(storeName, seller.getName());
             //Reads the csv file at csvPath and imports the variables to the store
-            store.setupStoreInputChecks(makeIsOpenFromCSVFile(csvPath),
+            /*store.setupStoreInputChecks(makeIsOpenFromCSVFile(csvPath),
                     makeOpeningTimesFromCSVFile(csvPath),
                     makeClosingTimesFromCSVFile(csvPath),
                     makeCapacitiesFromCSVFile(csvPath),
-                    makeLocationsFromCSVFile(csvPath));
+                    makeLocationsFromCSVFile(csvPath));*/
+            store.importFromCsv(csvPath);
             store.setupStore();
             store.makeFileFromStore();
             return 0;
