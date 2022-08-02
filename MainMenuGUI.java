@@ -670,6 +670,7 @@ public class MainMenuGUI implements Runnable {
 
     //NEW APPOINTMENT REQUEST GUI CODE BELOW
     public void playNewAppointmentRequestGUI(Customer customer, Store store) {
+        String openTimes = store.showOpenedTimes();
         JFrame frame = new JFrame("Request a new appointment at " + store.getName());
 
         Container content = frame.getContentPane();
@@ -697,9 +698,9 @@ public class MainMenuGUI implements Runnable {
             public void actionPerformed(ActionEvent e) {
                 System.out.println("NEW APP BUTTON PRESSED");
                 String year = yearTextField.getText().trim();
-                String month = yearTextField.getText().trim();
-                String day = yearTextField.getText().trim();
-                String hour = yearTextField.getText().trim();
+                String month = monthTextField.getText().trim();
+                String day = dayTextField.getText().trim();
+                String hour = hourField.getText().trim();
                 int success = 100;
                 System.out.println("NEW APP SUCCESS " + success);
                 String[] customerRequestAppointment = new String[6];
@@ -790,7 +791,7 @@ public class MainMenuGUI implements Runnable {
         gridBagConstraints.ipadx = 220;
         gridBagConstraints.ipady = 115;
 
-        JLabel storeInfoLabel = new JLabel("10", SwingConstants.LEFT);
+        JLabel storeInfoLabel = new JLabel(openTimes, SwingConstants.LEFT);
 
         storeInfoLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         panel2.add(storeInfoLabel, gridBagConstraints);

@@ -180,17 +180,30 @@ public class TestServer {
                         } else if (customerStringPacket.getStrings()[0].equals(
                                 "customerRequestAppointment")) {
                             System.out.println("NEW APP RUNNING BLOCK");
+                            Store store =
+                                    serverMethods.getStoreWithName(
+                                            customerStringPacket.getStrings()[5]);
+                            store.remakeStoreFromFile();
                             Integer success = serverMethods.requestAppointment(
-                                    customerStringPacket.getCustomer(),
-                                    customerStringPacket.getStrings()[5],
+                                   customerStringPacket.getCustomer(),
+                                     store,
                                     customerStringPacket.getStrings()[1],
                                     customerStringPacket.getStrings()[2],
                                     customerStringPacket.getStrings()[3],
-                                    customerStringPacket.getStrings()[4]);
+                                     customerStringPacket.getStrings()[4]);
+                            int year = Integer.parseInt(customerStringPacket.getStrings()[1]);
+                            int month = Integer.parseInt(customerStringPacket.getStrings()[2]);
+                            int day = Integer.parseInt(customerStringPacket.getStrings()[3]);
+                            int hour = Integer.parseInt(customerStringPacket.getStrings()[4]);
                             System.out.println(success + "SUCCESS0");
-                            objectOutputStream.writeObject(success);
+                           objectOutputStream.writeObject(success);
                             System.out.println(success + "SUCCESS");
                             objectOutputStream.flush();
+                            if (success == 0 || success == 1) {
+                                store.requestAppointmentAtTime(year,month,day,hour,
+                                        customerStringPacket.getCustomer().getName());
+                                store.makeFileFromStore();
+                            }
                         }
                     }
                 }

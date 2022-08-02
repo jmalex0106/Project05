@@ -201,11 +201,6 @@ public class ServerMethods {
      * JOptionpane with the appropriate error/success message will appear.
      *
      * @param customer
-     * @param storeName
-     * @param yearString
-     * @param monthString
-     * @param dayString
-     * @param hourString
      * @return Each int from 0 to 6 corresponds to a different message to be displayed to
      * the user, a customer. These messages are approximations, actual JOptionpane may be different.
      * 0 - You have been added to the waitlist successfully
@@ -218,68 +213,9 @@ public class ServerMethods {
      * 5 - The store you have entered is closed on the date and time you have entered. Please
      * enter a valid date. Waitlist has not been updated.
      */
-    public int requestAppointment(Customer customer, String storeName, String yearString,
-                                  String monthString, String dayString, String hourString) {
-        //Converts year, month , day , and hour to ints
-        int year = Integer.parseInt(yearString.trim());
-        int month = monthFormat(monthString);
-        int day = dayFormat(dayString);
-        int hour = hourFormat(hourString);
-        System.out.println("INTS CONVERTED");
-        //Searches if the store under storeName exists in AllStores.txt.
-        try {
-            String storeOwner = "";
-            File file = new File("AllStores.txt");
-            FileReader fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            boolean storeExists = false;
-            String line = bufferedReader.readLine();
-            while (line != null) {
-                if (line.split(",")[0].equals(storeName)) {
-                    storeExists = true;
-                    storeOwner = line.split(",")[1];
-                }
-                line = bufferedReader.readLine();
-            }
-            bufferedReader.close();
-            System.out.println("READER CLOSED");
-            if (!storeExists) {
-                return 3;
-            }
-            //Creates a store object
-            Store store = new Store(storeName, storeOwner);
-            store.remakeStoreFromFile();
-            //Checks if the date entered is a valid date that is in the future
-            if (!checkIfDateIsFuture(year, month, day, hour)) {
-                return 4;
-            }
-            if (!store.checkIfStoreIsOpen(year, month, day, hour)) {
-                return 5;
-            }
-            //Sets the int capacity to the capacity of the store at the requested session time
-            int index = 0;
-            for (int i = 0; i < dayOfWeek(year, month, day); i++) {
-                if (store.getIsOpen()[i]) {
-                    index++;
-                }
-            }
-            int output = 0;
-            int capacity = store.getCapacities()[index];
-            int requestedSessionCapacity =
-                    store.sessionAtSpecifiedTime(year, month, day, hour).getEnrolledCustomers().size();
-            if (capacity > requestedSessionCapacity) {
-                output = 0;
-            } else {
-                output = 1;
-            }
-            store.requestAppointmentAtTime(year, month, day, hour, customer.getName());
-            customer.requestAppointment(store.sessionAtSpecifiedTime(year, month, day, hour));
-            store.makeFileFromStore();
-            customer.remakeFileFromCustomer();
-            return output;
-        } catch (IOException ioException) {
-            return 6;
-        }
+    public int requestAppointment(Customer customer, Store store, String year , String
+                                  month , String day , String hour) {
+        return 0;
     }
 
     /**
@@ -1009,11 +945,12 @@ public class ServerMethods {
             bufferedReader.close();
             Store store = new Store(storeName, seller.getName());
             //Reads the csv file at csvPath and imports the variables to the store
-            store.setupStoreInputChecks(makeIsOpenFromCSVFile(csvPath),
+            /* store.setupStoreInputChecks(makeIsOpenFromCSVFile(csvPath),
                     makeOpeningTimesFromCSVFile(csvPath),
                     makeClosingTimesFromCSVFile(csvPath),
                     makeCapacitiesFromCSVFile(csvPath),
-                    makeLocationsFromCSVFile(csvPath));
+                    makeLocationsFromCSVFile(csvPath)); */
+            store.importFromCsv(csvPath);
             store.setupStore();
             store.makeFileFromStore();
             return 0;
