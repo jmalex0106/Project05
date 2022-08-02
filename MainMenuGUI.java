@@ -22,6 +22,7 @@ public class MainMenuGUI implements Runnable {
             System.out.println("CONSTRUCTED 0");
             this.objectInputStream =
                     new ObjectInputStream(socket.getInputStream());
+            System.out.println("CONSTRUCTED 1");
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null , "Failed to connect with server");
         }
@@ -136,7 +137,6 @@ public class MainMenuGUI implements Runnable {
                         JOptionPane.showMessageDialog(frame,
                                 "Invalid credentials entered. Please try again");
                     } else if (login == 1) {
-                        //TODO receive the appropriate seller from server and set seller to that seller
                         objectOutputStream.writeObject(requestSeller);
                         objectOutputStream.flush();
                         Object sellerObject = objectInputStream.readObject();
@@ -146,6 +146,9 @@ public class MainMenuGUI implements Runnable {
                             Seller seller = (Seller) sellerObject;
                             System.out.println(seller.getName());
                             frame.dispose();
+                            System.out.println("MAKING GUI");
+                            objectOutputStream.close();
+                            objectInputStream.close();
                             new SellerMenuGUI(seller , socket).playGUI();
                         }
                     } else if (login == 2) {

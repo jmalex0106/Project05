@@ -29,6 +29,7 @@ public class SellerMenuGUI implements Runnable {
             System.out.println("CONSTRUCTED 0");
             this.objectInputStream =
                     new ObjectInputStream(socket.getInputStream());
+            System.out.println("CONSTRUCTED 1");
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Failed to connect with server");
         }
@@ -60,6 +61,7 @@ public class SellerMenuGUI implements Runnable {
     private static final String[] STATISTICS = {"View sorted statistics", "View unsorted statistics"};
 
     public void playGUI() {
+        System.out.println("PlayGUI");
         SwingUtilities.invokeLater(new SellerMenuGUI(seller , socket));
     }
 
@@ -154,6 +156,7 @@ public class SellerMenuGUI implements Runnable {
         openNewStore.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                frame.dispose();
                 new OpenNewStoreGUI(seller , socket).playGUI();
             }
         });

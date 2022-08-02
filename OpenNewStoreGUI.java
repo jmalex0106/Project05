@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -30,6 +31,8 @@ public class OpenNewStoreGUI implements Runnable {
     }
     public void run() {
         JFrame jFrame = new JFrame("Open new store for " + seller.getName());
+        Container content = jFrame.getContentPane();
+        content.setLayout(new GridLayout(5, 1)); // 2x1
         JLabel storeName = new JLabel("enter a new store name");
         JLabel csvPath = new JLabel("enter the path to a CSV file");
         JTextField storeNameInput = new JTextField();
@@ -47,9 +50,9 @@ public class OpenNewStoreGUI implements Runnable {
                         File file = new File(csvPathString);
                         if (!file.exists()) {
                             JOptionPane.showMessageDialog(jFrame , "The file path entered" +
-                                    "is invalid , please try again");
+                                    " is invalid , please try again");
                             jFrame.dispose();
-                            new SellerMenuGUI(seller , socket);
+                            new SellerMenuGUI(seller , socket).playGUI();
                         } else {
                             String[] tags = new String[1];
                             tags[0] = storeNameInput.getText();
