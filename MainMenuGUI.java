@@ -901,6 +901,7 @@ public class MainMenuGUI implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
+                playSellerMenuGUI(seller);
             }
         });
         panel1.add(backToTutor); // (2,1)
@@ -1002,6 +1003,7 @@ public class MainMenuGUI implements Runnable {
                         index = i;
                     }
                 }
+                System.out.println(store.getSessions().size() + "STORE SESS COUNT");
                 store.getSessions().get(index).getEnrolledCustomers().add(waitingListDropdown.getSelectedItem().toString());
                 store.getSessions().get(index).getWaitingCustomers().remove(waitingListDropdown.getSelectedItem().toString());
                 seller.getStores().add(store);
