@@ -145,6 +145,14 @@ public class TestServer {
                             Store store = serverMethods.getStoreWithName(array[1]);
                             objectOutputStream.writeObject(store);
                             objectOutputStream.flush();
+                        } else if (array.length == 3 && array[0].equals("sellerStorePacket")) {
+                            Store store = new Store(array[1] , array[2]);
+                            Seller seller = new Seller(array[2]);
+                            store.remakeStoreFromFile();
+                            seller.remakeSellerFromFile();
+                            SellerStorePacket sellerStorePacket = new SellerStorePacket(seller , store);
+                            objectOutputStream.writeObject(sellerStorePacket);
+                            objectOutputStream.flush();
                         }
                     } else if (object instanceof FileStringPacket) {
                         FileStringPacket fileStringPacket = (FileStringPacket) object;
@@ -161,12 +169,14 @@ public class TestServer {
                         }
                         SellerIntegerPacket sellerIntegerPacket =
                                 new SellerIntegerPacket(seller, openedNewStore);
+                        sellerIntegerPacket.getSeller().makeFileFromSeller();
                         objectOutputStream.writeObject(sellerIntegerPacket);
                         objectOutputStream.flush();
                     } else if (object instanceof CustomerStringPacket) {
                         //giving customer their exported csv file
                         CustomerStringPacket customerStringPacket =
                                 (CustomerStringPacket) object;
+                        customerStringPacket.getCustomer().remakeFileFromCustomer();
                         if (customerStringPacket.getStrings()[0].equals("customerRequestCSV")) {
                             Customer customer = customerStringPacket.getCustomer();
                             File file = serverMethods.exportCustomerAppointmentsToCSVFile(customer);

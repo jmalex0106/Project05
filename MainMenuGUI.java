@@ -830,6 +830,25 @@ public class MainMenuGUI implements Runnable {
 
     //SELLER STORE GUI CODE BELOW
     public void playSellerStoreGUI(Seller seller, Store store) {
+        System.out.println(store.getSessions().size() + "SESSION SIZE");
+        //UPDATES STORE AND SELLER OBJECTS
+        String[] sellerStorePacketArray = new String[3];
+        sellerStorePacketArray[0] = "sellerStorePacket";
+        sellerStorePacketArray[1] = store.getName();
+        sellerStorePacketArray[2] = seller.getName();
+        try {
+            objectOutputStream.writeObject(sellerStorePacketArray);
+            objectOutputStream.flush();
+            Object sellerStoreObject = objectInputStream.readObject();
+            if (sellerStoreObject instanceof SellerStorePacket) {
+                SellerStorePacket sellerStorePacket =
+                        (SellerStorePacket) sellerStoreObject;
+            }
+        } catch (Exception exception) {
+            JOptionPane.showMessageDialog(null ,
+                    "connection error with server");
+        }
+        //ABOVE
         JFrame frame = new JFrame("Welcome to " + store.getName());
 
         Container content = frame.getContentPane();
@@ -869,7 +888,6 @@ public class MainMenuGUI implements Runnable {
         backToTutor.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                playSellerMenuGUI(seller);
                 frame.dispose();
             }
         });
