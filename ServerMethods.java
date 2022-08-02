@@ -1013,6 +1013,7 @@ public class ServerMethods {
             String line = bufferedReader.readLine();
             while (line != null) {
                 allStoreNamesArrayList.add(line.split(",")[0]);
+                line = bufferedReader.readLine();
             }
             String[] output = new String[allStoreNamesArrayList.size()];
             for (int i = 0; i < output.length; i++) {
