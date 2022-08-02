@@ -137,9 +137,17 @@ public class MainMenuGUI implements Runnable {
                                 "Invalid credentials entered. Please try again");
                     } else if (login == 1) {
                         //TODO receive the appropriate seller from server and set seller to that seller
-                        Seller seller = new Seller("Bob");
-                        frame.dispose();
-                        new SellerMenuGUI(seller , socket).playGUI();
+                        objectOutputStream.writeObject(requestSeller);
+                        objectOutputStream.flush();
+                        Object sellerObject = objectInputStream.readObject();
+                        System.out.println(sellerObject);
+                        if (sellerObject instanceof Seller) {
+                            System.out.println("OBJECT IS SELLER");
+                            Seller seller = (Seller) sellerObject;
+                            System.out.println(seller.getName());
+                            frame.dispose();
+                            new SellerMenuGUI(seller , socket).playGUI();
+                        }
                     } else if (login == 2) {
                         System.out.println("LOGIN = 2 RUNNING");
                         //TODO receive the appropriate customer from server and set customer
@@ -179,17 +187,32 @@ public class MainMenuGUI implements Runnable {
                 if (isTutorInt == 1) {
                     isTutor = true;
                 }
-                //TODO send username,password,email,and isTutor to server. Server runs ServerMethods.createNewAccount
-                //TODO and sends back a boolean. Set boolean accountCreated to this boolean.
-                boolean accountCreated = true;
-                if (accountCreated) {
-                    JOptionPane.showMessageDialog(null,
-                            "Account created successfully for " + username +
-                                    "\n Please log in!");
-                } else {
-                    JOptionPane.showMessageDialog(null, "Invalid account information\n" +
-                            "Please ensure your username is unique, your password is long enough, and your" +
-                            " email is valid.");
+                String[] newAccountCreation = new String[5];
+                newAccountCreation[0] = "newAccountCreation";
+                newAccountCreation[1] = String.valueOf(isTutor);
+                newAccountCreation[2] = username;
+                newAccountCreation[3] = email;
+                newAccountCreation[4] = password;
+                boolean accountCreated = false;
+                try {
+                    objectOutputStream.writeObject(newAccountCreation);
+                    objectOutputStream.flush();
+                    Object newAccountBoolObject = objectInputStream.readObject();
+                    if (newAccountBoolObject instanceof Boolean) {
+                        accountCreated = (Boolean) newAccountBoolObject;
+                        System.out.println("ACCOUNT BOOLEAN = " + (Boolean) newAccountBoolObject);
+                    }
+                    if (accountCreated) {
+                        JOptionPane.showMessageDialog(null,
+                                "Account created successfully for " + username +
+                                        "\n Please log in!");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Invalid account information\n" +
+                                "Please ensure your username is unique, your password is long enough, and your" +
+                                " email is valid.");
+                    }
+                } catch (Exception exception) {
+                    JOptionPane.showMessageDialog(frame , "connection error with server");
                 }
                 new MainMenuGUI().playGUI();
             }

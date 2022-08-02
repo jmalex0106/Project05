@@ -8,7 +8,7 @@ import java.io.*;
  * @version date
  */
 
-public class Seller {
+public class Seller implements Serializable {
     private String name;
     private ArrayList<Store> stores;
 

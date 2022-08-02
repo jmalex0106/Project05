@@ -70,58 +70,76 @@ public class ServerMethods {
         //No input string may contain a comma ","
         //Checks if any inputs are null:
         if (newUsername == null) {
+            System.out.println("T0");
             return false;
         }
         if (newEmail == null) {
+            System.out.println("T1");
             return false;
         }
         if (newPassword == null) {
+            System.out.println("T2");
             return false;
         }
         //Checks if any inputs contain a comma ",":
         if (newUsername.contains(",")) {
+            System.out.println("T3");
             return false;
         }
         if (newEmail.contains(",")) {
+            System.out.println("T4");
             return false;
         }
         if (newPassword.contains(",")) {
+            System.out.println("T5");
             return false;
         }
         //Checks if password is six or more characters
         if (newPassword.length() < 6) {
+            System.out.println("T6");
             return false;
         }
         //Checks if email contains only one "@" and only one "." after that "@"
         if (!newEmail.contains("@")) {
+            System.out.println("T7");
             return false;
         }
         if (newEmail.split("@").length != 2) {
+            System.out.println("T8");
             return false;
         }
         if (!newEmail.split("@")[1].contains(".")) {
-            return false;
-        }
-        if (newEmail.split("@")[1].split(".").length != 2) {
+            System.out.println("T9");
             return false;
         }
         //Checks if username ends in Store and contains only letters and numbers
+        System.out.println("TEST0");
         if (newUsername.endsWith("Store")) {
+            System.out.println("T11");
             return false;
         }
         if (!newUsername.matches("^[a-zA-Z0-9]*$")) {
+            System.out.println("T12");
             return false;
         }
         try {
+            System.out.println("TEST1");
             //Reads Users.txt to check if newUsername is unique.
             BufferedReader bufferedReader = new BufferedReader(new FileReader("Users.txt"));
             String line = bufferedReader.readLine();
+            System.out.println("LINE = " + line);
+            System.out.println("TEST1-0");
             while (line != null) {
+                System.out.println("LINE = " + line);
                 if (line.split(",")[1].equals(newUsername)) {
+                    System.out.println("T13");
                     return false;
                 }
+                line = bufferedReader.readLine();
             }
+            System.out.println("TEST1-1");
             bufferedReader.close();
+            System.out.println("TEST2");
             //Closes bufferedReader and opens printWriter
             File file = new File("Users.txt");
             FileOutputStream fileOutputStream = new FileOutputStream(file, true);
@@ -146,8 +164,10 @@ public class ServerMethods {
             File file1 = new File(newUsername + ".txt");
             file1.createNewFile();
         } catch (Exception exception) {
+            System.out.println("T14");
             return false;
         }
+        System.out.println("T15");
         return true;
     }
 
@@ -821,6 +841,133 @@ public class ServerMethods {
             output += storeStatisticsArray[i];
         }
         return output;
+    }
+
+    //TEST METHODS
+    public String[][] csvPathToStringFromFile(File csvPath) {
+        String[][] output = new String[7][5];
+        try {
+            FileReader fileReader = new FileReader(csvPath);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line = bufferedReader.readLine();
+            for (int i = 0; i < 7; i++) {
+                line = bufferedReader.readLine();
+                for (int j = 0; j < 5; j++) {
+                    output[dayFormat(line.split(",")[0])][j] = line.split(",")[j + 1];
+                }
+            }
+            bufferedReader.close();
+        } catch (Exception exception) {
+            int catchInt = 0;
+        }
+        return output;
+    }
+
+    public boolean[] makeIsOpenFromCSVFile(File csvPath) {
+        String[][] csvArray = csvPathToStringFromFile(csvPath);
+        boolean[] output = new boolean[7];
+        for (int i = 0; i < 7; i++) {
+            output[i] = booleanFormat(csvArray[i][0]);
+        }
+        return output;
+    }
+
+    public int makeSizeOfArraysFromCSVFile(File csvPath) {
+        String[][] csvArray = csvPathToStringFromFile(csvPath);
+        boolean[] isOpen = makeIsOpenFromCSVFile(csvPath);
+        int output = 0;
+        for (int i = 0; i < 7; i++) {
+            if (isOpen[i]) {
+                output++;
+            }
+        }
+        return output;
+    }
+
+    public int[] makeOpeningTimesFromCSVFile(File csvPath) {
+        String[][] csvArray = csvPathToStringFromFile(csvPath);
+        int size = makeSizeOfArraysFromCSVFile(csvPath);
+        boolean[] isOpen = makeIsOpenFromCSVFile(csvPath);
+        int[] output = new int[size];
+        int index = 0;
+        for (int i = 0; i < 7; i++) {
+            if (isOpen[i]) {
+                output[index] = Integer.parseInt(csvArray[i][1]);
+                index++;
+            }
+        }
+        return output;
+    }
+
+    public int[] makeClosingTimesFromCSVFile(File csvPath) {
+        String[][] csvArray = csvPathToStringFromFile(csvPath);
+        int size = makeSizeOfArraysFromCSVFile(csvPath);
+        boolean[] isOpen = makeIsOpenFromCSVFile(csvPath);
+        int[] output = new int[size];
+        int index = 0;
+        for (int i = 0; i < 7; i++) {
+            if (isOpen[i]) {
+                output[index] = Integer.parseInt(csvArray[i][2]);
+                index++;
+            }
+        }
+        return output;
+    }
+
+    public int[] makeCapacitiesFromCSVFile(File csvPath) {
+        String[][] csvArray = csvPathToStringFromFile(csvPath);
+        int size = makeSizeOfArraysFromCSVFile(csvPath);
+        boolean[] isOpen = makeIsOpenFromCSVFile(csvPath);
+        int[] output = new int[size];
+        int index = 0;
+        for (int i = 0; i < 7; i++) {
+            if (isOpen[i]) {
+                output[index] = Integer.parseInt(csvArray[i][3]);
+                index++;
+            }
+        }
+        return output;
+    }
+
+    public String[] makeLocationsFromCSVFile(File csvPath) {
+        String[][] csvArray = csvPathToStringFromFile(csvPath);
+        int size = makeSizeOfArraysFromCSVFile(csvPath);
+        boolean[] isOpen = makeIsOpenFromCSVFile(csvPath);
+        String[] output = new String[size];
+        int index = 0;
+        for (int i = 0; i < 7; i++) {
+            if (isOpen[i]) {
+                output[index] = csvArray[i][4];
+                index++;
+            }
+        }
+        return output;
+    }
+    public int setupNewStoreFromFile(Seller seller, String storeName, File csvPath) {
+        try {
+            File file = new File("AllStores.txt");
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                if (line.split(",")[0].equalsIgnoreCase(storeName)) {
+                    return 1;
+                }
+            }
+            bufferedReader.close();
+            Store store = new Store(storeName, seller.getName());
+            //Reads the csv file at csvPath and imports the variables to the store
+            store.setupStoreInputChecks(makeIsOpenFromCSVFile(csvPath),
+                    makeOpeningTimesFromCSVFile(csvPath),
+                    makeClosingTimesFromCSVFile(csvPath),
+                    makeCapacitiesFromCSVFile(csvPath),
+                    makeLocationsFromCSVFile(csvPath));
+            store.setupStore();
+            store.makeFileFromStore();
+            return 0;
+        } catch (Exception exception) {
+            return 2;
+        }
     }
 }
 

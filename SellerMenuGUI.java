@@ -2,6 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
@@ -13,11 +16,24 @@ import java.net.Socket;
 public class SellerMenuGUI implements Runnable {
     private Seller seller;  //The seller that is associated with this GUI
     private Socket socket;
+    private ObjectOutputStream objectOutputStream;
+    private ObjectInputStream objectInputStream;
 
-    public SellerMenuGUI(Seller seller , Socket socket) {
+    public SellerMenuGUI(Seller seller, Socket socket) {
+        System.out.println("MAKING SELLER MENU GUI");
         this.seller = seller;
         this.socket = socket;
+        try {
+            this.objectOutputStream =
+                    new ObjectOutputStream(socket.getOutputStream());
+            System.out.println("CONSTRUCTED 0");
+            this.objectInputStream =
+                    new ObjectInputStream(socket.getInputStream());
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Failed to connect with server");
+        }
     }
+
 
     /**
      * Returns the names of all the stores that this seller owns in a String array to display
@@ -74,10 +90,14 @@ public class SellerMenuGUI implements Runnable {
         confirmStore.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SellerStoreGUI ssg = new SellerStoreGUI(seller,
-                        getStoreWithName(storeDropdown.getSelectedItem().toString()) , socket);
-                frame.dispose();
-                ssg.playGUI();
+                if (listAllStores().length == 0) {
+                    JOptionPane.showMessageDialog(frame , "You have no stores");
+                } else {
+                    new SellerStoreGUI(seller,
+                            getStoreWithName(storeDropdown.getSelectedItem().toString()) ,
+                            socket).playGUI();
+                    frame.dispose();
+                }
             }
         });
         panel1.add(confirmStore); // (1, 3)
@@ -101,9 +121,26 @@ public class SellerMenuGUI implements Runnable {
                 //TODO: send selection (sorted or unsorted statistics) to server,
                 //TODO: receive appropriate statistics toString from server, and
                 //TODO: set String statistics to this toString.
-                String statistics = "statistics";
-                JOptionPane.showMessageDialog(frame,
-                        statistics);
+                String[] sellerRequestStatistics = new String[3];
+                sellerRequestStatistics[0] = "sellerRequestStatistics";
+                sellerRequestStatistics[1] = statDropdown.getSelectedItem().toString();
+                sellerRequestStatistics[2] = seller.getName();
+                if (listAllStores().length == 0) {
+                    JOptionPane.showMessageDialog(frame , "You have no stores");
+                } else {
+                    try {
+                        objectOutputStream.writeObject(sellerRequestStatistics);
+                        objectOutputStream.flush();
+                        Object statisticsObject = objectInputStream.readObject();
+                        if (statisticsObject instanceof String) {
+                            String statistics = (String) statisticsObject;
+                            JOptionPane.showMessageDialog(frame,
+                                    statistics);
+                        }
+                    } catch (IOException | ClassNotFoundException ioException) {
+                        JOptionPane.showMessageDialog(frame , "Connection with server failed");
+                    }
+                }
             }
         });
         panel1.add(confirmStat); // (2,3)
@@ -117,8 +154,7 @@ public class SellerMenuGUI implements Runnable {
         openNewStore.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO display open new Store GUI and delete test line below
-                System.out.println("OPEN STORE BUTTON PRESSED");
+                new OpenNewStoreGUI(seller , socket).playGUI();
             }
         });
         panel1.add(openNewStore); // (3,1)
@@ -153,6 +189,5 @@ public class SellerMenuGUI implements Runnable {
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-
     }
 }

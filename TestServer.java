@@ -81,16 +81,65 @@ public class TestServer {
                             System.out.println("SENDING");
                         } else if (array.length == 2 && array[0].equals("requestSeller")) {
                             Seller seller = new Seller(array[1]);
+                            seller.remakeSellerFromFile();
                             objectOutputStream.writeObject(seller);
                             objectOutputStream.flush();
                         } else if (array.length == 2 && array[0].equals("requestCustomer")) {
                             Customer customer = new Customer(array[1]);
+                            customer.remakeCustomerFromFile();
                             System.out.println("T 0");
                             objectOutputStream.writeObject(customer);
                             System.out.println("T 1");
                             objectOutputStream.flush();
                             System.out.println("T 2");
+                        } else if (array.length == 3 && array[0].equals("sellerRequestStatistics")) {
+                            if (array[1].equals("View sorted statistics")) {
+                                Seller seller = new Seller(array[2]);
+                                seller.remakeSellerFromFile();
+                                String statistics = new ServerMethods().
+                                        showSellerSortedStatistics(seller);
+                                objectOutputStream.writeObject(statistics);
+                                objectOutputStream.flush();
+                            } else if (array[1].equals("View unsorted statistics")) {
+                                Seller seller = new Seller(array[2]);
+                                seller.remakeSellerFromFile();
+                                String statistics = new ServerMethods().
+                                        showSellerUnsortedStatistics(seller);
+                                objectOutputStream.writeObject(statistics);
+                                objectOutputStream.flush();
+                            } else {
+                                String statistics = "an error has occurred";
+                                objectOutputStream.writeObject(statistics);
+                                objectOutputStream.flush();
+                            }
+                        } else if (array.length == 5 && array[0].equals("newAccountCreation")) {
+                            String[] newAccount = (String[]) object;
+                            boolean isTutor = Boolean.valueOf(newAccount[1]);
+                            Boolean newAccountBool = new ServerMethods().
+                                    createNewAccount(
+                                    isTutor ,
+                                    newAccount[2] ,
+                                    newAccount[3] ,
+                                    newAccount[4]);
+                            objectOutputStream.writeObject(newAccountBool);
                         }
+                    } else if (object instanceof FileStringPacket) {
+                        FileStringPacket fileStringPacket = (FileStringPacket) object;
+                        File file = fileStringPacket.getFile();
+                        Seller seller = fileStringPacket.getSeller();
+                        String[] tags = fileStringPacket.getStrings();
+                        seller.makeFileFromSeller();
+                        Store store = new Store(tags[0] , seller.getName());
+                        int openedNewStore =
+                                new ServerMethods().setupNewStoreFromFile(seller , tags[0] , file);
+                        if (openedNewStore == 0) {
+                            store.remakeStoreFromFile();
+                            store.makeFileFromStore();
+                        }
+                        SellerIntegerPacket sellerIntegerPacket =
+                                new SellerIntegerPacket(seller , openedNewStore);
+                        objectOutputStream.writeObject(sellerIntegerPacket);
+                        objectOutputStream.flush();
                     }
                 }
             } catch (IOException e) {
