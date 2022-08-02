@@ -111,10 +111,10 @@ Store.java
 
 The class helps create store objects. Sellers (tutors) manage stores that are like different folders/directories. Every store has a name, it can be based on majors (like mathematics, computer science), classes (like calculus, linear algebra, CS 180), or others. Store has seller, isOpen, openingTimes, closingTimes, capacities, locations, uniqueCustomers, approvedRequest, and waitingRequest as field variables. importFromCsv in the file can read data from store files. makeCsvFromTxt method can read a txt file and make corresponding CSV file. There are other methods for file making, import, and export. mostPopularAp is to calculate the most popular appointment(Session) in the Store.
 
-ClientMethods.java
-SelectStoreToRequestGUI.java
+
 TestServer.java
-GUITEST.java
+
+This is the server class file. This class represents the methods that need to be done on various object to extract useful data to show to the client. searchForValidLogin method is to match .txt files named after username. createNewAccount assist to create new account. allExistingStores will read AllStores.txt and return a data array. RequestAppointment method is called on the server side when the user, a customer (student), presses the confirm button on the request appointment GUI. After the confirm button has been pressed, a JOptionPane with the appropriate error/success message will appear. Also, declineAppointmentAtTime, approveAppointmentAtTime, andcancelAppointmentAtTime can deny, approve, andcancel appointments, respectively. customerCancelAppointmentAtIndex is another method to cancel at the index apoointmentIndex for a certain customer. checkIfDateIsFuture methods will return true if the date is future. checkIfDateIsValid method will check the input format of the date input. Other methods also help us to check format, return true if there is an expected input.
 
 
 
