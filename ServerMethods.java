@@ -832,6 +832,7 @@ public class ServerMethods {
                 Store store = new Store(line.split(",")[0], line.split(",")[1]);
                 store.remakeStoreFromFile();
                 output.add(store);
+                line = bufferedReader.readLine();
             }
             return output;
         } catch (Exception exception) {
