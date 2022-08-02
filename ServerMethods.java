@@ -616,17 +616,23 @@ public class ServerMethods {
                 if (line.split(",")[0].equalsIgnoreCase(storeName)) {
                     return 1;
                 }
+                line = bufferedReader.readLine();
             }
             bufferedReader.close();
+            System.out.println("TEST 2");
             Store store = new Store(storeName, seller.getName());
+            System.out.println("TEST 0");
             //Reads the csv file at csvPath and imports the variables to the store
             store.setupStoreInputChecks(makeIsOpenFromCSV(csvPath),
                     makeOpeningTimesFromCSV(csvPath), makeClosingTimesFromCSV(csvPath),
                     makeCapacitiesFromCSV(csvPath), makeLocationsFromCSV(csvPath));
+            System.out.println("TEST 1");
             store.setupStore();
+            System.out.println("MAKING FILE");
             store.makeFileFromStore();
             return 0;
         } catch (Exception exception) {
+            exception.printStackTrace();
             return 2;
         }
     }
@@ -995,6 +1001,7 @@ public class ServerMethods {
                 if (line.split(",")[0].equalsIgnoreCase(storeName)) {
                     return 1;
                 }
+                line = bufferedReader.readLine();
             }
             bufferedReader.close();
             Store store = new Store(storeName, seller.getName());

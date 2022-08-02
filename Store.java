@@ -249,6 +249,8 @@ public class Store implements Serializable {
                 }
             }
             add = add.trim();
+            System.out.println("PRINTING ADD");
+            System.out.println(add);
             printWriter.println(add);
             printWriter.close();
             return true;
