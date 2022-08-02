@@ -1,10 +1,12 @@
+import java.io.Serializable;
+
 /**
  * Used to send a customer and a string together between client and server
  *
  * @author Aidan Davis
  * @version 8/2/2022
  */
-public class CustomerStringPacket {
+public class CustomerStringPacket implements Serializable {
     private Customer customer;
     private String[] strings;
 

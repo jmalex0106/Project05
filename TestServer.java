@@ -77,7 +77,7 @@ public class TestServer {
                         String[] array = (String[]) object;
                         System.out.println("TAG" + array[0]);
                         if (array.length == 3 && array[0].equals("loginCredentials")) {
-                            objectOutputStream.writeObject(new ServerMethods().searchForValidLogin(array[1], array[2]));
+                            objectOutputStream.writeObject(serverMethods.searchForValidLogin(array[1], array[2]));
                             System.out.println("SENDING");
                         } else if (array.length == 2 && array[0].equals("requestSeller")) {
                             Seller seller = new Seller(array[1]);
@@ -98,14 +98,14 @@ public class TestServer {
                             if (array[1].equals("View sorted statistics")) {
                                 Seller seller = new Seller(array[2]);
                                 seller.remakeSellerFromFile();
-                                String statistics = new ServerMethods().
+                                String statistics = serverMethods.
                                         showSellerSortedStatistics(seller);
                                 objectOutputStream.writeObject(statistics);
                                 objectOutputStream.flush();
                             } else if (array[1].equals("View unsorted statistics")) {
                                 Seller seller = new Seller(array[2]);
                                 seller.remakeSellerFromFile();
-                                String statistics = new ServerMethods().
+                                String statistics = serverMethods.
                                         showSellerUnsortedStatistics(seller);
                                 objectOutputStream.writeObject(statistics);
                                 objectOutputStream.flush();
@@ -117,7 +117,7 @@ public class TestServer {
                         } else if (array.length == 5 && array[0].equals("newAccountCreation")) {
                             String[] newAccount = (String[]) object;
                             boolean isTutor = Boolean.valueOf(newAccount[1]);
-                            Boolean newAccountBool = new ServerMethods().
+                            Boolean newAccountBool = serverMethods.
                                     createNewAccount(
                                     isTutor ,
                                     newAccount[2] ,
@@ -126,22 +126,22 @@ public class TestServer {
                             objectOutputStream.writeObject(newAccountBool);
                         } else if (array.length == 1 &&
                                 array[0].equals("customerRequestSortedStats")) {
-                            String sortedStats = new
-                                    ServerMethods().showSortedStatisticsToCustomer();
+                            String sortedStats = serverMethods.
+                                    showSortedStatisticsToCustomer();
                             objectOutputStream.writeObject(sortedStats);
                             objectOutputStream.flush();
                         } else if (array.length == 1 &&
                                 array[0].equals("customerRequestUnsortedStats")) {
-                            String unsortedStats = new
-                                    ServerMethods().showUnsortedStatisticsToCustomer();
+                            String unsortedStats = serverMethods.
+                                    showUnsortedStatisticsToCustomer();
                             objectOutputStream.writeObject(unsortedStats);
                             objectOutputStream.flush();
                         } else if (array.length == 1 && array[0].equals("requestAllStoreNames")) {
-                            String[] allStoreNames = new ServerMethods().allStoreNames();
+                            String[] allStoreNames = serverMethods.allStoreNames();
                             objectOutputStream.writeObject(allStoreNames);
                             objectOutputStream.flush();
                         } else if (array.length == 2 && array[0].equals("customerRequestStore")) {
-                            Store store = new ServerMethods().getStoreWithName(array[1]);
+                            Store store = serverMethods.getStoreWithName(array[1]);
                             objectOutputStream.writeObject(store);
                             objectOutputStream.flush();
                         }
@@ -153,7 +153,7 @@ public class TestServer {
                         seller.makeFileFromSeller();
                         Store store = new Store(tags[0] , seller.getName());
                         int openedNewStore =
-                                new ServerMethods().setupNewStoreFromFile(seller , tags[0] , file);
+                                serverMethods.setupNewStoreFromFile(seller , tags[0] , file);
                         if (openedNewStore == 0) {
                             store.remakeStoreFromFile();
                             store.makeFileFromStore();
@@ -168,18 +168,18 @@ public class TestServer {
                                 (CustomerStringPacket) object;
                         if (customerStringPacket.getStrings()[0].equals("customerRequestCSV")) {
                             Customer customer = customerStringPacket.getCustomer();
-                            File file = new ServerMethods().
+                            File file = serverMethods.
                                     exportCustomerAppointmentsToCSVFile(customer);
                             objectOutputStream.writeObject(file);
                             objectOutputStream.flush();
                         } else if (customerStringPacket.getStrings()[0].
                                 equals("customerCancelAppointment")) {
                             int index = Integer.parseInt(customerStringPacket.getStrings()[1]);
-                            new ServerMethods().customerCancelAppointmentAtIndex(
+                            serverMethods.customerCancelAppointmentAtIndex(
                                     customerStringPacket.getCustomer() , index);
                         } else if (customerStringPacket.getStrings()[0].
                                 equals("customerRequestAppointment")) {
-                            Integer success = new ServerMethods().requestAppointment(
+                            Integer success = serverMethods.requestAppointment(
                                     customerStringPacket.getCustomer() ,
                                     customerStringPacket.getStrings()[5] ,
                                     customerStringPacket.getStrings()[1] ,

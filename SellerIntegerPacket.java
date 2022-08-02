@@ -1,4 +1,6 @@
-public class SellerIntegerPacket {
+import java.io.Serializable;
+
+public class SellerIntegerPacket implements Serializable {
     private Seller seller;
     private int integer;
     public SellerIntegerPacket (Seller seller , int integer) {
