@@ -2,12 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.net.URI;
+import java.util.ArrayList;
 
 /**
  * This class runs all the GUIs that this application needs and handles all clientside commmunication
@@ -150,8 +148,6 @@ public class MainMenuGUI implements Runnable {
                             Seller seller = (Seller) sellerObject;
                             System.out.println(seller.getName());
                             frame.dispose();
-                            objectOutputStream.close();
-                            objectInputStream.close();
                             playSellerMenuGUI(seller);
                         }
                     } else if (login == 2) {
@@ -331,13 +327,6 @@ public class MainMenuGUI implements Runnable {
         openNewStore.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                frame.dispose();
-                try {
-                    objectOutputStream.close();
-                    objectInputStream.close();
-                } catch (Exception exception) {
-                    JOptionPane.showMessageDialog(frame, "Connection error with server");
-                }
                 frame.dispose();
                 playOpenNewStoreGUI(seller);
             }
@@ -1091,6 +1080,7 @@ public class MainMenuGUI implements Runnable {
     }
     //OPEN NEW STORE GUI CODE BELOW
 
+    /*
     public void playOpenNewStoreGUI(Seller seller) {
         JFrame jFrame = new JFrame("Open new store for " + seller.getName());
         Container content = jFrame.getContentPane();
@@ -1169,6 +1159,100 @@ public class MainMenuGUI implements Runnable {
                     JOptionPane.showMessageDialog(jFrame ,
                             "Connection error with server");
                 }
+                playSellerMenuGUI(seller);
+            }
+        });
+        jFrame.add(storeName);
+        jFrame.add(storeNameInput);
+        jFrame.add(csvPath);
+        jFrame.add(csvPathInput);
+        jFrame.add(openStore);
+        jFrame.add(back);
+        jFrame.setVisible(true);
+    }
+     */
+    public void playOpenNewStoreGUI(Seller seller) {
+        JFrame jFrame = new JFrame("Open new store for " + seller.getName());
+        Container content = jFrame.getContentPane();
+        content.setLayout(new GridLayout(5, 1)); // 2x1
+        JLabel storeName = new JLabel("enter a new store name");
+        JLabel csvPath = new JLabel("enter the path to a CSV file");
+        JTextField storeNameInput = new JTextField();
+        JTextField csvPathInput = new JTextField();
+        JButton openStore = new JButton("confirm open store");
+        JButton back = new JButton("back");
+        openStore.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO make this button work
+                String storeNameString = storeNameInput.getText();
+                String csvPathString = csvPathInput.getText();
+                if (csvPathString != null && storeNameString != null) {
+                    System.out.println("pathing is okay");
+                    try {
+                        File file = new File(csvPathInput.getText());
+                        if (!file.exists()) {
+                            JOptionPane.showMessageDialog(jFrame , "The file path entered" +
+                                    " is invalid , please try again");
+                            jFrame.dispose();
+                            playSellerMenuGUI(seller);
+                        } else {
+                            String[] tags = new String[1];
+                            tags[0] = storeNameString;
+                            FileStringPacket fileStringPacket =
+                                    new FileStringPacket(file, tags, seller);
+                            System.out.println("Trying to send...");
+                            objectOutputStream.writeObject(fileStringPacket);
+                            System.out.println("mid send");
+                            objectOutputStream.flush();
+                            System.out.println("sent");
+                            int openedStore = 3;
+                            Object sellerIntPackObj = objectInputStream.readObject();
+                            if (sellerIntPackObj instanceof SellerIntegerPacket) {
+                                SellerIntegerPacket sellerIntegerPacket =
+                                        (SellerIntegerPacket) sellerIntPackObj;
+                                seller.setStores(sellerIntegerPacket.getSeller().getStores());
+                                openedStore = sellerIntegerPacket.getInteger();
+                                switch (openedStore) {
+                                    case 0 -> {
+                                        JOptionPane.showMessageDialog(jFrame,
+                                                "New store created with name " +
+                                                        storeNameString );
+                                    }
+                                    case 1 -> {
+                                        JOptionPane.showMessageDialog(jFrame,
+                                                "This store name is taken");
+                                    }
+                                    case 2 -> {
+                                        JOptionPane.showMessageDialog(jFrame,
+                                                "The CSV path is invalid");
+                                    }
+                                    default -> {
+                                        JOptionPane.showMessageDialog(jFrame,
+                                                "An unexpected error occurred");
+                                    }
+                                }
+                            }
+                        }
+                        jFrame.dispose();
+                        playGUI();
+                    } catch (IOException | ClassNotFoundException ioException) {
+                        ioException.printStackTrace();
+                        JOptionPane.showMessageDialog(jFrame , "Connection error with server");
+                        jFrame.dispose();
+                        playGUI();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(jFrame , "Some fields where left blank.");
+                    jFrame.dispose();
+                    playGUI();
+                }
+            }
+        });
+        back.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jFrame.dispose();
                 playSellerMenuGUI(seller);
             }
         });

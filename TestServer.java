@@ -155,6 +155,7 @@ public class TestServer {
                             objectOutputStream.reset();
                         }
                     } else if (object instanceof FileStringPacket) {
+                        //SELLER OPENS NEW STORE
                         FileStringPacket fileStringPacket = (FileStringPacket) object;
                         File file = fileStringPacket.getFile();
                         Seller seller = fileStringPacket.getSeller();
@@ -167,11 +168,15 @@ public class TestServer {
                             store.remakeStoreFromFile();
                             store.makeFileFromStore();
                         }
+                        System.out.println("PRE ADD STORE");
+                        seller.getStores().add(store);
+                        System.out.println("POST ADD STORE");
                         SellerIntegerPacket sellerIntegerPacket =
                                 new SellerIntegerPacket(seller, openedNewStore);
                         sellerIntegerPacket.getSeller().makeFileFromSeller();
                         objectOutputStream.writeObject(sellerIntegerPacket);
-                        objectOutputStream.reset();;
+                        objectOutputStream.reset();
+                        System.out.println("RESET");
                     } else if (object instanceof CustomerStringPacket) {
                         //giving customer their exported csv file
                         CustomerStringPacket customerStringPacket =
