@@ -52,6 +52,9 @@ public class OpenNewStoreGUI implements Runnable {
                             JOptionPane.showMessageDialog(jFrame , "The file path entered" +
                                     " is invalid , please try again");
                             jFrame.dispose();
+                            socket.close();
+                            objectInputStream.close();
+                            objectOutputStream.close();
                             new SellerMenuGUI(seller , socket).playGUI();
                         } else {
                             String[] tags = new String[1];
@@ -100,7 +103,15 @@ public class OpenNewStoreGUI implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 jFrame.dispose();
-                new SellerMenuGUI(seller , socket);
+                try {
+                    socket.close();
+                    objectInputStream.close();
+                    objectOutputStream.close();
+                } catch (Exception exception) {
+                    JOptionPane.showMessageDialog(jFrame ,
+                            "Connection error with server");
+                }
+                new SellerMenuGUI(seller , socket).playGUI();
             }
         });
         jFrame.add(storeName);

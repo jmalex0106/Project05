@@ -157,6 +157,13 @@ public class SellerMenuGUI implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
+                try {
+                    socket.close();
+                    objectOutputStream.close();
+                    objectInputStream.close();
+                } catch (Exception exception) {
+                    JOptionPane.showMessageDialog(frame , "Connection error with server");
+                }
                 new OpenNewStoreGUI(seller , socket).playGUI();
             }
         });

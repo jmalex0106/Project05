@@ -147,6 +147,7 @@ public class MainMenuGUI implements Runnable {
                             System.out.println(seller.getName());
                             frame.dispose();
                             System.out.println("MAKING GUI");
+                            socket.close();
                             objectOutputStream.close();
                             objectInputStream.close();
                             new SellerMenuGUI(seller , socket).playGUI();
