@@ -32,46 +32,32 @@ public class Seller implements Serializable {
 
     public void makeFileFromSeller() {
         try {
-            File file = new File(getName() + ".txt");
-            if (!file.exists()) {
-                file.createNewFile();
-            }
+            File file = new File(name + ".txt");
+            file.createNewFile();
             FileOutputStream fileOutputStream = new FileOutputStream(file);
-            PrintWriter printWriter = new PrintWriter(fileOutputStream);
-            String add = "";
-            for (int i = 0; i < stores.size(); i++) {
-                add += stores.get(i).getName();
-                add += "\n";
-            }
-            add = add.trim();
-            printWriter.println(add);
-            printWriter.close();
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(this);
+            objectOutputStream.close();
         } catch (Exception exception) {
-            System.out.println("An error has occurred");
+            exception.printStackTrace();
         }
     }
 
     public void remakeSellerFromFile() {
-        File f = new File(getName() + ".txt");
-        try {
-            FileReader fr = new FileReader(f);
-            BufferedReader bfr = new BufferedReader(fr);
-            ArrayList<String> list = new ArrayList<String>();
-            String line = bfr.readLine();
-            while (line != null) {
-                list.add(line);
-                line = bfr.readLine();
-            }
-            bfr.close();
-
-            for (int i = 0; i < list.size(); i++) {
-                Store store = new Store(list.get(i), getName());
-                store.remakeStoreFromFile();
-                stores.add(store);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+       try {
+           File file = new File(name + ".txt");
+           FileInputStream fileInputStream = new FileInputStream(file);
+           ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+           Object sellerObject = objectInputStream.readObject();
+           if (sellerObject instanceof Seller) {
+               Seller seller = (Seller) sellerObject;
+               System.out.println("SELLER OBJECT");
+               this.name = seller.getName();
+               this.stores = seller.getStores();
+           }
+       } catch (Exception exception) {
+           exception.printStackTrace();
+       }
     }
 
     /**
