@@ -32,31 +32,20 @@ public class Customer implements Serializable {
 
     public boolean remakeCustomerFromFile() {
         try {
-            File file = new File(getName() + ".txt");
-            FileReader fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            String line;
-            String remakeName = file.getName();
-            this.name = remakeName.replace(".txt", "");
-            line = bufferedReader.readLine();
-            while (line != null) {
-                if (line.split(",").length == 6) {
-                    Session session = new Session(Integer.parseInt(line.split(",")[1]),
-                            Integer.parseInt(line.split(",")[2]),
-                            Integer.parseInt(line.split(",")[3]),
-                            Integer.parseInt(line.split(",")[4]),
-                            line.split(",")[5].trim());
-                    if (line.split(",")[0].equals("approved")) {
-                        approvedRequest.add(session);
-                    } else if (line.split(",")[0].equals("waiting")) {
-                        waitingRequest.add(session);
-                    }
-                }
-                line = bufferedReader.readLine();
+            File file = new File(name + ".txt");
+            FileInputStream fileInputStream = new FileInputStream(file);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            Object customerObject = objectInputStream.readObject();
+            if (customerObject instanceof Customer) {
+                Customer customer = (Customer) customerObject;
+                this.name = customer.getName();
+                this.approvedRequest = customer.getApprovedRequest();
+                this.waitingRequest = customer.getWaitingRequest();
             }
-            bufferedReader.close();
+            objectInputStream.close();
             return true;
         } catch (Exception exception) {
+            exception.printStackTrace();
             return false;
         }
     }
@@ -83,45 +72,16 @@ public class Customer implements Serializable {
 
     public boolean remakeFileFromCustomer() {
         try {
-            File file = new File(getName() + ".txt");
-            if (!file.exists()) {
-                file.createNewFile();
-            }
+            File file = new File(name + ".txt");
+            file.createNewFile();
             FileOutputStream fileOutputStream = new FileOutputStream(file);
-            PrintWriter printWriter = new PrintWriter(fileOutputStream);
-            String add = "";
-            for (int i = 0; i < waitingRequest.size(); i++) {
-                add += "waiting,";
-                add += waitingRequest.get(i).getHour();
-                add += ",";
-                add += waitingRequest.get(i).getDay();
-                add += ",";
-                add += waitingRequest.get(i).getMonth();
-                add += ",";
-                add += waitingRequest.get(i).getYear();
-                add += ",";
-                add += waitingRequest.get(i).getStore();
-                add += "\n";
-            }
-            for (int i = 0; i < approvedRequest.size(); i++) {
-                add += "approved,";
-                add += approvedRequest.get(i).getHour();
-                add += ",";
-                add += approvedRequest.get(i).getDay();
-                add += ",";
-                add += approvedRequest.get(i).getMonth();
-                add += ",";
-                add += approvedRequest.get(i).getYear();
-                add += ",";
-                add += approvedRequest.get(i).getStore();
-                add += "\n";
-            }
-            add = add.trim();
-            printWriter.println(add);
-            printWriter.close();
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(this);
+            objectOutputStream.close();
             return true;
         } catch (Exception exception) {
-            return false;
+            exception.printStackTrace();
+            return true;
         }
     }
 

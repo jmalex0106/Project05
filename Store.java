@@ -247,74 +247,15 @@ public class Store implements Serializable {
      */
     public boolean makeFileFromStore() {
         try {
-            File file = new File(name + "Store.txt");
-            if (!file.exists()) {
-                file.createNewFile();
-            }
+            File file = new File (name + "Store.txt");
+            file.createNewFile();
             FileOutputStream fileOutputStream = new FileOutputStream(file);
-            PrintWriter printWriter = new PrintWriter(fileOutputStream);
-            String add = "";
-            add += seller;
-            add += "\n";
-            int t = 0;
-            for (int i = 0; i < 7; i++) {
-                if (isOpen[i]) {
-                    add += "true,";
-                    add += openingTimes[t];
-                    add += ",";
-                    add += closingTimes[t];
-                    add += ",";
-                    add += capacities[t];
-                    add += ",";
-                    add += locations[t];
-                    add += "\n";
-                    t++;
-                } else {
-                    add += "false\n";
-                }
-            }
-            for (String customer : uniqueCustomers) {
-                add += customer;
-                add += "\n";
-            }
-            add += "BREAK\n";
-            //Adds sessions back into file in the form
-            //isApproved,hour,day,month,year,customer username
-            for (int i = 0; i < sessions.size(); i++) {
-                for (int j = 0; j < sessions.get(i).getWaitingCustomers().size(); j++) {
-                    add += "waiting,";
-                    add += sessions.get(i).getHour();
-                    add += ",";
-                    add += sessions.get(i).getDay();
-                    add += ",";
-                    add += sessions.get(i).getMonth();
-                    add += ",";
-                    add += sessions.get(i).getYear();
-                    add += ",";
-                    add += sessions.get(i).getWaitingCustomers().get(j);
-                    add += "\n";
-                }
-                for (int k = 0; k < sessions.get(i).getWaitingCustomers().size(); k++) {
-                    add += "approved,";
-                    add += sessions.get(i).getHour();
-                    add += ",";
-                    add += sessions.get(i).getDay();
-                    add += ",";
-                    add += sessions.get(i).getMonth();
-                    add += ",";
-                    add += sessions.get(i).getYear();
-                    add += ",";
-                    add += sessions.get(i).getEnrolledCustomers().get(k);
-                    add += "\n";
-                }
-            }
-            add = add.trim();
-            System.out.println("PRINTING ADD");
-            System.out.println(add);
-            printWriter.println(add);
-            printWriter.close();
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(this);
+            objectOutputStream.close();
             return true;
-        } catch (Exception exception) {
+        } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -327,69 +268,27 @@ public class Store implements Serializable {
     }
 
     public void remakeStoreFromFile() {
-        try {
-            File f = new File(name + "Store.txt");
-            FileReader fr = new FileReader(f);
-            BufferedReader bfr = new BufferedReader(fr);
-            ArrayList<String> list = new ArrayList<String>();
-            String line = bfr.readLine();
-            while (line != null) {
-                list.add(line);
-                line = bfr.readLine();
-            }
-            bfr.close();
-
-            boolean[] isOpenRemake = new boolean[7];
-            int daysOpen = 0;
-
-            for (int i = 1; i < 8; i++) {
-                if (!list.get(i).equals("false")) {
-                    isOpenRemake[i - 1] = true;
-                    daysOpen++;
-                } else {
-                    isOpenRemake[i - 1] = false;
-                }
-            }
-            int[] openingTimesRemake = new int[daysOpen];
-            int[] closingTimesRemake = new int[daysOpen];
-            int[] capacityRemake = new int[daysOpen];
-            String[] locationRemake = new String[daysOpen];
-
-            for (int i = 1; i < 8; i++) {
-                for (int j = 0; j < daysOpen; j++) {
-                    if (!list.get(i).equals("false")) {
-                        String[] tmpArr = list.get(i).split(",");
-                        openingTimesRemake[j] = Integer.parseInt(tmpArr[1]);
-                        closingTimesRemake[j] = Integer.parseInt(tmpArr[2]);
-                        capacityRemake[j] = Integer.parseInt(tmpArr[3]);
-                        locationRemake[j] = tmpArr[4];
-                    }
-                }
-            }
-            setupStoreInputChecks(isOpenRemake, openingTimesRemake,
-                    closingTimesRemake, capacityRemake, locationRemake);
-            //Code to make uniqueCustomers
-            File file = new File(name + "Store.txt");
-            FileReader fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            String line1;
-            Set<String> uniqueCustomersRemake = new HashSet<String>();
-            for (int i = 0; i < 9; i++) {
-                line1 = bufferedReader.readLine();
-                System.out.println(line1);
-            }
-            line1 = bufferedReader.readLine();
-            System.out.println(line1);
-            while (line1 != null) {
-                uniqueCustomersRemake.add(line1);
-                line1 = bufferedReader.readLine();
-                System.out.println(line1);
-            }
-            this.uniqueCustomers = uniqueCustomersRemake;
-            bufferedReader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+       try {
+           File file = new File(name + "Store.txt");
+           FileInputStream fileInputStream = new FileInputStream(file);
+           ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+           Object storeObject = objectInputStream.readObject();
+           if (storeObject instanceof Store) {
+               System.out.println("STORE OBJECT");
+               Store store = (Store) storeObject;
+               this.sessions = store.getSessions();
+               this.uniqueCustomers = store.getUniqueCustomers();
+               this.isOpen = store.getIsOpen();
+               this.openingTimes = store.getOpeningTimes();
+               this.closingTimes = store.getClosingTimes();
+               this.locations = store.getLocations();
+               this.seller = store.getSeller();
+               this.name = store.getName();
+           }
+           objectInputStream.close();
+       } catch (Exception exception) {
+           exception.printStackTrace();
+       }
     }
 
     public ArrayList<Session> getSessions() {
@@ -419,11 +318,18 @@ public class Store implements Serializable {
     public boolean checkIfStoreIsOpen(int year, int month, int day, int hour) {
         Calendar calender = Calendar.getInstance();
         calender.set(Calendar.YEAR, year);
-        calender.set(Calendar.MONTH, month);
-        calender.set(Calendar.DAY_OF_MONTH, day);
+        calender.set(Calendar.MONTH, month + 1);
+        calender.set(Calendar.DAY_OF_MONTH, day + 1);
         calender.set(Calendar.HOUR, hour);
         //Checks if the store is open on this particular day
+        //TODO delete test below
+        for (int i = 0; i < 7; i++) {
+            System.out.println(i + " OPEN " + isOpen[i]);
+        }
+        //TODO delete test above
         if (!isOpen[calender.get(Calendar.DAY_OF_WEEK) - 1]) {
+            System.out.println("CLOSED DAY");
+            System.out.println("DAY IS " + calender.get(Calendar.DAY_OF_WEEK));
             return false;
         }
         //Gets the index of the day n in the arrays openingTimes, closingTimes, capacities, and
@@ -436,6 +342,7 @@ public class Store implements Serializable {
         }
         //Checks if session time is within the open hours of the store
         if (openingTimes[index] > calender.get(Calendar.HOUR)) {
+            System.out.println("CLOSED HOUR");
             return false;
         }
         return !(closingTimes[index] <= calender.get(Calendar.HOUR));
@@ -647,6 +554,78 @@ public class Store implements Serializable {
                 "unique customers with approved appointments!\n" +
                 getMostPopularDaysOfWeekToString();
         return output;
+    }
+
+    public String showOpenedTimes() {
+        String out = "";
+        int index = 0;
+        for (int i = 0; i < 7; i++) {
+            if (isOpen[i]) {
+                out += DAY_NAMES[i] + " from " +
+                        openingTimes[index] + ":00 to " +
+                        closingTimes[index] + ":00\n";
+                index++;
+            }
+        }
+        return out;
+    }
+    public void importFromCsv(File file) {
+        try {
+            File f = file;
+            FileReader fr = new FileReader(f);
+            BufferedReader bfr = new BufferedReader(fr);
+            ArrayList<String> list = new ArrayList<String>();
+            String line = bfr.readLine();
+            while (line != null) {
+                list.add(line);
+                line = bfr.readLine();
+            }
+            bfr.close();
+            this.isOpen = new boolean[7];
+
+
+            for (int i = 0; i < list.size(); i++) {
+                String[] tmpArr = list.get(i).split(",");
+                isOpen[i] = Boolean.parseBoolean(tmpArr[1]);
+            }
+
+            int daysOpen = 0;
+            for (int i = 0; i < isOpen.length; i++) {
+                if (isOpen[i]) {
+                    daysOpen++;
+                }
+            }
+
+            ArrayList<Integer> idxs = new ArrayList<Integer>();
+
+            for (int i = 0; i < list.size(); i++) {
+                String[] tmpArr = list.get(i).split(",");
+                if (Boolean.parseBoolean(tmpArr[1])) {
+                    idxs.add(i);
+                }
+            }
+
+            int[] openingTimesArr = new int[daysOpen];
+            int[] closingTimesArr = new int[daysOpen];
+            int[] capacitiesArr = new int[daysOpen];
+            String[] locationsArr = new String[daysOpen];
+
+            for (int i = 0; i < daysOpen; i++) {
+                String[] arr = list.get(idxs.get(i)).split(",");
+                openingTimesArr[i] = Integer.parseInt(arr[2]);
+                closingTimesArr[i] = Integer.parseInt(arr[3]);
+                capacitiesArr[i] = Integer.parseInt(arr[4]);
+                locationsArr[i] = arr[5];
+            }
+            this.openingTimes = openingTimesArr;
+            this.closingTimes = closingTimesArr;
+            this.capacities = capacitiesArr;
+            this.locations = locationsArr;
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 
