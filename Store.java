@@ -9,10 +9,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * TODO ADD DESCRIPTIVE JAVADOCS
+ * Each store represents a list of sessions waiting to be approved, a list that is approved, and
+ * a name and owner.
  *
  * @author Moxiao Li, Junmo Kim, Aidan Davis Lab 03 Group 08
- * @version date
+ * @version 8/2/2022
  */
 
 public class Store implements Serializable {
@@ -92,11 +93,6 @@ public class Store implements Serializable {
      * fields of the store object and returns true. If any are not valid, it returns false and does
      * nothing. This method is never called directly, but only from other methods in Store.
      *
-     * @param isOpen
-     * @param openingTimes
-     * @param closingTimes
-     * @param capacities
-     * @param locations
      * @return
      */
     public boolean setupStoreInputChecks(boolean[] isOpenCheck, int[] openingTimesCheck,

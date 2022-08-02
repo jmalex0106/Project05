@@ -2,10 +2,11 @@ import java.util.ArrayList;
 import java.io.*;
 
 /**
- * TODO ADD DESCRIPTIVE JAVADOCS
+ * The seller class represents the Tutor user of this program, which is seen as an array list of
+ * stores bound by a name.
  *
  * @author Moxiao Li, Junmo Kim, Aidan Davis Lab 03 Group 08
- * @version date
+ * @version 8/2/2022
  */
 
 public class Seller implements Serializable {

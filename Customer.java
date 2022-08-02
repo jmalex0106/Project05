@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 /**
- * TODO ADD DESCRIPTIVE JAVADOCS
+ * The customer class represents each customer user of this application.
  *
  * @author Moxiao Li, Junmo Kim, Aidan Davis Lab 03 Group 08
  * @version date

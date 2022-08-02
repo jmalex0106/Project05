@@ -4,13 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.io.*;
 
+/**
+ * This class is the server, takes object packets in from the client, calls the correct method
+ * in ServerMethods, and sends back a packet.
+ *
+ * @author Junmo Kim, Aidan Davis, Moxiao Li
+ *
+ * @version 8/2/2022
+ */
 public class TestServer {
     ServerSocket serverSocket;
     Socket socket;
     List<Thread> threads;
     ServerMethods serverMethods;
-    BufferedReader messageIn;
-    BufferedWriter messageOut;
 
     public TestServer() {
         threads = new ArrayList<Thread>();
@@ -98,15 +104,13 @@ public class TestServer {
                             if (array[1].equals("View sorted statistics")) {
                                 Seller seller = new Seller(array[2]);
                                 seller.remakeSellerFromFile();
-                                String statistics = serverMethods.
-                                        showSellerSortedStatistics(seller);
+                                String statistics = serverMethods.showSellerSortedStatistics(seller);
                                 objectOutputStream.writeObject(statistics);
                                 objectOutputStream.flush();
                             } else if (array[1].equals("View unsorted statistics")) {
                                 Seller seller = new Seller(array[2]);
                                 seller.remakeSellerFromFile();
-                                String statistics = serverMethods.
-                                        showSellerUnsortedStatistics(seller);
+                                String statistics = serverMethods.showSellerUnsortedStatistics(seller);
                                 objectOutputStream.writeObject(statistics);
                                 objectOutputStream.flush();
                             } else {
@@ -117,23 +121,20 @@ public class TestServer {
                         } else if (array.length == 5 && array[0].equals("newAccountCreation")) {
                             String[] newAccount = (String[]) object;
                             boolean isTutor = Boolean.valueOf(newAccount[1]);
-                            Boolean newAccountBool = serverMethods.
-                                    createNewAccount(
-                                    isTutor ,
-                                    newAccount[2] ,
-                                    newAccount[3] ,
-                                    newAccount[4]);
+                            Boolean newAccountBool = serverMethods.createNewAccount(
+                                            isTutor,
+                                            newAccount[2],
+                                            newAccount[3],
+                                            newAccount[4]);
                             objectOutputStream.writeObject(newAccountBool);
                         } else if (array.length == 1 &&
                                 array[0].equals("customerRequestSortedStats")) {
-                            String sortedStats = serverMethods.
-                                    showSortedStatisticsToCustomer();
+                            String sortedStats = serverMethods.showSortedStatisticsToCustomer();
                             objectOutputStream.writeObject(sortedStats);
                             objectOutputStream.flush();
                         } else if (array.length == 1 &&
                                 array[0].equals("customerRequestUnsortedStats")) {
-                            String unsortedStats = serverMethods.
-                                    showUnsortedStatisticsToCustomer();
+                            String unsortedStats = serverMethods.showUnsortedStatisticsToCustomer();
                             objectOutputStream.writeObject(unsortedStats);
                             objectOutputStream.flush();
                         } else if (array.length == 1 && array[0].equals("requestAllStoreNames")) {
@@ -151,15 +152,15 @@ public class TestServer {
                         Seller seller = fileStringPacket.getSeller();
                         String[] tags = fileStringPacket.getStrings();
                         seller.makeFileFromSeller();
-                        Store store = new Store(tags[0] , seller.getName());
+                        Store store = new Store(tags[0], seller.getName());
                         int openedNewStore =
-                                serverMethods.setupNewStoreFromFile(seller , tags[0] , file);
+                                serverMethods.setupNewStoreFromFile(seller, tags[0], file);
                         if (openedNewStore == 0) {
                             store.remakeStoreFromFile();
                             store.makeFileFromStore();
                         }
                         SellerIntegerPacket sellerIntegerPacket =
-                                new SellerIntegerPacket(seller , openedNewStore);
+                                new SellerIntegerPacket(seller, openedNewStore);
                         objectOutputStream.writeObject(sellerIntegerPacket);
                         objectOutputStream.flush();
                     } else if (object instanceof CustomerStringPacket) {
@@ -168,35 +169,30 @@ public class TestServer {
                                 (CustomerStringPacket) object;
                         if (customerStringPacket.getStrings()[0].equals("customerRequestCSV")) {
                             Customer customer = customerStringPacket.getCustomer();
-                            File file = serverMethods.
-                                    exportCustomerAppointmentsToCSVFile(customer);
+                            File file = serverMethods.exportCustomerAppointmentsToCSVFile(customer);
                             objectOutputStream.writeObject(file);
                             objectOutputStream.flush();
-                        } else if (customerStringPacket.getStrings()[0].
-                                equals("customerCancelAppointment")) {
+                        } else if (customerStringPacket.getStrings()[0].equals(
+                                "customerCancelAppointment")) {
                             int index = Integer.parseInt(customerStringPacket.getStrings()[1]);
                             serverMethods.customerCancelAppointmentAtIndex(
-                                    customerStringPacket.getCustomer() , index);
-                        } else if (customerStringPacket.getStrings()[0].
-                                equals("customerRequestAppointment")) {
+                                    customerStringPacket.getCustomer(), index);
+                        } else if (customerStringPacket.getStrings()[0].equals(
+                                "customerRequestAppointment")) {
                             Integer success = serverMethods.requestAppointment(
-                                    customerStringPacket.getCustomer() ,
-                                    customerStringPacket.getStrings()[5] ,
-                                    customerStringPacket.getStrings()[1] ,
-                                    customerStringPacket.getStrings()[2] ,
-                                    customerStringPacket.getStrings()[3] ,
+                                    customerStringPacket.getCustomer(),
+                                    customerStringPacket.getStrings()[5],
+                                    customerStringPacket.getStrings()[1],
+                                    customerStringPacket.getStrings()[2],
+                                    customerStringPacket.getStrings()[3],
                                     customerStringPacket.getStrings()[4]);
                             objectOutputStream.writeObject(success);
                             objectOutputStream.flush();
                         }
                     }
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
-            } catch (ClassNotFoundException classNotFoundException) {
-                classNotFoundException.printStackTrace();
-            } catch (Exception exception) {
-                exception.printStackTrace();
             }
         }
     }

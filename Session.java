@@ -2,11 +2,11 @@ import java.io.*;
 import java.util.ArrayList;
 
 /**
- * TODO ADD DESCRIPTIVE JAVADOCS
+ * Each session represents an hour block of time at a specific store.
  *
  * @author Moxiao Li, Junmo Kim, Aidan Davis Lab 03 Group 08
  *
- * @version date
+ * @version 8/2/2022
  */
 public class Session implements Serializable {
     private int hour;  //The hour of day that the session occurs at. For example, 13 is the 13:00 to 14:00

@@ -10,11 +10,11 @@ the login GUI
 
 Test 2:
 1. Login GUI appears
-2. Grader enters "bobStores" into the username box and "123456" into 
+2. Grader enters "bobStore" into the username box and "123456" into 
 the password box and "bob@gmail.com" into the email box. 
 3. Grader presses create account button
 4. JOption appears with buttons "Student" and "Tutor". Grader presses
-"Student"
+either button.
 5. JOption appears stating that the entered credentials are
 invalid
 6. Grader exits this JOption pane.
@@ -26,7 +26,6 @@ Test 3:
    the password box and "bob@gmail.com" into the email box.
 3. Grader presses create account button
 4. JOption appears with buttons "Student" and "Tutor". Grader presses
-   "Student"
 5. JOption appears stating that the entered credentials are
    invalid
 6. Grader exits this JOption pane.
@@ -35,10 +34,10 @@ Test 3:
 Test 4:
 1. Login GUI appears
 2. Grader enters "bob" into the username box and "123456" into
-   the password box and "bobgmail.com" into the email box.
+   the password box and "bobgmailcom" into the email box.
 3. Grader presses create account button
 4. JOption appears with buttons "Student" and "Tutor". Grader presses
-   "Student"
+   either button
 5. JOption appears stating that the entered credentials are
    invalid
 6. Grader exits this JOption pane.
@@ -79,7 +78,8 @@ Test 6:
 7. Seller GUI for bob disappears
 8. A fresh login GUI appears
 9. Grader logs back into bob's account with the credentials "bob" and
-"123456". Email is only used for creating new accounts, not to log in. 
+"123456". Email is only used for creating new accounts, not to log in, 
+so this field can be left blank. 
 10. Login GUI disappears
 11. Seller GUI for bob appears with welcome message for bob at the top. 
-CONTINUE THIS TEST
+12. Grader exits the program.

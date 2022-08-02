@@ -9,6 +9,14 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.URI;
 
+/**
+ * This class runs all the GUIs that this application needs and handles all clientside commmunication
+ * with the server.
+ *
+ * @author Moxiao Li, Junmo Kim, Aidan Davis, lab 03, group 08
+ * @version 8/2/2022
+ */
+
 public class MainMenuGUI implements Runnable {
     public static final String[] TUTOR_STUDENT = new String[]{"Student", "Tutor"};
     public static final String[] appointment = {"select"}; //TODO delete this when ready
@@ -28,7 +36,8 @@ public class MainMenuGUI implements Runnable {
             System.out.println("CONSTRUCTED 1");
         } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Failed to connect with server");
+            JOptionPane.showMessageDialog(null,
+                    "Failed to connect with server");
         }
     }
 
@@ -61,7 +70,7 @@ public class MainMenuGUI implements Runnable {
 
         // // Password
         JLabel passwordLabel = new JLabel("Password: ");
-        panel1.add(passwordLabel);// (2,1)
+        panel1.add(passwordLabel); // (2,1)
         JTextField passwordTextField = new JTextField(10);
         panel1.add(passwordTextField); // (2,2)
 
@@ -94,7 +103,7 @@ public class MainMenuGUI implements Runnable {
         panel1.add(emailTextField); // (3,2)
 
         // // exit
-        panel1.add(mysteryOption);// (3,3)
+        panel1.add(mysteryOption); // (3,3)
 
         content.add(panel1, BorderLayout.CENTER);
 
@@ -123,15 +132,10 @@ public class MainMenuGUI implements Runnable {
                 requestCustomer[1] = username;
                 requestSeller[1] = username;
                 int login = 0;
-                System.out.println("TESTLINE");
                 try {
-                    System.out.println("TRY");
-                    System.out.println("CONSTRUCTED 1");
                     objectOutputStream.writeObject(credentials);
                     objectOutputStream.flush();
-                    System.out.println("WRITTEN");
                     Object loginObject = objectInputStream.readObject();
-                    System.out.println("Login Object " + loginObject);
                     if (loginObject instanceof Integer) {
                         login = (Integer) loginObject;
                     }
@@ -142,26 +146,20 @@ public class MainMenuGUI implements Runnable {
                         objectOutputStream.writeObject(requestSeller);
                         objectOutputStream.flush();
                         Object sellerObject = objectInputStream.readObject();
-                        System.out.println(sellerObject);
                         if (sellerObject instanceof Seller) {
-                            System.out.println("OBJECT IS SELLER");
                             Seller seller = (Seller) sellerObject;
                             System.out.println(seller.getName());
                             frame.dispose();
-                            System.out.println("MAKING GUI");
                             objectOutputStream.close();
                             objectInputStream.close();
                             playSellerMenuGUI(seller);
                         }
                     } else if (login == 2) {
-                        System.out.println("LOGIN = 2 RUNNING");
                         objectOutputStream.writeObject(requestCustomer);
                         objectOutputStream.flush();
-                        System.out.println("FLUSHED");
                         Object customerObject = objectInputStream.readObject();
                         System.out.println(customerObject);
                         if (customerObject instanceof Customer) {
-                            System.out.println("OBJECT IS CUSTOMER");
                             Customer customer = (Customer) customerObject;
                             System.out.println(customer.getName());
                             frame.dispose();
@@ -185,7 +183,9 @@ public class MainMenuGUI implements Runnable {
                 int isTutorInt = JOptionPane.showOptionDialog(frame, "Select whether your account is " +
                                 "for a tutor or a student:",
                         "Create Account",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, TUTOR_STUDENT, TUTOR_STUDENT[0]);
+                        JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, null,
+                        TUTOR_STUDENT, TUTOR_STUDENT[0]);
                 frame.dispose();
                 boolean isTutor = false;
                 if (isTutorInt == 1) {
@@ -211,8 +211,10 @@ public class MainMenuGUI implements Runnable {
                                 "Account created successfully for " + username +
                                         "\n Please log in!");
                     } else {
-                        JOptionPane.showMessageDialog(null, "Invalid account information\n" +
-                                "Please ensure your username is unique, your password is long enough, and your" +
+                        JOptionPane.showMessageDialog(null,
+                                "Invalid account information\n" +
+                                "Please ensure your username is unique," +
+                                        " your password is long enough, and your" +
                                 " email is valid.");
                     }
                 } catch (Exception exception) {
@@ -270,9 +272,10 @@ public class MainMenuGUI implements Runnable {
                 if (listAllStores(seller).length == 0) {
                     JOptionPane.showMessageDialog(frame, "You have no stores");
                 } else {
-                    playSellerStoreGUI(seller ,
+                    playSellerStoreGUI(seller,
                             getStoreWithName(
-                                    storeDropdown.getSelectedItem().toString(), seller));
+                                    storeDropdown.getSelectedItem().toString(),
+                                    seller));
                     frame.dispose();
                 }
             }
@@ -335,10 +338,8 @@ public class MainMenuGUI implements Runnable {
                 } catch (Exception exception) {
                     JOptionPane.showMessageDialog(frame, "Connection error with server");
                 }
-                //playOpenNewStoreGUI(seller); TODO make this work and delete code below
-                System.out.println("playing open new store gui");
-                playSellerMenuGUI(seller);
-                //TODO make this work and delete code above
+                frame.dispose();
+                playOpenNewStoreGUI(seller);
             }
         });
         panel1.add(openNewStore); // (3,1)
@@ -395,7 +396,7 @@ public class MainMenuGUI implements Runnable {
                     String[] customerRequestCSV = new String[1];
                     customerRequestCSV[0] = "customerRequestCSV";
                     CustomerStringPacket customerStringPacket =
-                            new CustomerStringPacket(customer , customerRequestCSV);
+                            new CustomerStringPacket(customer, customerRequestCSV);
                     objectOutputStream.writeObject(customerStringPacket);
                     Object csvObject = objectInputStream.readObject();
                     if (csvObject instanceof File) {
@@ -431,7 +432,7 @@ public class MainMenuGUI implements Runnable {
                                 sortedStats);
                     }
                 } catch (Exception exception) {
-                    JOptionPane.showMessageDialog(frame ,
+                    JOptionPane.showMessageDialog(frame,
                             "Connection error with server");
                 }
             }
@@ -465,7 +466,7 @@ public class MainMenuGUI implements Runnable {
                                 unsortedStats);
                     }
                 } catch (Exception exception) {
-                    JOptionPane.showMessageDialog(frame ,
+                    JOptionPane.showMessageDialog(frame,
                             "Connection error with server");
                 }
             }
@@ -555,23 +556,28 @@ public class MainMenuGUI implements Runnable {
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int selectedAppointment = appointmentDropdown.getSelectedIndex();
-                String selectedAppointmentString = String.valueOf(selectedAppointment);
-                String[] cancelAppointment = new String[2];
-                cancelAppointment[0] = "customerCancelAppointment";
-                cancelAppointment[1] = selectedAppointmentString;
-                CustomerStringPacket customerStringPacket =
-                        new CustomerStringPacket(customer , cancelAppointment);
-                try {
-                    objectOutputStream.writeObject(customerStringPacket);
-                    objectOutputStream.flush();
-                } catch (Exception exception) {
-                    JOptionPane.showMessageDialog(frame ,
-                            "Connection error with server");
+                if (appointment.length == 0) {
+                    JOptionPane.showMessageDialog(frame,
+                            "You have no appointments to cancel");
+                } else {
+                    int selectedAppointment = appointmentDropdown.getSelectedIndex();
+                    String selectedAppointmentString = String.valueOf(selectedAppointment);
+                    String[] cancelAppointment = new String[2];
+                    cancelAppointment[0] = "customerCancelAppointment";
+                    cancelAppointment[1] = selectedAppointmentString;
+                    CustomerStringPacket customerStringPacket =
+                            new CustomerStringPacket(customer, cancelAppointment);
+                    try {
+                        objectOutputStream.writeObject(customerStringPacket);
+                        objectOutputStream.flush();
+                    } catch (Exception exception) {
+                        JOptionPane.showMessageDialog(frame,
+                                "Connection error with server");
+                    }
+                    JOptionPane.showMessageDialog(frame, "Appointment cancelled successfully");
+                    frame.dispose();
+                    playCustomerMenuGUI(customer);
                 }
-                JOptionPane.showMessageDialog(frame, "Appointment cancelled successfully");
-                frame.dispose();
-                playCustomerMenuGUI(customer);
             }
         });
         panel.add(backButton);
@@ -605,7 +611,7 @@ public class MainMenuGUI implements Runnable {
                 allStoreNames = (String[]) allStoreNamesObject;
             }
         } catch (Exception exception) {
-            JOptionPane.showMessageDialog(frame ,
+            JOptionPane.showMessageDialog(frame,
                     "connection error with server");
         }
         JComboBox<String> storeDropdown = new JComboBox<>(allStoreNames);
@@ -628,13 +634,13 @@ public class MainMenuGUI implements Runnable {
                     if (storeObject instanceof Store) {
                         Store store = (Store) storeObject;
                         frame.dispose();
-                        playNewAppointmentRequestGUI(customer , store);
+                        playNewAppointmentRequestGUI(customer, store);
                     } else {
-                        JOptionPane.showMessageDialog(frame ,
+                        JOptionPane.showMessageDialog(frame,
                                 "Connection error with server");
                     }
                 } catch (Exception exception) {
-                    JOptionPane.showMessageDialog(frame ,
+                    JOptionPane.showMessageDialog(frame,
                             "Connection error with server");
                 }
             }
@@ -702,7 +708,7 @@ public class MainMenuGUI implements Runnable {
                 customerRequestAppointment[4] = hour;
                 customerRequestAppointment[5] = store.getName();
                 CustomerStringPacket customerStringPacket = new CustomerStringPacket(
-                        customer , customerRequestAppointment);
+                        customer, customerRequestAppointment);
                 try {
                     objectOutputStream.writeObject(customerStringPacket);
                     objectOutputStream.flush();
@@ -712,7 +718,7 @@ public class MainMenuGUI implements Runnable {
                         success = successInt;
                     }
                 } catch (Exception exception) {
-                    JOptionPane.showMessageDialog(frame ,
+                    JOptionPane.showMessageDialog(frame,
                             "Connection error with server");
                 }
 
@@ -815,7 +821,7 @@ public class MainMenuGUI implements Runnable {
     }
 
     //SELLER STORE GUI CODE BELOW
-    public void playSellerStoreGUI(Seller seller , Store store) {
+    public void playSellerStoreGUI(Seller seller, Store store) {
         JFrame frame = new JFrame("Welcome to " + store.getName());
 
         Container content = frame.getContentPane();
@@ -833,7 +839,7 @@ public class MainMenuGUI implements Runnable {
                     " at " + store.getSessions().get(i).getHour() +
                     ":00";
         }
-        if (store.getSessions().size() == 0 ) {
+        if (store.getSessions().size() == 0) {
             appList = new String[]{"This store has no waiting or approved customers"};
         }
         JComboBox<String> appointmentDropDown = new JComboBox<>(appList);
@@ -846,7 +852,7 @@ public class MainMenuGUI implements Runnable {
                 int appointmentSelected = appointmentDropDown.getSelectedIndex();
                 Session session = store.getSessions().get(appointmentSelected);
                 frame.dispose();
-                playSessionGUI(seller , store , session);
+                playSessionGUI(seller, store, session);
             }
         });
         panel1.add(appointmentConfirm); // (1,2)
@@ -881,8 +887,8 @@ public class MainMenuGUI implements Runnable {
     }
 
     //SESSION GUI CODE BELOW
-    public void playSessionGUI(Seller seller , Store store , Session session) {
-        JFrame frame = new JFrame("Welcome to session at " + (session.getMonth()+1) +
+    public void playSessionGUI(Seller seller, Store store, Session session) {
+        JFrame frame = new JFrame("Welcome to session at " + (session.getMonth() + 1) +
                 "/" + session.getDay() + " " + session.getYear() + " at store " +
                 session.getStore());
 
@@ -922,7 +928,7 @@ public class MainMenuGUI implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
-                playSellerStoreGUI(seller , store);
+                playSellerStoreGUI(seller, store);
             }
         });
         panel1.add(back);
@@ -937,7 +943,8 @@ public class MainMenuGUI implements Runnable {
         panel2.add(maxCapacityLabel); // (1,1)
         // // Current # of approved
         String numberOfApproved = "";
-        JLabel numberOfApprovedLabel = new JLabel("Current Number of Approved: " + numberOfApproved);
+        JLabel numberOfApprovedLabel = new JLabel("Current Number of Approved: " +
+                numberOfApproved);
         panel2.add(numberOfApprovedLabel); // (2,1)
         // Start time - End time
         String startTime = String.valueOf(session.getHour()) + ":00";
@@ -987,7 +994,7 @@ public class MainMenuGUI implements Runnable {
         frame.setVisible(true);
     }
     //OPEN NEW STORE GUI CODE BELOW
-    /*
+
     public void playOpenNewStoreGUI(Seller seller) {
         JFrame jFrame = new JFrame("Open new store for " + seller.getName());
         Container content = jFrame.getContentPane();
@@ -1023,7 +1030,6 @@ public class MainMenuGUI implements Runnable {
                             if (object instanceof SellerIntegerPacket) {
                                 SellerIntegerPacket sellerIntegerPacket =
                                         (SellerIntegerPacket) object;
-                                seller = sellerIntegerPacket.getSeller();
                                 int openedNewStore = sellerIntegerPacket.getInteger();
                                 if (openedNewStore == 0) {
                                     JOptionPane.showMessageDialog(jFrame , "Store " +
@@ -1046,12 +1052,12 @@ public class MainMenuGUI implements Runnable {
                     } catch (IOException | ClassNotFoundException ioException) {
                         JOptionPane.showMessageDialog(jFrame , "Connection error with server");
                         jFrame.dispose();
-                        new SellerMenuGUI(seller , socket);
+                        playOpenNewStoreGUI(seller);
                     }
                 } else {
                     JOptionPane.showMessageDialog(jFrame , "Some fields where left blank.");
                     jFrame.dispose();
-                    new SellerMenuGUI(seller , socket);
+                    playSellerMenuGUI(seller);
                 }
             }
         });
@@ -1077,5 +1083,5 @@ public class MainMenuGUI implements Runnable {
         jFrame.add(openStore);
         jFrame.add(back);
         jFrame.setVisible(true);
-    }*/
+    }
 }

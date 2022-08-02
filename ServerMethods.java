@@ -6,10 +6,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 /**
- * TODO ADD DESCRIPTIVE JAVADOCS
+ * This class represents the methods that need to be done on various object to extract useful data
+ * to show to the client.
  *
  * @author Moxiao Li, Junmo Kim, Aidan Davis Lab 03 Group 08
- * @version date
+ * @version 8/2/2022
  */
 
 public class ServerMethods {
@@ -316,17 +317,18 @@ public class ServerMethods {
 
     /**
      * Cancels the appointment at the index appointmentIndex for a certain customer
+     *
      * @param customer
      * @param appointmentIndex
      */
-    public void customerCancelAppointmentAtIndex(Customer customer , int appointmentIndex) {
+    public void customerCancelAppointmentAtIndex(Customer customer, int appointmentIndex) {
         Session sessionToCancel = customer.getApprovedRequest().get(appointmentIndex);
         customer.getApprovedRequest().remove(appointmentIndex);
         String storeName = customer.getApprovedRequest().get(appointmentIndex).getStore();
         String sellerName = "";
         //Creates store from storeName
         try {
-            File file = new File ("AllStores.txt");
+            File file = new File("AllStores.txt");
             FileReader fileReader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line = bufferedReader.readLine();
@@ -336,7 +338,7 @@ public class ServerMethods {
                 }
                 break;
             }
-            Store store = new Store(storeName , sellerName);
+            Store store = new Store(storeName, sellerName);
             store.remakeStoreFromFile();
             for (Session session : store.getSessions()) {
                 if (session.getYear() ==
@@ -843,20 +845,24 @@ public class ServerMethods {
 
     public String showSortedStatisticsToCustomer() {
         String output = "";
+        ArrayList<Store> allStores = new ArrayList<Store>();
         //Sets int maxCustomers to the maximum number of unique customers at a store
         //that this seller owns
         int maxCustomers = 0;
-        for (int i = 0; i < allStores().size(); i++) {
-            if (maxCustomers < allStores().get(i).getUniqueCustomers().size()) {
-                maxCustomers = allStores().get(i).getUniqueCustomers().size();
+        for (int i = 0; i < allStores.size(); i++) {
+            if (maxCustomers < allStores.get(i).getUniqueCustomers().size()) {
+                maxCustomers = allStores.get(i).getUniqueCustomers().size();
             }
         }
         for (int i = maxCustomers; i <= 0; i--) {
-            for (int j = 0; j < allStores().size(); j++) {
-                if (allStores().get(j).getUniqueCustomers().size() == i) {
-                    output += allStores().get(j).createStatisticsToString();
+            for (int j = 0; j < allStores.size(); j++) {
+                if (allStores.get(j).getUniqueCustomers().size() == i) {
+                    output += allStores.get(j).createStatisticsToString();
                 }
             }
+        }
+        if (output.equals("")) {
+            return "Not enough statistics to show sorted data";
         }
         return output;
     }
@@ -978,6 +984,7 @@ public class ServerMethods {
         }
         return output;
     }
+
     public int setupNewStoreFromFile(Seller seller, String storeName, File csvPath) {
         try {
             File file = new File("AllStores.txt");
