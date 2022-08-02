@@ -213,9 +213,9 @@ public class MainMenuGUI implements Runnable {
                     } else {
                         JOptionPane.showMessageDialog(null,
                                 "Invalid account information\n" +
-                                "Please ensure your username is unique," +
+                                        "Please ensure your username is unique," +
                                         " your password is long enough, and your" +
-                                " email is valid.");
+                                        " email is valid.");
                     }
                 } catch (Exception exception) {
                     JOptionPane.showMessageDialog(frame, "connection error with server");
@@ -830,6 +830,29 @@ public class MainMenuGUI implements Runnable {
 
     //SELLER STORE GUI CODE BELOW
     public void playSellerStoreGUI(Seller seller, Store store) {
+        String[] packet = new String[3];
+        packet[0] = "sellerStorePacket";
+        packet[1] = store.getName();
+        packet[2] = seller.getName();
+        try {
+            objectOutputStream.writeObject(packet);
+            objectOutputStream.reset();
+            Object object = objectInputStream.readObject();
+            if (object instanceof SellerStorePacket) {
+                SellerStorePacket sellerStorePacket =
+                        (SellerStorePacket) object;
+                seller.setName(sellerStorePacket.getSeller().getName());
+                seller.setStores(sellerStorePacket.getSeller().getStores());
+                store.setName(sellerStorePacket.getSeller().getName());
+                store.setIsOpen(sellerStorePacket.getStore().getIsOpen());
+                store.setOpeningTimes(sellerStorePacket.getStore().getOpeningTimes());
+                store.setClosingTimes(sellerStorePacket.getStore().getClosingTimes());
+                store.setCapacities(sellerStorePacket.getStore().getCapacities());
+                store.setSessions(sellerStorePacket.getStore().getSessions());
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
         System.out.println(store.getSessions().size() + "SESSION SIZE");
         //UPDATES STORE AND SELLER OBJECTS
         String[] sellerStorePacketArray = new String[3];
@@ -980,6 +1003,53 @@ public class MainMenuGUI implements Runnable {
 
         content.add(panel2, BorderLayout.NORTH);
 
+        approveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int index = 0;
+                seller.getStores().remove(store);
+                for (int i = 0; i < store.getSessions().size(); i++) {
+                    if (store.getSessions().get(i) == session) {
+                        index = i;
+                    }
+                }
+                store.getSessions().get(index).getEnrolledCustomers().add(waitingListDropdown.getSelectedItem().toString());
+                store.getSessions().get(index).getWaitingCustomers().remove(waitingListDropdown.getSelectedItem().toString());
+                seller.getStores().add(store);
+                SellerIntegerPacket sellerIntegerPacket = new SellerIntegerPacket(seller , 50);
+                try {
+                    objectOutputStream.writeObject(sellerIntegerPacket);
+                    objectOutputStream.reset();
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+                playSellerStoreGUI(seller , store);
+            }
+        });
+
+        approveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int index = 0;
+                seller.getStores().remove(store);
+                for (int i = 0; i < store.getSessions().size(); i++) {
+                    if (store.getSessions().get(i) == session) {
+                        index = i;
+                    }
+                }
+                store.getSessions().get(index).getEnrolledCustomers().remove(waitingListDropdown.getSelectedItem().toString());
+                store.getSessions().get(index).getWaitingCustomers().add(waitingListDropdown.getSelectedItem().toString());
+                seller.getStores().add(store);
+                SellerIntegerPacket sellerIntegerPacket = new SellerIntegerPacket(seller , 50);
+                try {
+                    objectOutputStream.writeObject(sellerIntegerPacket);
+                    objectOutputStream.reset();
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+                playSellerStoreGUI(seller , store);
+            }
+        });
 
         frame.setSize(500, 200);
         frame.setResizable(false);

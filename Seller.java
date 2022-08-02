@@ -119,5 +119,10 @@ public class Seller implements Serializable {
         }
         return output;
     }
+
+    public void setStores(ArrayList<Store> stores) {
+        this.stores = stores;
+    }
+
 }
 

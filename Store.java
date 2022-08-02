@@ -569,5 +569,38 @@ public class Store implements Serializable {
             e.printStackTrace();
         }
     }
+
+    public void setSeller(String seller) {
+        this.seller = seller;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setCapacities(int[] capacities) {
+        this.capacities = capacities;
+    }
+
+    public void setClosingTimes(int[] closingTimes) {
+        this.closingTimes = closingTimes;
+    }
+
+    public void setIsOpen(boolean[] isOpen) {
+        this.isOpen = isOpen;
+    }
+
+    public void setLocations(String[] locations) {
+        this.locations = locations;
+    }
+
+    public void setOpeningTimes(int[] openingTimes) {
+        this.openingTimes = openingTimes;
+    }
+
+    public void setSessions(ArrayList<Session> sessions) {
+        this.sessions = sessions;
+    }
+
 }
 

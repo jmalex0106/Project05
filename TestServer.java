@@ -55,7 +55,7 @@ public class TestServer {
     public static void send(Socket socket, Object obj) throws IOException {
         ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
         oos.writeObject(obj);
-        oos.flush();
+        oos.reset();;
     }
 
     public static void main(String[] args) {
@@ -91,14 +91,14 @@ public class TestServer {
                             seller.remakeSellerFromFile();
                             System.out.println("TEST2");
                             objectOutputStream.writeObject(seller);
-                            objectOutputStream.flush();
+                            objectOutputStream.reset();;
                         } else if (array.length == 2 && array[0].equals("requestCustomer")) {
                             Customer customer = new Customer(array[1]);
                             customer.remakeCustomerFromFile();
                             System.out.println("T 0");
                             objectOutputStream.writeObject(customer);
                             System.out.println("T 1");
-                            objectOutputStream.flush();
+                            objectOutputStream.reset();;
                             System.out.println("T 2");
                         } else if (array.length == 3 && array[0].equals("sellerRequestStatistics")) {
                             if (array[1].equals("View sorted statistics")) {
@@ -106,45 +106,45 @@ public class TestServer {
                                 seller.remakeSellerFromFile();
                                 String statistics = serverMethods.showSellerSortedStatistics(seller);
                                 objectOutputStream.writeObject(statistics);
-                                objectOutputStream.flush();
+                                objectOutputStream.reset();;
                             } else if (array[1].equals("View unsorted statistics")) {
                                 Seller seller = new Seller(array[2]);
                                 seller.remakeSellerFromFile();
                                 String statistics = serverMethods.showSellerUnsortedStatistics(seller);
                                 objectOutputStream.writeObject(statistics);
-                                objectOutputStream.flush();
+                                objectOutputStream.reset();;
                             } else {
                                 String statistics = "an error has occurred";
                                 objectOutputStream.writeObject(statistics);
-                                objectOutputStream.flush();
+                                objectOutputStream.reset();;
                             }
                         } else if (array.length == 5 && array[0].equals("newAccountCreation")) {
                             String[] newAccount = (String[]) object;
                             boolean isTutor = Boolean.valueOf(newAccount[1]);
                             Boolean newAccountBool = serverMethods.createNewAccount(
-                                            isTutor,
-                                            newAccount[2],
-                                            newAccount[3],
-                                            newAccount[4]);
+                                    isTutor,
+                                    newAccount[2],
+                                    newAccount[3],
+                                    newAccount[4]);
                             objectOutputStream.writeObject(newAccountBool);
                         } else if (array.length == 1 &&
                                 array[0].equals("customerRequestSortedStats")) {
                             String sortedStats = serverMethods.showSortedStatisticsToCustomer();
                             objectOutputStream.writeObject(sortedStats);
-                            objectOutputStream.flush();
+                            objectOutputStream.reset();;
                         } else if (array.length == 1 &&
                                 array[0].equals("customerRequestUnsortedStats")) {
                             String unsortedStats = serverMethods.showUnsortedStatisticsToCustomer();
                             objectOutputStream.writeObject(unsortedStats);
-                            objectOutputStream.flush();
+                            objectOutputStream.reset();;
                         } else if (array.length == 1 && array[0].equals("requestAllStoreNames")) {
                             String[] allStoreNames = serverMethods.allStoreNames();
                             objectOutputStream.writeObject(allStoreNames);
-                            objectOutputStream.flush();
+                            objectOutputStream.reset();;
                         } else if (array.length == 2 && array[0].equals("customerRequestStore")) {
                             Store store = serverMethods.getStoreWithName(array[1]);
                             objectOutputStream.writeObject(store);
-                            objectOutputStream.flush();
+                            objectOutputStream.reset();;
                         } else if (array.length == 3 && array[0].equals("sellerStorePacket")) {
                             Store store = new Store(array[1] , array[2]);
                             Seller seller = new Seller(array[2]);
@@ -152,7 +152,7 @@ public class TestServer {
                             seller.remakeSellerFromFile();
                             SellerStorePacket sellerStorePacket = new SellerStorePacket(seller , store);
                             objectOutputStream.writeObject(sellerStorePacket);
-                            objectOutputStream.flush();
+                            objectOutputStream.reset();
                         }
                     } else if (object instanceof FileStringPacket) {
                         FileStringPacket fileStringPacket = (FileStringPacket) object;
@@ -171,7 +171,7 @@ public class TestServer {
                                 new SellerIntegerPacket(seller, openedNewStore);
                         sellerIntegerPacket.getSeller().makeFileFromSeller();
                         objectOutputStream.writeObject(sellerIntegerPacket);
-                        objectOutputStream.flush();
+                        objectOutputStream.reset();;
                     } else if (object instanceof CustomerStringPacket) {
                         //giving customer their exported csv file
                         CustomerStringPacket customerStringPacket =
@@ -181,7 +181,7 @@ public class TestServer {
                             Customer customer = customerStringPacket.getCustomer();
                             File file = serverMethods.exportCustomerAppointmentsToCSVFile(customer);
                             objectOutputStream.writeObject(file);
-                            objectOutputStream.flush();
+                            objectOutputStream.reset();;
                         } else if (customerStringPacket.getStrings()[0].equals(
                                 "customerCancelAppointment")) {
                             int index = Integer.parseInt(customerStringPacket.getStrings()[1]);
@@ -195,25 +195,30 @@ public class TestServer {
                                             customerStringPacket.getStrings()[5]);
                             store.remakeStoreFromFile();
                             Integer success = serverMethods.requestAppointment(
-                                   customerStringPacket.getCustomer(),
-                                     store,
-                                    customerStringPacket.getStrings()[1],
-                                    customerStringPacket.getStrings()[2],
+                                    customerStringPacket.getCustomer(),
+                                    store,
+                                    customerStringPacket.getStrings()[4],
                                     customerStringPacket.getStrings()[3],
-                                     customerStringPacket.getStrings()[4]);
+                                    customerStringPacket.getStrings()[2],
+                                    customerStringPacket.getStrings()[1]);
                             int year = Integer.parseInt(customerStringPacket.getStrings()[1]);
                             int month = Integer.parseInt(customerStringPacket.getStrings()[2]);
                             int day = Integer.parseInt(customerStringPacket.getStrings()[3]);
                             int hour = Integer.parseInt(customerStringPacket.getStrings()[4]);
                             System.out.println(success + "SUCCESS0");
-                           objectOutputStream.writeObject(success);
+                            objectOutputStream.writeObject(success);
                             System.out.println(success + "SUCCESS");
-                            objectOutputStream.flush();
+                            objectOutputStream.reset();;
                             if (success == 0 || success == 1) {
                                 store.requestAppointmentAtTime(year,month,day,hour,
                                         customerStringPacket.getCustomer().getName());
                                 store.makeFileFromStore();
                             }
+                        }
+                    } else if (object instanceof SellerIntegerPacket) {
+                        SellerIntegerPacket sellerIntegerPacket = (SellerIntegerPacket) object;
+                        if (sellerIntegerPacket.getInteger() == 50) {
+                            sellerIntegerPacket.getSeller().makeFileFromSeller();
                         }
                     }
                 }
@@ -223,3 +228,4 @@ public class TestServer {
         }
     }
 }
+
