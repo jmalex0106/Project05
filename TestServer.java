@@ -81,7 +81,9 @@ public class TestServer {
                             System.out.println("SENDING");
                         } else if (array.length == 2 && array[0].equals("requestSeller")) {
                             Seller seller = new Seller(array[1]);
+                            System.out.println("TEST1");
                             seller.remakeSellerFromFile();
+                            System.out.println("TEST2");
                             objectOutputStream.writeObject(seller);
                             objectOutputStream.flush();
                         } else if (array.length == 2 && array[0].equals("requestCustomer")) {
@@ -122,6 +124,26 @@ public class TestServer {
                                     newAccount[3] ,
                                     newAccount[4]);
                             objectOutputStream.writeObject(newAccountBool);
+                        } else if (array.length == 1 &&
+                                array[0].equals("customerRequestSortedStats")) {
+                            String sortedStats = new
+                                    ServerMethods().showSortedStatisticsToCustomer();
+                            objectOutputStream.writeObject(sortedStats);
+                            objectOutputStream.flush();
+                        } else if (array.length == 1 &&
+                                array[0].equals("customerRequestUnsortedStats")) {
+                            String unsortedStats = new
+                                    ServerMethods().showUnsortedStatisticsToCustomer();
+                            objectOutputStream.writeObject(unsortedStats);
+                            objectOutputStream.flush();
+                        } else if (array.length == 1 && array[0].equals("requestAllStoreNames")) {
+                            String[] allStoreNames = new ServerMethods().allStoreNames();
+                            objectOutputStream.writeObject(allStoreNames);
+                            objectOutputStream.flush();
+                        } else if (array.length == 2 && array[0].equals("customerRequestStore")) {
+                            Store store = new ServerMethods().getStoreWithName(array[1]);
+                            objectOutputStream.writeObject(store);
+                            objectOutputStream.flush();
                         }
                     } else if (object instanceof FileStringPacket) {
                         FileStringPacket fileStringPacket = (FileStringPacket) object;
@@ -140,12 +162,41 @@ public class TestServer {
                                 new SellerIntegerPacket(seller , openedNewStore);
                         objectOutputStream.writeObject(sellerIntegerPacket);
                         objectOutputStream.flush();
+                    } else if (object instanceof CustomerStringPacket) {
+                        //giving customer their exported csv file
+                        CustomerStringPacket customerStringPacket =
+                                (CustomerStringPacket) object;
+                        if (customerStringPacket.getStrings()[0].equals("customerRequestCSV")) {
+                            Customer customer = customerStringPacket.getCustomer();
+                            File file = new ServerMethods().
+                                    exportCustomerAppointmentsToCSVFile(customer);
+                            objectOutputStream.writeObject(file);
+                            objectOutputStream.flush();
+                        } else if (customerStringPacket.getStrings()[0].
+                                equals("customerCancelAppointment")) {
+                            int index = Integer.parseInt(customerStringPacket.getStrings()[1]);
+                            new ServerMethods().customerCancelAppointmentAtIndex(
+                                    customerStringPacket.getCustomer() , index);
+                        } else if (customerStringPacket.getStrings()[0].
+                                equals("customerRequestAppointment")) {
+                            Integer success = new ServerMethods().requestAppointment(
+                                    customerStringPacket.getCustomer() ,
+                                    customerStringPacket.getStrings()[5] ,
+                                    customerStringPacket.getStrings()[1] ,
+                                    customerStringPacket.getStrings()[2] ,
+                                    customerStringPacket.getStrings()[3] ,
+                                    customerStringPacket.getStrings()[4]);
+                            objectOutputStream.writeObject(success);
+                            objectOutputStream.flush();
+                        }
                     }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException classNotFoundException) {
                 classNotFoundException.printStackTrace();
+            } catch (Exception exception) {
+                exception.printStackTrace();
             }
         }
     }

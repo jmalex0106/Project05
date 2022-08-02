@@ -8,7 +8,7 @@ import java.util.ArrayList;
  *
  * @version date
  */
-public class Session {
+public class Session implements Serializable {
     private int hour;  //The hour of day that the session occurs at. For example, 13 is the 13:00 to 14:00
     //session.
     private int day; //The day of the month that the session occurs at.

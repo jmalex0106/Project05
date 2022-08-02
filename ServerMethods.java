@@ -1,9 +1,9 @@
+import java.awt.geom.AffineTransform;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 /**
  * TODO ADD DESCRIPTIVE JAVADOCS
@@ -771,6 +771,40 @@ public class ServerMethods {
         }
     }
 
+    //The following is copy of the method above the outputs a file object
+    public File exportCustomerAppointmentsToCSVFile(Customer customer) {
+        try {
+            File file = new File(customer.getName() + ".txt");
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line = bufferedReader.readLine();
+            ArrayList<String> approvedAppointmentStrings = new ArrayList<String>();
+            while (line != null) {
+                if (line.split(",")[0].equals("approved")) {
+                    approvedAppointmentStrings.add(line);
+                }
+                line = bufferedReader.readLine();
+            }
+            bufferedReader.close();
+            File file1 = new File(customer.getName() + "Appointments.csv");
+            file1.createNewFile();
+            FileOutputStream fileOutputStream = new FileOutputStream(file1);
+            PrintWriter printWriter = new PrintWriter(fileOutputStream);
+            String add = "";
+            add += "Format: hour, day, month, year, tutor name";
+            for (int i = 0; i < approvedAppointmentStrings.size(); i++) {
+                add += "\n";
+                add += approvedAppointmentStrings.get(i);
+            }
+            printWriter.println(add);
+            printWriter.close();
+            return file1;
+        } catch (Exception exception) {
+            int catchInt = 0;
+        }
+        return null;
+    }
+
     //The following methods show statistics to the seller
     public String showSellerUnsortedStatistics(Seller seller) {
         return seller.createUnsortedSellerStatisticsToString();
@@ -968,6 +1002,37 @@ public class ServerMethods {
         } catch (Exception exception) {
             return 2;
         }
+    }
+
+    public String[] allStoreNames() {
+        ArrayList<String> allStoreNamesArrayList = new ArrayList<String>();
+        try {
+            File file = new File("AllStores.txt");
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                allStoreNamesArrayList.add(line.split(",")[0]);
+            }
+            String[] output = new String[allStoreNamesArrayList.size()];
+            for (int i = 0; i < output.length; i++) {
+                output[i] = allStoreNamesArrayList.get(i);
+            }
+            return output;
+        } catch (Exception exception) {
+            int catchInt = 1;
+        }
+        return null;
+    }
+
+    public Store getStoreWithName(String storeName) {
+        ArrayList<Store> stores = allStores();
+        for (Store store : stores) {
+            if (store.getName().equals(storeName)) {
+                return store;
+            }
+        }
+        return null;
     }
 }
 

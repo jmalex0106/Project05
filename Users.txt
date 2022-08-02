@@ -1,4 +1,2 @@
-Tutor,Aidan,a@b.c,123456
-Student,tom,tom@gmail.com,tom123
-Student,Junmo,junmo@realemail.yahoo,jun123Student,jim,a@b.c,123456
-Student,Zoe,zoe@email.net,z98765
+Tutor,Aidan,a@b.c,123123
+Student,Moxiao,mo@xiao.com,moxiao1

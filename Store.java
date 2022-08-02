@@ -15,7 +15,7 @@ import java.util.Set;
  * @version date
  */
 
-public class Store {
+public class Store implements Serializable {
     private static final String[] DAY_NAMES = new String[]{"Sunday", "Monday",
             "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
     private static final int[] DAYS = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //days in normal years
@@ -314,15 +314,19 @@ public class Store {
             File file = new File(name + "Store.txt");
             FileReader fileReader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
-            String line1 = "";
+            String line1;
             Set<String> uniqueCustomersRemake = new HashSet<String>();
             for (int i = 0; i < 9; i++) {
                 line1 = bufferedReader.readLine();
+                System.out.println(line1);
             }
-            do {
+            line1 = bufferedReader.readLine();
+            System.out.println(line1);
+            while (line1 != null) {
                 uniqueCustomersRemake.add(line1);
                 line1 = bufferedReader.readLine();
-            } while (!line1.equals("BREAK"));
+                System.out.println(line1);
+            }
             this.uniqueCustomers = uniqueCustomersRemake;
             bufferedReader.close();
         } catch (IOException e) {

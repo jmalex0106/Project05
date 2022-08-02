@@ -1,7 +1,8 @@
 public class TestMain {
     public static void main(String[] args) {
-        System.out.println("Running");
-        System.out.println(new ServerMethods().createNewAccount(false , "jim" ,
-                "a@b.c" , "123456"));
+        Seller aidan = new Seller("Aidan");
+        String csv = "C:\\Users\\home computer\\Downloads\\Sample Store Input CSV - Sheet1 (1).csv";
+        Store store = new Store("aidanMath" , "Aidan");
+        store.remakeStoreFromFile();
     }
 }
