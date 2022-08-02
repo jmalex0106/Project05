@@ -695,11 +695,13 @@ public class MainMenuGUI implements Runnable {
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                System.out.println("NEW APP BUTTON PRESSED");
                 String year = yearTextField.getText().trim();
                 String month = yearTextField.getText().trim();
                 String day = yearTextField.getText().trim();
                 String hour = yearTextField.getText().trim();
                 int success = 100;
+                System.out.println("NEW APP SUCCESS " + success);
                 String[] customerRequestAppointment = new String[6];
                 customerRequestAppointment[0] = "customerRequestAppointment";
                 customerRequestAppointment[1] = year;
@@ -709,11 +711,16 @@ public class MainMenuGUI implements Runnable {
                 customerRequestAppointment[5] = store.getName();
                 CustomerStringPacket customerStringPacket = new CustomerStringPacket(
                         customer, customerRequestAppointment);
+                System.out.println("NEW APP TEST 1");
                 try {
+                    System.out.println("NEW APP TRY RUNNING");
                     objectOutputStream.writeObject(customerStringPacket);
                     objectOutputStream.flush();
+                    System.out.println("NEW APP OBJECT WRITTEN");
                     Object intObject = objectInputStream.readObject();
+                    System.out.println(intObject.getClass() + "IS CLASS");
                     if (intObject instanceof Integer) {
+                        System.out.println("NEW APP INT RECEIVED");
                         Integer successInt = (Integer) intObject;
                         success = successInt;
                     }
@@ -721,7 +728,7 @@ public class MainMenuGUI implements Runnable {
                     JOptionPane.showMessageDialog(frame,
                             "Connection error with server");
                 }
-
+                System.out.println("NEW APP TEST 1");
                 switch (success) {
                     case 0 -> {
                         JOptionPane.showMessageDialog(frame,

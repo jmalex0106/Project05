@@ -9,7 +9,13 @@ public class TestMain {
         Seller aidan = new Seller("Aidan");
         String csv = "C:\\Users\\home computer\\Downloads\\Sample Store Input CSV - Sheet1 (1).csv";
         Store store = new Store("aidanMath" , "Aidan");
-        for (int i = 0; i < serverMethods.csvPathToString(csv).length; i++) {
+        Customer bob = new Customer("Bob");
+        serverMethods.requestAppointment(bob , "aidanMath" , "2022" , "8" ,
+        "5" , "12");
+    }
+}
+/*
+ for (int i = 0; i < serverMethods.csvPathToString(csv).length; i++) {
             for (int j = 0; j < serverMethods.csvPathToString(csv)[i].length; j++) {
                 System.out.print(serverMethods.csvPathToString(csv)[i][j] + " ");
             }
@@ -20,5 +26,4 @@ public class TestMain {
             System.out.println(serverMethods.makeIsOpenFromCSV(csv)[i]);
         }
         serverMethods.setupNewStore(aidan , "aidanMath" , csv);
-    }
-}
+ */

@@ -179,6 +179,7 @@ public class TestServer {
                                     customerStringPacket.getCustomer(), index);
                         } else if (customerStringPacket.getStrings()[0].equals(
                                 "customerRequestAppointment")) {
+                            System.out.println("NEW APP RUNNING BLOCK");
                             Integer success = serverMethods.requestAppointment(
                                     customerStringPacket.getCustomer(),
                                     customerStringPacket.getStrings()[5],
@@ -186,7 +187,9 @@ public class TestServer {
                                     customerStringPacket.getStrings()[2],
                                     customerStringPacket.getStrings()[3],
                                     customerStringPacket.getStrings()[4]);
+                            System.out.println(success + "SUCCESS0");
                             objectOutputStream.writeObject(success);
+                            System.out.println(success + "SUCCESS");
                             objectOutputStream.flush();
                         }
                     }

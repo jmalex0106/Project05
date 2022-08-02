@@ -225,6 +225,7 @@ public class ServerMethods {
         int month = monthFormat(monthString);
         int day = dayFormat(dayString);
         int hour = hourFormat(hourString);
+        System.out.println("INTS CONVERTED");
         //Searches if the store under storeName exists in AllStores.txt.
         try {
             String storeOwner = "";
@@ -238,8 +239,10 @@ public class ServerMethods {
                     storeExists = true;
                     storeOwner = line.split(",")[1];
                 }
+                line = bufferedReader.readLine();
             }
             bufferedReader.close();
+            System.out.println("READER CLOSED");
             if (!storeExists) {
                 return 3;
             }
