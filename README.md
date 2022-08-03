@@ -135,11 +135,11 @@ Used to send a seller object and an Integer between the client and server.
 
 *ServerMethods.java*
 
-This is the server class file. This class represents the methods that need to be done on various object to extract useful data to show to the client. searchForValidLogin method is to match .txt files named after username. createNewAccount assist to create new account. allExistingStores will read AllStores.txt and return a data array. RequestAppointment method is called on the server side when the user, a customer (student), presses the confirm button on the request appointment GUI. After the confirm button has been pressed, a JOptionPane with the appropriate error/success message will appear. Also, declineAppointmentAtTime, approveAppointmentAtTime, cancelAppointmentAtTime can deny, approve, andcancel appointments, respectively. customerCancelAppointmentAtIndex is another method to cancel at the index apoointmentIndex for a certain customer. checkIfDateIsFuture method will return true if the date is future. checkIfDateIsValid method will check the input format of the date input. Other methods also help us to check format, for example, return true if there is an expected input.
+This class represents the methods that need to be done on various object to extract useful data to show to the client. searchForValidLogin method is to match .txt files named after username. createNewAccount assist to create new account. allExistingStores will read AllStores.txt and return a data array. RequestAppointment method is called on the server side when the user, a customer (student), presses the confirm button on the request appointment GUI. After the confirm button has been pressed, a JOptionPane with the appropriate error/success message will appear. Also, declineAppointmentAtTime, approveAppointmentAtTime, cancelAppointmentAtTime can deny, approve, andcancel appointments, respectively. customerCancelAppointmentAtIndex is another method to cancel at the index apoointmentIndex for a certain customer. checkIfDateIsFuture method will return true if the date is future. checkIfDateIsValid method will check the input format of the date input. Other methods also help us to check format, for example, return true if there is an expected input. The file is to support Server.java.
 
 *Server.java*
 
-This class is the server, takes object packets in from the client, calls the correct method in ServerMethods, and sends back a packet.
+This class is the server, takes object packets in from the client, calls the correct method in ServerMethods, and sends back a packet. Server class will user ServerMethods.
 
 *SellerStorePacket.java*
 
