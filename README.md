@@ -146,3 +146,6 @@ This class is the server, takes object packets in from the client, calls the cor
 *SellerStorePacket.java*
 
 Used to send a seller object and an Store between the client and server.
+
+*StartClientGui.java*
+Users will start program from here after they launched Server.java
