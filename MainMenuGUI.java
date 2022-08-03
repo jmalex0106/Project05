@@ -28,10 +28,8 @@ public class MainMenuGUI implements Runnable {
             socket = new Socket("localhost", 1234);
             this.objectOutputStream =
                     new ObjectOutputStream(socket.getOutputStream());
-            System.out.println("CONSTRUCTED 0");
             this.objectInputStream =
                     new ObjectInputStream(socket.getInputStream());
-            System.out.println("CONSTRUCTED 1");
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null,
@@ -39,7 +37,7 @@ public class MainMenuGUI implements Runnable {
         }
     }
 
-    public void playGUI() {
+    public synchronized void playGUI() {
         SwingUtilities.invokeLater(new MainMenuGUI());
     }
 
@@ -81,7 +79,6 @@ public class MainMenuGUI implements Runnable {
         mysteryOption.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO find video URL to input and set String videoURL to the URL
                 String videoURL = "https://www.youtube.com/watch?v=dAyXuLNxOfE";
                 try {
                     Desktop desktop = Desktop.getDesktop();
@@ -115,7 +112,6 @@ public class MainMenuGUI implements Runnable {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Button pressed");
                 // grab input information
                 String username = usernameTextField.getText();
                 String password = passwordTextField.getText();
@@ -146,7 +142,6 @@ public class MainMenuGUI implements Runnable {
                         Object sellerObject = objectInputStream.readObject();
                         if (sellerObject instanceof Seller) {
                             Seller seller = (Seller) sellerObject;
-                            System.out.println(seller.getName());
                             frame.dispose();
                             playSellerMenuGUI(seller);
                         }
@@ -154,10 +149,8 @@ public class MainMenuGUI implements Runnable {
                         objectOutputStream.writeObject(requestCustomer);
                         objectOutputStream.flush();
                         Object customerObject = objectInputStream.readObject();
-                        System.out.println(customerObject);
                         if (customerObject instanceof Customer) {
                             Customer customer = (Customer) customerObject;
-                            System.out.println(customer.getName());
                             frame.dispose();
                             playCustomerMenuGUI(customer);
                         }
@@ -183,10 +176,7 @@ public class MainMenuGUI implements Runnable {
                         JOptionPane.QUESTION_MESSAGE, null,
                         TUTOR_STUDENT, TUTOR_STUDENT[0]);
                 frame.dispose();
-                boolean isTutor = false;
-                if (isTutorInt == 1) {
-                    isTutor = true;
-                }
+                boolean isTutor = isTutorInt == 1;
                 String[] newAccountCreation = new String[5];
                 newAccountCreation[0] = "newAccountCreation";
                 newAccountCreation[1] = String.valueOf(isTutor);
@@ -200,7 +190,6 @@ public class MainMenuGUI implements Runnable {
                     Object newAccountBoolObject = objectInputStream.readObject();
                     if (newAccountBoolObject instanceof Boolean) {
                         accountCreated = (Boolean) newAccountBoolObject;
-                        System.out.println("ACCOUNT BOOLEAN = " + (Boolean) newAccountBoolObject);
                     }
                     if (accountCreated) {
                         JOptionPane.showMessageDialog(null,
@@ -239,7 +228,7 @@ public class MainMenuGUI implements Runnable {
         return output;
     }
 
-    public void playSellerMenuGUI(Seller seller) {
+    public synchronized void playSellerMenuGUI(Seller seller) {
         JFrame frame = new JFrame("Welcome " + seller.getName() + "!");
 
         Container content = frame.getContentPane();
@@ -264,7 +253,7 @@ public class MainMenuGUI implements Runnable {
         JButton confirmStore = new JButton("Confirm"); // add action listener
         confirmStore.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public synchronized void actionPerformed(ActionEvent e) {
                 if (listAllStores(seller).length == 0) {
                     JOptionPane.showMessageDialog(frame, "You have no stores");
                 } else {
@@ -685,13 +674,11 @@ public class MainMenuGUI implements Runnable {
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("NEW APP BUTTON PRESSED");
                 String year = yearTextField.getText().trim();
                 String month = monthTextField.getText().trim();
                 String day = dayTextField.getText().trim();
                 String hour = hourField.getText().trim();
                 int success = 100;
-                System.out.println("NEW APP SUCCESS " + success);
                 String[] customerRequestAppointment = new String[6];
                 customerRequestAppointment[0] = "customerRequestAppointment";
                 customerRequestAppointment[1] = year;
@@ -701,16 +688,11 @@ public class MainMenuGUI implements Runnable {
                 customerRequestAppointment[5] = store.getName();
                 CustomerStringPacket customerStringPacket = new CustomerStringPacket(
                         customer, customerRequestAppointment);
-                System.out.println("NEW APP TEST 1");
                 try {
-                    System.out.println("NEW APP TRY RUNNING");
                     objectOutputStream.writeObject(customerStringPacket);
                     objectOutputStream.flush();
-                    System.out.println("NEW APP OBJECT WRITTEN");
                     Object intObject = objectInputStream.readObject();
-                    System.out.println(intObject.getClass() + "IS CLASS");
                     if (intObject instanceof Integer) {
-                        System.out.println("NEW APP INT RECEIVED");
                         Integer successInt = (Integer) intObject;
                         success = successInt;
                     }
@@ -718,7 +700,6 @@ public class MainMenuGUI implements Runnable {
                     JOptionPane.showMessageDialog(frame,
                             "Connection error with server");
                 }
-                System.out.println("NEW APP TEST 1");
                 switch (success) {
                     case 0 -> {
                         JOptionPane.showMessageDialog(frame,
@@ -785,7 +766,6 @@ public class MainMenuGUI implements Runnable {
         storeInfoLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         panel2.add(storeInfoLabel, gridBagConstraints);
 
-
         // DON'T  Change these parameters ----------------------------------
         // where the next component is
         gridBagConstraints.gridy = 500;
@@ -842,7 +822,6 @@ public class MainMenuGUI implements Runnable {
         } catch (Exception exception) {
             exception.printStackTrace();
         }
-        System.out.println(store.getSessions().size() + "SESSION SIZE");
         //UPDATES STORE AND SELLER OBJECTS
         String[] sellerStorePacketArray = new String[3];
         sellerStorePacketArray[0] = "sellerStorePacket";
@@ -857,7 +836,7 @@ public class MainMenuGUI implements Runnable {
                         (SellerStorePacket) sellerStoreObject;
             }
         } catch (Exception exception) {
-            JOptionPane.showMessageDialog(null ,
+            JOptionPane.showMessageDialog(null,
                     "connection error with server");
         }
         //ABOVE
@@ -914,7 +893,6 @@ public class MainMenuGUI implements Runnable {
             }
         });
         panel1.add(exit); // (2,2)
-
 
         content.add(panel1, BorderLayout.CENTER);
 
@@ -986,13 +964,12 @@ public class MainMenuGUI implements Runnable {
                 numberOfApproved);
         panel2.add(numberOfApprovedLabel); // (2,1)
         // Start time - End time
-        String startTime = String.valueOf(session.getHour()) + ":00";
-        String endTime = String.valueOf(session.getHour() + 1) + ":00";
+        String startTime = session.getHour() + ":00";
+        String endTime = session.getHour() + 1 + ":00";
         JLabel startAndEndTimeLabel = new JLabel(startTime + " - " + endTime);
         panel2.add(startAndEndTimeLabel);
 
         content.add(panel2, BorderLayout.NORTH);
-
         approveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1003,22 +980,21 @@ public class MainMenuGUI implements Runnable {
                         index = i;
                     }
                 }
-                System.out.println(store.getSessions().size() + "STORE SESS COUNT");
-                store.getSessions().get(index).getEnrolledCustomers().add(waitingListDropdown.getSelectedItem().toString());
-                store.getSessions().get(index).getWaitingCustomers().remove(waitingListDropdown.getSelectedItem().toString());
+                store.getSessions().get(index).addToEnrolledList(waitingListDropdown.getSelectedItem().toString());
+                store.getSessions().get(index).removeFromWaitingList(waitingListDropdown.getSelectedItem().toString());
                 seller.getStores().add(store);
-                SellerIntegerPacket sellerIntegerPacket = new SellerIntegerPacket(seller , 50);
+                SellerIntegerPacket sellerIntegerPacket = new SellerIntegerPacket(seller, 50);
                 try {
                     objectOutputStream.writeObject(sellerIntegerPacket);
                     objectOutputStream.reset();
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
-                playSellerStoreGUI(seller , store);
+                playSellerStoreGUI(seller, store);
             }
         });
 
-        approveButton.addActionListener(new ActionListener() {
+        denyButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int index = 0;
@@ -1031,14 +1007,14 @@ public class MainMenuGUI implements Runnable {
                 store.getSessions().get(index).getEnrolledCustomers().remove(waitingListDropdown.getSelectedItem().toString());
                 store.getSessions().get(index).getWaitingCustomers().add(waitingListDropdown.getSelectedItem().toString());
                 seller.getStores().add(store);
-                SellerIntegerPacket sellerIntegerPacket = new SellerIntegerPacket(seller , 50);
+                SellerIntegerPacket sellerIntegerPacket = new SellerIntegerPacket(seller, 50);
                 try {
                     objectOutputStream.writeObject(sellerIntegerPacket);
                     objectOutputStream.reset();
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
-                playSellerStoreGUI(seller , store);
+                playSellerStoreGUI(seller, store);
             }
         });
 
@@ -1050,7 +1026,6 @@ public class MainMenuGUI implements Runnable {
     }
 
     //SELLER CANCEL APPOINTMENT GUI CODE BELOW
-    //TODO what is this gui for?
     public void playSellerCancelAppointmentGUI(Seller seller) {
         JFrame frame = new JFrame("Cancel Appointment");
 
@@ -1082,7 +1057,6 @@ public class MainMenuGUI implements Runnable {
     }
     //OPEN NEW STORE GUI CODE BELOW
 
-    /*
     public void playOpenNewStoreGUI(Seller seller) {
         JFrame jFrame = new JFrame("Open new store for " + seller.getName());
         Container content = jFrame.getContentPane();
@@ -1100,101 +1074,10 @@ public class MainMenuGUI implements Runnable {
                 String storeNameString = storeNameInput.getText();
                 String csvPathString = csvPathInput.getText();
                 if (csvPathString != null && storeNameString != null) {
-                    try {
-                        File file = new File(csvPathString);
-                        if (!file.exists()) {
-                            JOptionPane.showMessageDialog(jFrame , "The file path entered" +
-                                    " is invalid , please try again");
-                            jFrame.dispose();
-                            playSellerMenuGUI(seller);
-                        } else {
-                            String[] tags = new String[1];
-                            tags[0] = storeNameInput.getText();
-                            FileStringPacket fileStringPacket = new FileStringPacket(file ,
-                                    tags , seller);
-                            objectOutputStream.writeObject(fileStringPacket);
-                            objectOutputStream.flush();
-                            Object object = objectInputStream.readObject();
-                            if (object instanceof SellerIntegerPacket) {
-                                SellerIntegerPacket sellerIntegerPacket =
-                                        (SellerIntegerPacket) object;
-                                int openedNewStore = sellerIntegerPacket.getInteger();
-                                if (openedNewStore == 0) {
-                                    JOptionPane.showMessageDialog(jFrame , "Store " +
-                                            storeNameInput.getText() + " opened for seller " +
-                                            seller.getName());
-                                    jFrame.dispose();
-                                    playSellerMenuGUI(seller);
-                                } else if (openedNewStore == 1) {
-                                    JOptionPane.showMessageDialog(jFrame ,
-                                            "this store name is already taken");
-                                } else {
-                                    JOptionPane.showMessageDialog(jFrame ,
-                                            "An error occurred importing your csv file");
-                                }
-                            } else {
-                                JOptionPane.showMessageDialog(jFrame ,
-                                        "Connection error with server");
-                            }
-                        }
-                    } catch (IOException | ClassNotFoundException ioException) {
-                        JOptionPane.showMessageDialog(jFrame , "Connection error with server");
-                        jFrame.dispose();
-                        playOpenNewStoreGUI(seller);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(jFrame , "Some fields where left blank.");
-                    jFrame.dispose();
-                    playSellerMenuGUI(seller);
-                }
-            }
-        });
-        back.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                jFrame.dispose();
-                try {
-                    socket.close();
-                    objectInputStream.close();
-                    objectOutputStream.close();
-                } catch (Exception exception) {
-                    JOptionPane.showMessageDialog(jFrame ,
-                            "Connection error with server");
-                }
-                playSellerMenuGUI(seller);
-            }
-        });
-        jFrame.add(storeName);
-        jFrame.add(storeNameInput);
-        jFrame.add(csvPath);
-        jFrame.add(csvPathInput);
-        jFrame.add(openStore);
-        jFrame.add(back);
-        jFrame.setVisible(true);
-    }
-     */
-    public void playOpenNewStoreGUI(Seller seller) {
-        JFrame jFrame = new JFrame("Open new store for " + seller.getName());
-        Container content = jFrame.getContentPane();
-        content.setLayout(new GridLayout(5, 1)); // 2x1
-        JLabel storeName = new JLabel("enter a new store name");
-        JLabel csvPath = new JLabel("enter the path to a CSV file");
-        JTextField storeNameInput = new JTextField();
-        JTextField csvPathInput = new JTextField();
-        JButton openStore = new JButton("confirm open store");
-        JButton back = new JButton("back");
-        openStore.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //TODO make this button work
-                String storeNameString = storeNameInput.getText();
-                String csvPathString = csvPathInput.getText();
-                if (csvPathString != null && storeNameString != null) {
-                    System.out.println("pathing is okay");
                     try {
                         File file = new File(csvPathInput.getText());
                         if (!file.exists()) {
-                            JOptionPane.showMessageDialog(jFrame , "The file path entered" +
+                            JOptionPane.showMessageDialog(jFrame, "The file path entered" +
                                     " is invalid , please try again");
                             jFrame.dispose();
                             playSellerMenuGUI(seller);
@@ -1203,11 +1086,8 @@ public class MainMenuGUI implements Runnable {
                             tags[0] = storeNameString;
                             FileStringPacket fileStringPacket =
                                     new FileStringPacket(file, tags, seller);
-                            System.out.println("Trying to send...");
                             objectOutputStream.writeObject(fileStringPacket);
-                            System.out.println("mid send");
                             objectOutputStream.flush();
-                            System.out.println("sent");
                             int openedStore = 3;
                             Object sellerIntPackObj = objectInputStream.readObject();
                             if (sellerIntPackObj instanceof SellerIntegerPacket) {
@@ -1219,7 +1099,7 @@ public class MainMenuGUI implements Runnable {
                                     case 0 -> {
                                         JOptionPane.showMessageDialog(jFrame,
                                                 "New store created with name " +
-                                                        storeNameString );
+                                                        storeNameString);
                                     }
                                     case 1 -> {
                                         JOptionPane.showMessageDialog(jFrame,
@@ -1240,12 +1120,12 @@ public class MainMenuGUI implements Runnable {
                         playGUI();
                     } catch (IOException | ClassNotFoundException ioException) {
                         ioException.printStackTrace();
-                        JOptionPane.showMessageDialog(jFrame , "Connection error with server");
+                        JOptionPane.showMessageDialog(jFrame, "Connection error with server");
                         jFrame.dispose();
                         playGUI();
                     }
                 } else {
-                    JOptionPane.showMessageDialog(jFrame , "Some fields where left blank.");
+                    JOptionPane.showMessageDialog(jFrame, "Some fields where left blank.");
                     jFrame.dispose();
                     playGUI();
                 }

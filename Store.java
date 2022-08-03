@@ -60,31 +60,31 @@ public class Store implements Serializable {
         this.sessions = new ArrayList<Session>();
     }
 
-    public String getName() {
+    public synchronized String getName() {
         return name;
     }
 
-    public String getSeller() {
+    public synchronized String getSeller() {
         return seller;
     }
 
-    public boolean[] getIsOpen() {
+    public synchronized boolean[] getIsOpen() {
         return isOpen;
     }
 
-    public int[] getCapacities() {
+    public synchronized int[] getCapacities() {
         return capacities;
     }
 
-    public int[] getClosingTimes() {
+    public synchronized int[] getClosingTimes() {
         return closingTimes;
     }
 
-    public int[] getOpeningTimes() {
+    public synchronized int[] getOpeningTimes() {
         return openingTimes;
     }
 
-    public String[] getLocations() {
+    public synchronized String[] getLocations() {
         return locations;
     }
 
@@ -95,9 +95,9 @@ public class Store implements Serializable {
      *
      * @return
      */
-    public boolean setupStoreInputChecks(boolean[] isOpenCheck, int[] openingTimesCheck,
-                                         int[] closingTimesCheck,
-                                         int[] capacitiesCheck, String[] locationsCheck) {
+    public synchronized boolean setupStoreInputChecks(boolean[] isOpenCheck, int[] openingTimesCheck,
+                                                      int[] closingTimesCheck,
+                                                      int[] capacitiesCheck, String[] locationsCheck) {
         if (isOpenCheck.length != 7) {
             return false;
         }
@@ -158,7 +158,7 @@ public class Store implements Serializable {
      * Sets up a store. This method is ONLY to be called when a brand-new store has been
      * created for the first time (when a tutor makes a new store for the first time)
      */
-    public boolean setupStore() {
+    public synchronized boolean setupStore() {
         //Checks if inputs are valid
         if (!setupStoreInputChecks(isOpen, openingTimes, closingTimes,
                 capacities, locations)) {
@@ -185,9 +185,9 @@ public class Store implements Serializable {
      * called on the server side to save changes made to a store object.
      * TODO-figure out how this works and provide better docs
      */
-    public boolean makeFileFromStore() {
+    public synchronized boolean makeFileFromStore() {
         try {
-            File file = new File (name + "Store.txt");
+            File file = new File(name + "Store.txt");
             file.createNewFile();
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
@@ -203,43 +203,43 @@ public class Store implements Serializable {
     /**
      * @return number of unique customers for this store
      */
-    public int numberOfCustomers() {
+    public synchronized int numberOfCustomers() {
         return uniqueCustomers.size();
     }
 
-    public void remakeStoreFromFile() {
-       try {
-           File file = new File(name + "Store.txt");
-           FileInputStream fileInputStream = new FileInputStream(file);
-           ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-           Object storeObject = objectInputStream.readObject();
-           if (storeObject instanceof Store) {
-               System.out.println("STORE OBJECT");
-               Store store = (Store) storeObject;
-               this.sessions = store.getSessions();
-               this.uniqueCustomers = store.getUniqueCustomers();
-               this.isOpen = store.getIsOpen();
-               this.openingTimes = store.getOpeningTimes();
-               this.closingTimes = store.getClosingTimes();
-               this.locations = store.getLocations();
-               this.seller = store.getSeller();
-               this.name = store.getName();
-           }
-           objectInputStream.close();
-       } catch (Exception exception) {
-           exception.printStackTrace();
-       }
+    public synchronized void remakeStoreFromFile() {
+        try {
+            File file = new File(name + "Store.txt");
+            FileInputStream fileInputStream = new FileInputStream(file);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            Object storeObject = objectInputStream.readObject();
+            if (storeObject instanceof Store) {
+                System.out.println("STORE OBJECT");
+                Store store = (Store) storeObject;
+                this.sessions = store.getSessions();
+                this.uniqueCustomers = store.getUniqueCustomers();
+                this.isOpen = store.getIsOpen();
+                this.openingTimes = store.getOpeningTimes();
+                this.closingTimes = store.getClosingTimes();
+                this.locations = store.getLocations();
+                this.seller = store.getSeller();
+                this.name = store.getName();
+            }
+            objectInputStream.close();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
     }
 
-    public ArrayList<Session> getSessions() {
+    public synchronized ArrayList<Session> getSessions() {
         return sessions;
     }
 
-    public void setUniqueCustomers(Set<String> uniqueCustomers) {
+    public synchronized void setUniqueCustomers(Set<String> uniqueCustomers) {
         this.uniqueCustomers = uniqueCustomers;
     }
 
-    public Set<String> getUniqueCustomers() {
+    public synchronized Set<String> getUniqueCustomers() {
         return uniqueCustomers;
     }
 
@@ -255,18 +255,13 @@ public class Store implements Serializable {
      * @param hour
      * @return
      */
-    public boolean checkIfStoreIsOpen(int year, int month, int day, int hour) {
+    public synchronized boolean checkIfStoreIsOpen(int year, int month, int day, int hour) {
         Calendar calender = Calendar.getInstance();
         calender.set(Calendar.YEAR, year);
         calender.set(Calendar.MONTH, month + 1);
         calender.set(Calendar.DAY_OF_MONTH, day + 1);
         calender.set(Calendar.HOUR, hour);
         //Checks if the store is open on this particular day
-        //TODO delete test below
-        for (int i = 0; i < 7; i++) {
-            System.out.println(i + " OPEN " + isOpen[i]);
-        }
-        //TODO delete test above
         if (!isOpen[calender.get(Calendar.DAY_OF_WEEK) - 1]) {
             System.out.println("CLOSED DAY");
             System.out.println("DAY IS " + calender.get(Calendar.DAY_OF_WEEK));
@@ -294,7 +289,7 @@ public class Store implements Serializable {
      * that are used when a customer applies for an appointment so that there can never be two
      * session objects with the same time at the same store.
      */
-    public boolean checkIfSessionAtTimeAlreadyExists(int year, int month, int day, int hour) {
+    public synchronized boolean checkIfSessionAtTimeAlreadyExists(int year, int month, int day, int hour) {
         return !(sessionAtSpecifiedTime(year, month, day, hour) == null);
     }
 
@@ -305,7 +300,7 @@ public class Store implements Serializable {
      * @param hour
      * @return session at the specified time, if it exists. If it does not exist, return null.
      */
-    public Session sessionAtSpecifiedTime(int year, int month, int day, int hour) {
+    public synchronized Session sessionAtSpecifiedTime(int year, int month, int day, int hour) {
         for (Session session : sessions) {
             if (session.getYear() == year &&
                     session.getMonth() == month &&
@@ -324,8 +319,8 @@ public class Store implements Serializable {
      * NOTE: This method does not update any fields in any customer object. To do so,
      * other methods must be called from the Customer class.
      */
-    public void requestAppointmentAtTime(int year, int month, int day, int hour,
-                                         String customerName) {
+    public synchronized void requestAppointmentAtTime(int year, int month, int day, int hour,
+                                                      String customerName) {
         System.out.println("RUNNING");
         if (!checkIfSessionAtTimeAlreadyExists(year, month, day, hour)) {
             Session session = new Session(year, month, day, hour, name);
@@ -348,8 +343,8 @@ public class Store implements Serializable {
      * Removes customer from waitlist at the specified session, if applicable, or does nothing.
      * This method updates the correct store and customer objects and saves them.
      */
-    public void declineAppointmentAtTime(int year, int month, int day, int hour,
-                                         Customer customer) {
+    public synchronized void declineAppointmentAtTime(int year, int month, int day, int hour,
+                                                      Customer customer) {
         for (Session session : sessions) {
             if (session.getYear() == year &&
                     session.getMonth() == month &&
@@ -372,8 +367,8 @@ public class Store implements Serializable {
      * @param hour
      * @param customerName
      */
-    public void approveAppointmentAtTime(int year, int month, int day, int hour,
-                                         String customerName) {
+    public synchronized void approveAppointmentAtTime(int year, int month, int day, int hour,
+                                                      String customerName) {
         try {
             for (Session session : sessions) {
                 if (session.getYear() == year &&
@@ -399,8 +394,8 @@ public class Store implements Serializable {
      * @param hour
      * @param customerName
      */
-    public void cancelAlreadyApprovedAppointment(int year, int month, int day, int hour,
-                                                 String customerName) {
+    public synchronized void cancelAlreadyApprovedAppointment(int year, int month, int day, int hour,
+                                                              String customerName) {
         try {
             for (Session session : sessions) {
                 if (session.getYear() == year &&
@@ -422,7 +417,7 @@ public class Store implements Serializable {
      * top days are added to the output string array. This string array is then converted into
      * a toString that tells about this store's popularity over the days of the week.
      */
-    public String getMostPopularDaysOfWeekToString() {
+    public synchronized String getMostPopularDaysOfWeekToString() {
         int[] dayCounters = new int[7];
         //sets day Counters all to 0
         for (int i = 0; i < dayCounters.length; i++) {
@@ -490,7 +485,7 @@ public class Store implements Serializable {
      *
      * @return
      */
-    public String createStatisticsToString() {
+    public synchronized String createStatisticsToString() {
         String output = "Your tutoring service " + name +
                 "has " + uniqueCustomers.size() +
                 "unique customers with approved appointments!\n" +
@@ -511,7 +506,8 @@ public class Store implements Serializable {
         }
         return out;
     }
-    public void importFromCsv(File file) {
+
+    public synchronized void importFromCsv(File file) {
         try {
             File f = file;
             FileReader fr = new FileReader(f);
@@ -570,35 +566,35 @@ public class Store implements Serializable {
         }
     }
 
-    public void setSeller(String seller) {
+    public synchronized void setSeller(String seller) {
         this.seller = seller;
     }
 
-    public void setName(String name) {
+    public synchronized void setName(String name) {
         this.name = name;
     }
 
-    public void setCapacities(int[] capacities) {
+    public synchronized void setCapacities(int[] capacities) {
         this.capacities = capacities;
     }
 
-    public void setClosingTimes(int[] closingTimes) {
+    public synchronized void setClosingTimes(int[] closingTimes) {
         this.closingTimes = closingTimes;
     }
 
-    public void setIsOpen(boolean[] isOpen) {
+    public synchronized void setIsOpen(boolean[] isOpen) {
         this.isOpen = isOpen;
     }
 
-    public void setLocations(String[] locations) {
+    public synchronized void setLocations(String[] locations) {
         this.locations = locations;
     }
 
-    public void setOpeningTimes(int[] openingTimes) {
+    public synchronized void setOpeningTimes(int[] openingTimes) {
         this.openingTimes = openingTimes;
     }
 
-    public void setSessions(ArrayList<Session> sessions) {
+    public synchronized void setSessions(ArrayList<Session> sessions) {
         this.sessions = sessions;
     }
 

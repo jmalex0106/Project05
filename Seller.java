@@ -18,19 +18,19 @@ public class Seller implements Serializable {
         stores = new ArrayList<>();
     }
 
-    public String getName() {
+    public synchronized String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public synchronized void setName(String name) {
         this.name = name;
     }
 
-    public ArrayList<Store> getStores() {
+    public synchronized ArrayList<Store> getStores() {
         return stores;
     }
 
-    public void makeFileFromSeller() {
+    public synchronized void makeFileFromSeller() {
         try {
             File file = new File(name + ".txt");
             file.createNewFile();
@@ -43,28 +43,28 @@ public class Seller implements Serializable {
         }
     }
 
-    public void remakeSellerFromFile() {
-       try {
-           File file = new File(name + ".txt");
-           FileInputStream fileInputStream = new FileInputStream(file);
-           ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-           Object sellerObject = objectInputStream.readObject();
-           if (sellerObject instanceof Seller) {
-               Seller seller = (Seller) sellerObject;
-               System.out.println("SELLER OBJECT");
-               this.name = seller.getName();
-               this.stores = seller.getStores();
-           }
-       } catch (Exception exception) {
-           exception.printStackTrace();
-       }
+    public synchronized void remakeSellerFromFile() {
+        try {
+            File file = new File(name + ".txt");
+            FileInputStream fileInputStream = new FileInputStream(file);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            Object sellerObject = objectInputStream.readObject();
+            if (sellerObject instanceof Seller) {
+                Seller seller = (Seller) sellerObject;
+                System.out.println("SELLER OBJECT");
+                this.name = seller.getName();
+                this.stores = seller.getStores();
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
     }
 
     /**
      * Returns a string arraylist that contains the names of all the stores that a certain tutor owns.
      * This method reads from AllStores.txt. It assumes that AllStores.txt exists.
      */
-    public ArrayList<String> sellerOwnedStores(Seller seller) {
+    public synchronized ArrayList<String> sellerOwnedStores(Seller seller) {
         ArrayList<String> output = new ArrayList<>();
         try {
             File file = new File("AllStores.txt");
@@ -83,7 +83,7 @@ public class Seller implements Serializable {
         return output;
     }
 
-    public String[] createStoreStatisticsToStringArray() {
+    public synchronized String[] createStoreStatisticsToStringArray() {
         String[] output = new String[stores.size()];
         for (int i = 0; i < output.length; i++) {
             output[i] = stores.get(i).getMostPopularDaysOfWeekToString();
@@ -91,7 +91,7 @@ public class Seller implements Serializable {
         return output;
     }
 
-    public String createUnsortedSellerStatisticsToString() {
+    public synchronized String createUnsortedSellerStatisticsToString() {
         String output = "";
         String[] storeStatisticsArray = createStoreStatisticsToStringArray();
         for (int i = 0; i < storeStatisticsArray.length; i++) {
@@ -100,7 +100,7 @@ public class Seller implements Serializable {
         return output;
     }
 
-    public String createSortedSellerStatisticsToString() {
+    public synchronized String createSortedSellerStatisticsToString() {
         String output = "";
         //Sets int maxCustomers to the maximum number of unique customers at a store
         //that this seller owns
@@ -120,7 +120,7 @@ public class Seller implements Serializable {
         return output;
     }
 
-    public void setStores(ArrayList<Store> stores) {
+    public synchronized void setStores(ArrayList<Store> stores) {
         this.stores = stores;
     }
 

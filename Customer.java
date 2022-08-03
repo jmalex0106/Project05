@@ -14,23 +14,23 @@ public class Customer implements Serializable {
     ArrayList<Session> waitingRequest;
     ArrayList<Session> approvedRequest;
 
-    public String getName() {
+    public synchronized String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public synchronized void setName(String name) {
         this.name = name;
     }
 
-    public ArrayList<Session> getWaitingRequest() {
+    public synchronized ArrayList<Session> getWaitingRequest() {
         return waitingRequest;
     }
 
-    public ArrayList<Session> getApprovedRequest() {
+    public synchronized ArrayList<Session> getApprovedRequest() {
         return approvedRequest;
     }
 
-    public boolean remakeCustomerFromFile() {
+    public synchronized boolean remakeCustomerFromFile() {
         try {
             File file = new File(name + ".txt");
             FileInputStream fileInputStream = new FileInputStream(file);
@@ -57,11 +57,11 @@ public class Customer implements Serializable {
     }
 
     // Customers can make or cancel appointment requests.
-    public void requestAppointment(Session session) {
+    public synchronized void requestAppointment(Session session) {
         waitingRequest.add(session);
     }
 
-    public void cancelAppointment(Session session) {
+    public synchronized void cancelAppointment(Session session) {
         if (waitingRequest.contains(session)) {
             waitingRequest.remove(session);
         } else if (approvedRequest.contains(session)) {
@@ -70,7 +70,7 @@ public class Customer implements Serializable {
         }
     }
 
-    public boolean remakeFileFromCustomer() {
+    public synchronized boolean remakeFileFromCustomer() {
         try {
             File file = new File(name + ".txt");
             file.createNewFile();
@@ -85,7 +85,7 @@ public class Customer implements Serializable {
         }
     }
 
-    public void removeFromWaitlistAtTime(int year, int month, int day, int hour, String storeName) {
+    public synchronized void removeFromWaitlistAtTime(int year, int month, int day, int hour, String storeName) {
         for (Session session : waitingRequest) {
             if (session.getYear() == year &&
                     session.getMonth() == month &&
@@ -97,7 +97,7 @@ public class Customer implements Serializable {
         }
     }
 
-    public void removeFromApprovedlistAtTime(int year, int month, int day, int hour, String storeName) {
+    public synchronized void removeFromApprovedlistAtTime(int year, int month, int day, int hour, String storeName) {
         for (Session session : approvedRequest) {
             if (session.getYear() == year &&
                     session.getMonth() == month &&
@@ -109,7 +109,7 @@ public class Customer implements Serializable {
         }
     }
 
-    public void approveAppointmentAtTime(int year, int month, int day, int hour,
+    public synchronized void approveAppointmentAtTime(int year, int month, int day, int hour,
                                          String storeName) {
         try {
             for (Session session : waitingRequest) {

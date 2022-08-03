@@ -30,7 +30,7 @@ public class ServerMethods {
      * @return - 0 if a matching account is not found in Users.txt, 1 if a matching Tutor account is
      * found in Users.txt, and 2 if a matching Student account is found in Users.txt.
      */
-    public int searchForValidLogin(String username, String password) {
+    public synchronized static int searchForValidLogin(String username, String password) {
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader("Users.txt"));
             String line = bufferedReader.readLine();
@@ -62,8 +62,8 @@ public class ServerMethods {
      * @return A boolean corresponding to the success of the account creation. false
      * means no account was created, true means the account was created successfully.
      */
-    public boolean createNewAccount(boolean isTutor, String newUsername,
-                                    String newEmail, String newPassword) {
+    public synchronized static boolean createNewAccount(boolean isTutor, String newUsername,
+                                                        String newEmail, String newPassword) {
         //Checks if inputs are valid. Usernames must be Unique, must consist of only letters
         //And numbers, and cannot end in "Store". Usernames are case-sensitive.
         //Emails must contain only one "@" and only one "." after that "@"
@@ -178,7 +178,7 @@ public class ServerMethods {
      * @return Returns an array list of strings containing the names of all the stores
      * that exist. This can be sent to the customer for displaying
      */
-    public ArrayList<String> allExistingStores() {
+    public synchronized static ArrayList<String> allExistingStores() {
         ArrayList<String> output = new ArrayList<String>();
         try {
             File file = new File("AllStores.txt");
@@ -213,8 +213,8 @@ public class ServerMethods {
      * 5 - The store you have entered is closed on the date and time you have entered. Please
      * enter a valid date. Waitlist has not been updated.
      */
-    public int requestAppointment(Customer customer, Store store, String year , String
-                                  month , String day , String hour) {
+    public synchronized static int requestAppointment(Customer customer, Store store, String year, String
+            month, String day, String hour) {
         return 0;
     }
 
@@ -222,8 +222,8 @@ public class ServerMethods {
      * Removes customer from waitlist at the specified session, if applicable, or does nothing.
      * This method updates the correct store and customer objects and saves them.
      */
-    public void declineAppointmentAtTime(int year, int month, int day, int hour,
-                                         Customer customer, Store store) {
+    public synchronized static void declineAppointmentAtTime(int year, int month, int day, int hour,
+                                                             Customer customer, Store store) {
         store.declineAppointmentAtTime(year, month, day, hour, customer);
         customer.removeFromWaitlistAtTime(year, month, day, hour, store.getName());
         store.makeFileFromStore();
@@ -234,8 +234,8 @@ public class ServerMethods {
      * Removes customer from waitlist at the specified session and adds them to the enrolledlist.
      * This method updates the correct store and customer objects and saves them.
      */
-    public void approveAppointmentAtTime(int year, int month, int day, int hour,
-                                         Customer customer, Store store) {
+    public synchronized static void approveAppointmentAtTime(int year, int month, int day, int hour,
+                                                             Customer customer, Store store) {
         store.approveAppointmentAtTime(year, month, day, hour, customer.getName());
         customer.approveAppointmentAtTime(year, month, day, hour, store.getName());
         store.makeFileFromStore();
@@ -246,8 +246,8 @@ public class ServerMethods {
      * Removes customer from approvedlist at the specified session, if applicable, or does nothing.
      * This method updates the correct store and customer objects and saves them.
      */
-    public void cancelAppointmentAtTime(int year, int month, int day, int hour,
-                                        Customer customer, Store store) {
+    public synchronized static void cancelAppointmentAtTime(int year, int month, int day, int hour,
+                                                            Customer customer, Store store) {
         store.declineAppointmentAtTime(year, month, day, hour, customer);
         customer.removeFromApprovedlistAtTime(year, month, day, hour, store.getName());
         store.makeFileFromStore();
@@ -260,7 +260,7 @@ public class ServerMethods {
      * @param customer
      * @param appointmentIndex
      */
-    public void customerCancelAppointmentAtIndex(Customer customer, int appointmentIndex) {
+    public synchronized static void customerCancelAppointmentAtIndex(Customer customer, int appointmentIndex) {
         Session sessionToCancel = customer.getApprovedRequest().get(appointmentIndex);
         customer.getApprovedRequest().remove(appointmentIndex);
         String storeName = customer.getApprovedRequest().get(appointmentIndex).getStore();
@@ -311,7 +311,7 @@ public class ServerMethods {
      * present day and the hour is the start of the present hour. For example, if the present time
      * is May 3rd 15:07, 2022, then the time May 3rd 15:00, 2022 is considered past.
      */
-    public boolean checkIfDateIsFuture(int year, int month, int day, int hour) {
+    public synchronized static boolean checkIfDateIsFuture(int year, int month, int day, int hour) {
         //Checks if date is valid
         if (!checkIfDateIsValid(year, month, day, hour)) {
             return false;
@@ -348,7 +348,7 @@ public class ServerMethods {
      * @param hour
      * @return True if date is valid, false is date is not valid.
      */
-    public boolean checkIfDateIsValid(int year, int month, int day, int hour) {
+    public synchronized static boolean checkIfDateIsValid(int year, int month, int day, int hour) {
         try {
             //Sets formatter object
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("uuuu-MM-dd-HH");
@@ -405,7 +405,7 @@ public class ServerMethods {
      * @return return 0 for January , 1 for February , 11 for December , and -1 for an invalid
      * month
      */
-    public int monthFormat(String monthString) {
+    public synchronized static int monthFormat(String monthString) {
         //Checks if monthString is an integer
         try {
             int i = Integer.parseInt(monthString);
@@ -441,7 +441,7 @@ public class ServerMethods {
      * @return return 0 for Sunday , 1 for Monday , 6 for Saturday , and -1 for an invalid
      * day
      */
-    public int dayFormat(String dayString) {
+    public synchronized static int dayFormat(String dayString) {
         //Checks if dayString is an integer
         try {
             int i = Integer.parseInt(dayString);
@@ -474,7 +474,7 @@ public class ServerMethods {
      * @param hourString
      * @return
      */
-    public int hourFormat(String hourString) {
+    public synchronized static int hourFormat(String hourString) {
         String toProcess = hourString.replace(" ", "");
         toProcess = toProcess.replace(".", "");
         toProcess = toProcess.replace(":00", "");
@@ -521,7 +521,7 @@ public class ServerMethods {
      * @param booleanString
      * @return
      */
-    public boolean booleanFormat(String booleanString) {
+    public synchronized static boolean booleanFormat(String booleanString) {
         if (booleanString == null) {
             return false;
         }
@@ -545,7 +545,7 @@ public class ServerMethods {
      * @return 0 if a new store has been made successfully, 1 if the name is taken, 2
      * if the inputs are invalid or the CSV import gives an error.
      */
-    public int setupNewStore(Seller seller, String storeName, String csvPath) {
+    public synchronized static int setupNewStore(Seller seller, String storeName, String csvPath) {
         try {
             File file = new File("AllStores.txt");
             FileReader fileReader = new FileReader(file);
@@ -582,7 +582,7 @@ public class ServerMethods {
      * @param csvPath
      * @return
      */
-    public String[][] csvPathToString(String csvPath) {
+    public synchronized static String[][] csvPathToString(String csvPath) {
         String[][] output = new String[7][5];
         try {
             FileReader fileReader = new FileReader(csvPath);
@@ -601,7 +601,7 @@ public class ServerMethods {
         return output;
     }
 
-    public boolean[] makeIsOpenFromCSV(String csvPath) {
+    public synchronized static boolean[] makeIsOpenFromCSV(String csvPath) {
         String[][] csvArray = csvPathToString(csvPath);
         boolean[] output = new boolean[7];
         for (int i = 0; i < 7; i++) {
@@ -610,7 +610,7 @@ public class ServerMethods {
         return output;
     }
 
-    public int makeSizeOfArraysFromCSV(String csvPath) {
+    public synchronized static int makeSizeOfArraysFromCSV(String csvPath) {
         String[][] csvArray = csvPathToString(csvPath);
         boolean[] isOpen = makeIsOpenFromCSV(csvPath);
         int output = 0;
@@ -622,7 +622,7 @@ public class ServerMethods {
         return output;
     }
 
-    public int[] makeOpeningTimesFromCSV(String csvPath) {
+    public synchronized static int[] makeOpeningTimesFromCSV(String csvPath) {
         String[][] csvArray = csvPathToString(csvPath);
         int size = makeSizeOfArraysFromCSV(csvPath);
         boolean[] isOpen = makeIsOpenFromCSV(csvPath);
@@ -637,7 +637,7 @@ public class ServerMethods {
         return output;
     }
 
-    public int[] makeClosingTimesFromCSV(String csvPath) {
+    public synchronized static int[] makeClosingTimesFromCSV(String csvPath) {
         String[][] csvArray = csvPathToString(csvPath);
         int size = makeSizeOfArraysFromCSV(csvPath);
         boolean[] isOpen = makeIsOpenFromCSV(csvPath);
@@ -652,7 +652,7 @@ public class ServerMethods {
         return output;
     }
 
-    public int[] makeCapacitiesFromCSV(String csvPath) {
+    public synchronized static int[] makeCapacitiesFromCSV(String csvPath) {
         String[][] csvArray = csvPathToString(csvPath);
         int size = makeSizeOfArraysFromCSV(csvPath);
         boolean[] isOpen = makeIsOpenFromCSV(csvPath);
@@ -667,7 +667,7 @@ public class ServerMethods {
         return output;
     }
 
-    public String[] makeLocationsFromCSV(String csvPath) {
+    public synchronized static String[] makeLocationsFromCSV(String csvPath) {
         String[][] csvArray = csvPathToString(csvPath);
         int size = makeSizeOfArraysFromCSV(csvPath);
         boolean[] isOpen = makeIsOpenFromCSV(csvPath);
@@ -687,7 +687,7 @@ public class ServerMethods {
      *
      * @param customer
      */
-    public void exportCustomerAppointmentsToCSV(Customer customer) {
+    public synchronized static void exportCustomerAppointmentsToCSV(Customer customer) {
         try {
             File file = new File(customer.getName() + ".txt");
             FileReader fileReader = new FileReader(file);
@@ -719,7 +719,7 @@ public class ServerMethods {
     }
 
     //The following is copy of the method above the outputs a file object
-    public File exportCustomerAppointmentsToCSVFile(Customer customer) {
+    public synchronized static File exportCustomerAppointmentsToCSVFile(Customer customer) {
         try {
             File file = new File(customer.getName() + ".txt");
             FileReader fileReader = new FileReader(file);
@@ -753,11 +753,11 @@ public class ServerMethods {
     }
 
     //The following methods show statistics to the seller
-    public String showSellerUnsortedStatistics(Seller seller) {
+    public synchronized static String showSellerUnsortedStatistics(Seller seller) {
         return seller.createUnsortedSellerStatisticsToString();
     }
 
-    public String showSellerSortedStatistics(Seller seller) {
+    public synchronized static String showSellerSortedStatistics(Seller seller) {
         return seller.createSortedSellerStatisticsToString();
     }
 
@@ -768,7 +768,7 @@ public class ServerMethods {
      *
      * @return
      */
-    public ArrayList<Store> allStores() {
+    public synchronized static ArrayList<Store> allStores() {
         ArrayList<Store> output = new ArrayList<Store>();
         try {
             File file = new File("AllStores.txt");
@@ -788,7 +788,7 @@ public class ServerMethods {
         return output;
     }
 
-    public String showSortedStatisticsToCustomer() {
+    public synchronized static String showSortedStatisticsToCustomer() {
         String output = "";
         ArrayList<Store> allStores = new ArrayList<Store>();
         //Sets int maxCustomers to the maximum number of unique customers at a store
@@ -812,7 +812,7 @@ public class ServerMethods {
         return output;
     }
 
-    public String[] createStoreStatisticsToStringArrayForAllStores() {
+    public synchronized static String[] createStoreStatisticsToStringArrayForAllStores() {
         String[] output = new String[allStores().size()];
         for (int i = 0; i < output.length; i++) {
             output[i] = allStores().get(i).getMostPopularDaysOfWeekToString();
@@ -820,7 +820,7 @@ public class ServerMethods {
         return output;
     }
 
-    public String showUnsortedStatisticsToCustomer() {
+    public synchronized static String showUnsortedStatisticsToCustomer() {
         String output = "";
         String[] storeStatisticsArray = createStoreStatisticsToStringArrayForAllStores();
         for (int i = 0; i < storeStatisticsArray.length; i++) {
@@ -830,7 +830,7 @@ public class ServerMethods {
     }
 
     //TEST METHODS
-    public String[][] csvPathToStringFromFile(File csvPath) {
+    public synchronized static String[][] csvPathToStringFromFile(File csvPath) {
         String[][] output = new String[7][5];
         try {
             FileReader fileReader = new FileReader(csvPath);
@@ -849,7 +849,7 @@ public class ServerMethods {
         return output;
     }
 
-    public boolean[] makeIsOpenFromCSVFile(File csvPath) {
+    public synchronized static boolean[] makeIsOpenFromCSVFile(File csvPath) {
         String[][] csvArray = csvPathToStringFromFile(csvPath);
         boolean[] output = new boolean[7];
         for (int i = 0; i < 7; i++) {
@@ -858,7 +858,7 @@ public class ServerMethods {
         return output;
     }
 
-    public int makeSizeOfArraysFromCSVFile(File csvPath) {
+    public synchronized static int makeSizeOfArraysFromCSVFile(File csvPath) {
         String[][] csvArray = csvPathToStringFromFile(csvPath);
         boolean[] isOpen = makeIsOpenFromCSVFile(csvPath);
         int output = 0;
@@ -870,7 +870,7 @@ public class ServerMethods {
         return output;
     }
 
-    public int[] makeOpeningTimesFromCSVFile(File csvPath) {
+    public synchronized static int[] makeOpeningTimesFromCSVFile(File csvPath) {
         String[][] csvArray = csvPathToStringFromFile(csvPath);
         int size = makeSizeOfArraysFromCSVFile(csvPath);
         boolean[] isOpen = makeIsOpenFromCSVFile(csvPath);
@@ -885,7 +885,7 @@ public class ServerMethods {
         return output;
     }
 
-    public int[] makeClosingTimesFromCSVFile(File csvPath) {
+    public synchronized static int[] makeClosingTimesFromCSVFile(File csvPath) {
         String[][] csvArray = csvPathToStringFromFile(csvPath);
         int size = makeSizeOfArraysFromCSVFile(csvPath);
         boolean[] isOpen = makeIsOpenFromCSVFile(csvPath);
@@ -900,7 +900,7 @@ public class ServerMethods {
         return output;
     }
 
-    public int[] makeCapacitiesFromCSVFile(File csvPath) {
+    public synchronized static int[] makeCapacitiesFromCSVFile(File csvPath) {
         String[][] csvArray = csvPathToStringFromFile(csvPath);
         int size = makeSizeOfArraysFromCSVFile(csvPath);
         boolean[] isOpen = makeIsOpenFromCSVFile(csvPath);
@@ -915,7 +915,7 @@ public class ServerMethods {
         return output;
     }
 
-    public String[] makeLocationsFromCSVFile(File csvPath) {
+    public synchronized static String[] makeLocationsFromCSVFile(File csvPath) {
         String[][] csvArray = csvPathToStringFromFile(csvPath);
         int size = makeSizeOfArraysFromCSVFile(csvPath);
         boolean[] isOpen = makeIsOpenFromCSVFile(csvPath);
@@ -930,7 +930,7 @@ public class ServerMethods {
         return output;
     }
 
-    public int setupNewStoreFromFile(Seller seller, String storeName, File csvPath) {
+    public synchronized static int setupNewStoreFromFile(Seller seller, String storeName, File csvPath) {
         try {
             File file = new File("AllStores.txt");
             FileReader fileReader = new FileReader(file);
@@ -944,12 +944,6 @@ public class ServerMethods {
             }
             bufferedReader.close();
             Store store = new Store(storeName, seller.getName());
-            //Reads the csv file at csvPath and imports the variables to the store
-            /* store.setupStoreInputChecks(makeIsOpenFromCSVFile(csvPath),
-                    makeOpeningTimesFromCSVFile(csvPath),
-                    makeClosingTimesFromCSVFile(csvPath),
-                    makeCapacitiesFromCSVFile(csvPath),
-                    makeLocationsFromCSVFile(csvPath)); */
             store.importFromCsv(csvPath);
             store.setupStore();
             store.makeFileFromStore();
@@ -959,7 +953,7 @@ public class ServerMethods {
         }
     }
 
-    public String[] allStoreNames() {
+    public synchronized static String[] allStoreNames() {
         ArrayList<String> allStoreNamesArrayList = new ArrayList<String>();
         try {
             File file = new File("AllStores.txt");
@@ -981,7 +975,7 @@ public class ServerMethods {
         return null;
     }
 
-    public Store getStoreWithName(String storeName) {
+    public synchronized static Store getStoreWithName(String storeName) {
         ArrayList<Store> stores = allStores();
         for (Store store : stores) {
             if (store.getName().equals(storeName)) {

@@ -15,11 +15,11 @@ public class CustomerStringPacket implements Serializable {
         this.strings = strings;
     }
 
-    public Customer getCustomer() {
+    public synchronized Customer getCustomer() {
         return customer;
     }
 
-    public String[] getStrings() {
+    public synchronized String[] getStrings() {
         return strings;
     }
 }

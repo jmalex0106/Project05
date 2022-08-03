@@ -18,15 +18,15 @@ public class FileStringPacket implements Serializable {
         this.seller = seller;
     }
 
-    public File getFile() {
+    public synchronized File getFile() {
         return file;
     }
 
-    public String[] getStrings() {
+    public synchronized String[] getStrings() {
         return strings;
     }
 
-    public Seller getSeller() {
+    public synchronized Seller getSeller() {
         return seller;
     }
 }
