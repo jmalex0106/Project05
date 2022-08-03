@@ -61,6 +61,7 @@ isApproved can be “approved” or “waiting”.
 
 **Changes of Project 4**
 
+Most of the functions were turned into synchronized functions. We had to tweak some of the functions such as remakeSellerFromFile in Seller.java because it was not operating the way that we wanted to.
 
 **Class Description**
 
