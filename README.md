@@ -3,6 +3,7 @@
 **Instructions on how to compile and run your project**
 
 Take the all of the classes within our compositor and all of the .txt files to run and compile the program. If you decide to make a new .txt file to upload, you have to make sure it is in the specific format that our program takes. 
+**Run Server.java firstly, then run GUITEST.**
 
 **Users.txt**
 
