@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class MainMenuGUI implements Runnable {
     public static final String[] TUTOR_STUDENT = new String[]{"Student", "Tutor"};
-    public static final String[] appointment = {"select"}; //TODO delete this when ready
+    public static final String[] APPOINTMENT = {"select"};
     private static final String[] STATISTICS = {"View sorted statistics", "View unsorted statistics"};
     private Socket socket;
     private ObjectOutputStream objectOutputStream;
@@ -461,7 +461,7 @@ public class MainMenuGUI implements Runnable {
                 playCustomerSelectStoreGUI(customer);
             }
         });
-        panel1.add(requestNewAppointment);// (3,1)
+        panel1.add(requestNewAppointment); // (3,1)
 
         // // Return to Main Menu
 
@@ -504,9 +504,9 @@ public class MainMenuGUI implements Runnable {
 
                 GridLayout(2, 1)); // 2x1
 
-        String[] appointment = new String[customer.getApprovedRequest().size()];
+        String[] appointmentArr = new String[customer.getApprovedRequest().size()];
         for (int i = 0; i < customer.getApprovedRequest().size(); i++) {
-            appointment[i] = "waiting " + (customer.getWaitingRequest().get(i).getMonth() + 1) +
+            appointmentArr[i] = "waiting " + (customer.getWaitingRequest().get(i).getMonth() + 1) +
                     "/" + customer.getWaitingRequest().get(i).getDay() +
                     " " + customer.getWaitingRequest().get(i).getYear() +
                     " at store " +
@@ -514,7 +514,7 @@ public class MainMenuGUI implements Runnable {
         }
 
         // Dropbox
-        JComboBox<String> appointmentDropdown = new JComboBox<>(appointment);
+        JComboBox<String> appointmentDropdown = new JComboBox<>(appointmentArr);
         content.add(appointmentDropdown);
 
         // JPanel with 2 buttons
@@ -534,7 +534,7 @@ public class MainMenuGUI implements Runnable {
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (appointment.length == 0) {
+                if (appointmentArr.length == 0) {
                     JOptionPane.showMessageDialog(frame,
                             "You have no appointments to cancel");
                 } else {
@@ -1004,10 +1004,13 @@ public class MainMenuGUI implements Runnable {
                         index = i;
                     }
                 }
-                store.getSessions().get(index).getEnrolledCustomers().remove(waitingListDropdown.getSelectedItem().toString());
-                store.getSessions().get(index).getWaitingCustomers().add(waitingListDropdown.getSelectedItem().toString());
+                store.getSessions().get(index).getEnrolledCustomers()
+                        .remove(waitingListDropdown.getSelectedItem().toString());
+                store.getSessions().get(index)
+                        .getWaitingCustomers().add(waitingListDropdown.getSelectedItem().toString());
                 seller.getStores().add(store);
-                SellerIntegerPacket sellerIntegerPacket = new SellerIntegerPacket(seller, 50);
+                SellerIntegerPacket sellerIntegerPacket =
+                        new SellerIntegerPacket(seller, 50);
                 try {
                     objectOutputStream.writeObject(sellerIntegerPacket);
                     objectOutputStream.reset();
@@ -1034,7 +1037,7 @@ public class MainMenuGUI implements Runnable {
         content.setLayout(new GridLayout(2, 1)); // 2x1
 
         // Dropbox
-        JComboBox<String> appointmentDropdown = new JComboBox<>(appointment);
+        JComboBox<String> appointmentDropdown = new JComboBox<>(APPOINTMENT);
         content.add(appointmentDropdown);
 
         // JPanel with 2 buttons
@@ -1070,7 +1073,6 @@ public class MainMenuGUI implements Runnable {
         openStore.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO make this button work
                 String storeNameString = storeNameInput.getText();
                 String csvPathString = csvPathInput.getText();
                 if (csvPathString != null && storeNameString != null) {

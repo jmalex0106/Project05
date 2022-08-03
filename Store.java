@@ -183,7 +183,7 @@ public class Store implements Serializable {
     /**
      * Makes the file associated with this store from the store object. This method needs to be
      * called on the server side to save changes made to a store object.
-     * TODO-figure out how this works and provide better docs
+     *
      */
     public synchronized boolean makeFileFromStore() {
         try {

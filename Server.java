@@ -61,8 +61,12 @@ public class Server {
         Server server = new Server();
         server.openServer();
     }
-
-
+    /**
+     * This Class starts the serverThread
+     *
+     * @author Junmo Kim, Aidan Davis, Moxiao Li
+     * @version 8/2/2022
+     */
     class ServerThread extends Thread {
         Server myServer;
 
