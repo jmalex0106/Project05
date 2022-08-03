@@ -140,3 +140,5 @@ This is the server class file. This class represents the methods that need to be
 *Server.java*
 
 This class is the server, takes object packets in from the client, calls the correct method in ServerMethods, and sends back a packet.
+
+*SellerStorePacket.java*
