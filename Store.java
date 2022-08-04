@@ -18,7 +18,7 @@ import java.util.Set;
 
 public class Store implements Serializable {
     private static final String[] DAY_NAMES = new String[]{"Sunday", "Monday",
-            "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+        "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
     private static final int[] DAYS = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //days in normal years
     private static final int[] LEAP_DAYS = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //days in leap years
     private String name;  //The name of the store

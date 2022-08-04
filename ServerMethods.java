@@ -15,10 +15,10 @@ import java.util.ArrayList;
 
 public class ServerMethods {
     private static final String[] MONTH_NAMES = new String[]{"January", "February",
-            "March", "April", "May", "June", "July", "August", "September",
-            "October", "November", "December"};
+        "March", "April", "May", "June", "July", "August", "September",
+        "October", "November", "December"};
     private static final String[] DAY_NAMES = new String[]{"Sunday", "Monday",
-            "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
+        "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
     };
 
     public ServerMethods() {
